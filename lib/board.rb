@@ -1,6 +1,4 @@
 class Board
-  attr_reader :board
-
   def initialize
     @board = [
       [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white), Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
@@ -24,6 +22,10 @@ class Board
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = new_figure
     figure
+  end
+
+  def at(coordinate)
+    @board[coordinate.y][coordinate.x]
   end
 
   def print_board(rotate = false)
