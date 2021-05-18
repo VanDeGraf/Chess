@@ -1,17 +1,17 @@
 class Figure
-  $figure = [
-    rook: ♜,
-    knight: ♞,
-    bishop: ♝,
-    queen: ♛,
-    king: ♚,
-    pawn: ♟,
-  ]
+  $figure = {
+    rook: "♜",
+    knight: "♞",
+    bishop: "♝",
+    queen: "♛",
+    king: "♚",
+    pawn: "♟",
+  }
 
-  $color = [
+  $color = {
     white: 37,
     black: 30,
-  ]
+  }
 
   attr_reader :figure, :color, :coordinate
 
@@ -21,6 +21,6 @@ class Figure
   end
 
   def to_s
-    "\e[#{$color[color]}m#{$figure[figure]}\e[0m"
+    " \e[#{$color[@color]}m#{$figure[@figure]}\e[0m"
   end
 end
