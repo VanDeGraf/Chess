@@ -25,7 +25,11 @@ class Board
   end
 
   def at(coordinate)
-    @board[coordinate.y][coordinate.x]
+    @board.dig(coordinate.y, coordinate.x)
+  end
+
+  def on_board?(coordinate)
+    coordinate.x.between(0, 7) && coordinate.y.between(0, 7)
   end
 
   def print_board(rotate = false)
