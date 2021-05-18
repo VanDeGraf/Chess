@@ -24,6 +24,12 @@ class Board
     figure
   end
 
+  def can_move_at?(figure, coordinate)
+    return false unless on_board?(coordinate)
+    return true if at(coordinate).nil?
+    at(coordinate).color != figure.color
+  end
+
   def at(coordinate)
     @board.dig(coordinate.y, coordinate.x)
   end
