@@ -15,10 +15,9 @@ class Figure
 
   attr_reader :figure, :color, :coordinate
 
-  def initialize(figure_name, color_name, coordinate = nil)
+  def initialize(figure_name, color_name)
     @figure = figure_name
     @color = color_name
-    @coordinate = coordinate
   end
 
   def to_s
