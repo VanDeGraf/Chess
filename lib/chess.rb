@@ -49,7 +49,7 @@ class Chess
       point_start, point_end = player_turn_input
     end
     # TODO: game state: check/shah
-    eaten_figure = @board.replace_at(point_end, @board.remove_at(point_start))
+    eaten_figure = @board.move(point_start, point_end)
     @eaten_figures << eaten_figure unless eaten_figure.nil?
     @current_player = @current_player == 0 ? 1 : 0
     print_game_status

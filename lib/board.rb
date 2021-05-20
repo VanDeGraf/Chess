@@ -24,6 +24,10 @@ class Board
     figure
   end
 
+  def move(start_point, end_point)
+    replace_at(point_end, remove_at(point_start))
+  end
+
   def can_move_at?(figure, coordinate)
     return false unless on_board?(coordinate)
     return true if at(coordinate).nil?
