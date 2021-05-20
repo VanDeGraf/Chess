@@ -13,4 +13,9 @@ class Coordinate
   def relative(x_add, y_add)
     Coordinate.new(@x + x_add, @y + y_add)
   end
+
+  # @example convert "a1" >> 0,0
+  def self.from_s(string)
+    Coordinate.new(string[0].ord - 97, string[1].to_i - 1)
+  end
 end
