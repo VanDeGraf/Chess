@@ -4,6 +4,7 @@ class PossibleMoves
     @start_coordinate = start
     @moves_coordinates = []
     @board = board
+    build_moves
   end
 
   def build_moves
@@ -81,6 +82,18 @@ class PossibleMoves
     end
   end
 
+  # @param point_start [Coordinate]
+  # @param point_end [Coordinate]
+  def can_move?(point_start, point_end)
+    return false if @start_coordinate.x != point_start.x ||
+                    @start_coordinate.y != point_start.y
+    @moves_coordinates.each do |move|
+      return true if move.x == point_end.x &&
+                     move.y == point_end.y
+    end
+    false
+  end
+
   private
 
   def add_move(x, y)
@@ -101,16 +114,16 @@ class PossibleMoves
 
   def add_moves(endpoints)
     endpoints.each do |coordinate|
-      add_move(coordinate.x, coordinate.y)
+      add_move(coordinate[0], coordinate[1])
     end
   end
 
   def add_move_as_part_of_row
     point = yield @start_coordinate
-    add_move(point)
+    add_move(point.x, point.y)
     while @board.on_board?(point) && @board.at(point).nil?
       point = yield point
-      add_move(point)
+      add_move(point.x, point.y)
     end
   end
 end
