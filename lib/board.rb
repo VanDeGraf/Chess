@@ -35,7 +35,19 @@ class Board
   end
 
   def on_board?(coordinate)
-    coordinate.x.between(0, 7) && coordinate.y.between(0, 7)
+    coordinate.x.between?(0, 7) && coordinate.y.between?(0, 7)
+  end
+
+  # @param color [Symbol]
+  def generate_possible_moves_by_color(color)
+    moves = []
+    @board.each_index do |y|
+      @board[y].each_index do |x|
+        next if @board[y][x].nil? || @board[y][x].color != color
+        moves << PossibleMoves.new(@board[y][x], Coordinate.new(x, y), self)
+      end
+    end
+    moves
   end
 
   def print_board(rotate = false)
