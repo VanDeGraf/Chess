@@ -13,12 +13,13 @@ class PossibleMoves
     if @figure.figure == :pawn
       move_direction = @figure.color == :white ? 1 : -1
 
-      add_move(0, 1 * move_direction) { |point|
+      first_position = add_move(0, 1 * move_direction) { |point|
         @board.on_board?(point) &&
             @board.at(point).nil?
       }
       add_move(0, 2 * move_direction) { |point|
-        @start_coordinate.y == 1 &&
+        (@start_coordinate.y == 1 || @start_coordinate.y == 6) &&
+            first_position &&
             @board.at(point).nil?
       }
       add_move(-1, 1 * move_direction) { |point|
@@ -103,12 +104,12 @@ class PossibleMoves
     if block_given?
       if yield(point)
         @moves_coordinates << point
-        true
+        return true
       end
     else
       if @board.can_move_at?(@figure, point)
         @moves_coordinates << point
-        true
+        return true
       end
     end
     false
