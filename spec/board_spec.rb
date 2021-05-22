@@ -21,6 +21,13 @@ describe Board do
         expect(board.remove_at(Coordinate.new(x, y))).to be figure
       end
     end
+
+    context "when coordinate out of board" do
+      it "return nil" do
+        expect(board.remove_at(Coordinate.new(-1, -1))).to be_nil
+        expect(board.remove_at(Coordinate.new(8, 8))).to be_nil
+      end
+    end
   end
 
   describe "#replace_at" do
@@ -51,6 +58,18 @@ describe Board do
 
       it "return nil" do
         expect(board.replace_at(Coordinate.new(x, y), figure)).to be_nil
+      end
+    end
+
+    context "when coordinate out of board" do
+      it "return nil" do
+        expect(board.replace_at(Coordinate.new(-1, -1), figure)).to be_nil
+        expect(board.replace_at(Coordinate.new(8, 8), figure)).to be_nil
+      end
+    end
+    context "when input figure is nil" do
+      it "return nil" do
+        expect(board.replace_at(Coordinate.new(1, 1), nil)).to be_nil
       end
     end
   end
@@ -84,6 +103,17 @@ describe Board do
     context "when coordinate on board" do
       it "return true" do
         expect(board.on_board?(Coordinate.new(1, 1))).to be true
+      end
+    end
+  end
+
+  describe "#move" do
+    context "when coordinate out of board" do
+      it "return nil" do
+        expect(board.move(Coordinate.new(-1, -1), Coordinate.new(1, 1))).to be_nil
+        expect(board.move(Coordinate.new(1, 1), Coordinate.new(-1, -1))).to be_nil
+        expect(board.move(Coordinate.new(8, 8), Coordinate.new(1, 1))).to be_nil
+        expect(board.move(Coordinate.new(1, 1), Coordinate.new(8, 8))).to be_nil
       end
     end
   end

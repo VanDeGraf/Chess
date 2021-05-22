@@ -1,31 +1,33 @@
 class Board
   def initialize
     @board = [
-      [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white), Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
-      [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
-      [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black), Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)],
+        [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white), Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
+        [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
+        [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black), Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)],
     ]
   end
 
   def remove_at(coordinate)
+    return nil unless on_board?(coordinate)
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = nil
     figure
   end
 
   def replace_at(coordinate, new_figure)
+    return nil unless on_board?(coordinate) && !new_figure.nil?
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = new_figure
     figure
   end
 
   def move(start_point, end_point)
-    replace_at(point_end, remove_at(point_start))
+    replace_at(end_point, remove_at(start_point))
   end
 
   def can_move_at?(figure, coordinate)
@@ -35,6 +37,7 @@ class Board
   end
 
   def at(coordinate)
+    return nil unless on_board?(coordinate)
     @board.dig(coordinate.y, coordinate.x)
   end
 
@@ -55,26 +58,26 @@ class Board
   end
 
   def print_board(rotate = false)
-    coor_start = 0
-    coor_end = 7
+    point_start = 0
+    point_end = 7
     step = 1
     if rotate
-      coor_start, coor_end = coor_end, coor_start
+      point_start, point_end = point_end, point_start
       step = -1
     end
     print "  "
-    coor_start.step(coor_end, step) { |x| print " " + (97 + x).chr }
+    point_start.step(point_end, step) { |x| print " " + (97 + x).chr }
     print "\n"
-    coor_start.step(coor_end, step) do |y|
+    point_start.step(point_end, step) do |y|
       print (y + 1).to_s + " "
-      coor_start.step(coor_end, step) do |x|
+      point_start.step(point_end, step) do |x|
         figure = @board[y][x].nil? ? "  " : @board[y][x].to_s
         print bg_color(figure, x + y)
       end
       puts " " + (y + 1).to_s
     end
     print " "
-    coor_start.step(coor_end, step) { |x| print " " + (97 + x).chr }
+    point_start.step(point_end, step) { |x| print " " + (97 + x).chr }
     puts " "
   end
 
