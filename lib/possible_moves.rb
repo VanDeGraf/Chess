@@ -1,4 +1,6 @@
 class PossibleMoves
+  attr_reader :moves_coordinates
+
   def initialize(figure, start, board)
     @figure = figure
     @start_coordinate = start
@@ -13,42 +15,42 @@ class PossibleMoves
 
       add_move(0, 1 * move_direction) { |point|
         @board.on_board?(point) &&
-        @board.at(point).nil?
+            @board.at(point).nil?
       }
       add_move(0, 2 * move_direction) { |point|
         @start_coordinate.y == 1 &&
-        @board.at(point).nil?
+            @board.at(point).nil?
       }
       add_move(-1, 1 * move_direction) { |point|
         !@board.at(point).nil? &&
-        @board.at(point).color != @figure.color
+            @board.at(point).color != @figure.color
       }
       add_move(1, 1 * move_direction) { |point|
         !@board.at(point).nil? &&
-        @board.at(point).color != @figure.color
+            @board.at(point).color != @figure.color
       }
     elsif @figure.figure == :knight
       add_moves([
-        [-1, 2],
-        [1, 2],
-        [-1, -2],
-        [1, -2],
-        [-2, 1],
-        [-2, -1],
-        [2, 1],
-        [2, -1],
-      ])
+                    [-1, 2],
+                    [1, 2],
+                    [-1, -2],
+                    [1, -2],
+                    [-2, 1],
+                    [-2, -1],
+                    [2, 1],
+                    [2, -1],
+                ])
     elsif @figure.figure == :king
       add_moves([
-        [-1, 1],
-        [0, 1],
-        [1, 1],
-        [1, 0],
-        [1, -1],
-        [0, -1],
-        [-1, -1],
-        [-1, 0],
-      ])
+                    [-1, 1],
+                    [0, 1],
+                    [1, 1],
+                    [1, 0],
+                    [1, -1],
+                    [0, -1],
+                    [-1, -1],
+                    [-1, 0],
+                ])
     elsif [:queen, :rook, :bishop].include?(@figure.figure)
       if [:queen, :rook].include?(@figure.figure)
         add_move_as_part_of_row { |point| point.relative(1, 0) }
@@ -86,10 +88,10 @@ class PossibleMoves
   # @param point_end [Coordinate]
   def can_move?(point_start, point_end)
     return false if @start_coordinate.x != point_start.x ||
-                    @start_coordinate.y != point_start.y
+        @start_coordinate.y != point_start.y
     @moves_coordinates.each do |move|
       return true if move.x == point_end.x &&
-                     move.y == point_end.y
+          move.y == point_end.y
     end
     false
   end
