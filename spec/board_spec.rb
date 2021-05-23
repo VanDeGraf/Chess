@@ -140,6 +140,29 @@ describe Board do
       end
     end
   end
+  describe "#mate?" do
+    context "when on board king and enemy queen near" do
+      before do
+        board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
+        board.replace_at(Coordinate.new(0, 0), Figure.new(:king, :white))
+        board.replace_at(Coordinate.new(1, 1), Figure.new(:queen, :black))
+      end
+      it 'should return false' do
+        expect(board.mate?(:white)).to be_falsey
+      end
+    end
+    context "when on board king and 2 enemy queen near" do
+      before do
+        board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
+        board.replace_at(Coordinate.new(0, 0), Figure.new(:king, :white))
+        board.replace_at(Coordinate.new(0, 1), Figure.new(:queen, :black))
+        board.replace_at(Coordinate.new(1, 0), Figure.new(:queen, :black))
+      end
+      it 'should return true' do
+        expect(board.mate?(:white)).to be_truthy
+      end
+    end
+  end
 
   describe "#can_move_at?" do
     #TODO
