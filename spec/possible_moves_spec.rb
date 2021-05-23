@@ -49,7 +49,7 @@ describe PossibleMoves do
     context "when figure is white pawn" do
       let(:figure) { Figure.new(:pawn, :white) }
       context 'when figure stay at 1,1' do
-        let(:figure_coordinate) {Coordinate.new(1,1)}
+        let(:figure_coordinate) { Coordinate.new(1, 1) }
         before do
           board.replace_at(figure_coordinate, figure)
         end
@@ -103,7 +103,7 @@ describe PossibleMoves do
     context "when figure is black pawn" do
       let(:figure) { Figure.new(:pawn, :black) }
       context 'when figure stay at 1,6' do
-        let(:figure_coordinate) {Coordinate.new(1,6)}
+        let(:figure_coordinate) { Coordinate.new(1, 6) }
         before do
           board.replace_at(figure_coordinate, figure)
         end
@@ -150,6 +150,76 @@ describe PossibleMoves do
           end
           it 'should add 0 moves' do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves_coordinates.length).to be 0
+          end
+        end
+      end
+    end
+    context "when figure is knight" do
+      let(:figure) { Figure.new(:knight, :white) }
+      let(:enemy_figure) { Figure.new(:pawn, :black) }
+      let(:ally_figure) { Figure.new(:pawn, :white) }
+      context 'when figure stay at 2,2' do
+        let(:figure_coordinate) { Coordinate.new(2, 2) }
+        before do
+          board.replace_at(figure_coordinate, figure)
+        end
+        it 'should add 8 moves' do
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves_coordinates.length).to be 8
+        end
+        it 'should add move with coordinate 1,4' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 1 && point.y == 4 }).to be_truthy
+        end
+        it 'should add move with coordinate 3,4' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 3 && point.y == 4 }).to be_truthy
+        end
+        it 'should add move with coordinate 4,3' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 4 && point.y == 3 }).to be_truthy
+        end
+        it 'should add move with coordinate 4,1' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 4 && point.y == 1 }).to be_truthy
+        end
+        it 'should add move with coordinate 3,0' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 3 && point.y == 0 }).to be_truthy
+        end
+        it 'should add move with coordinate 1,0' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 1 && point.y == 0 }).to be_truthy
+        end
+        it 'should add move with coordinate 0,1' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 0 && point.y == 1 }).to be_truthy
+        end
+        it 'should add move with coordinate 0,3' do
+          expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+              any? { |point| point.x == 0 && point.y == 3 }).to be_truthy
+        end
+        context 'and enemy figure stay at 1,4' do
+          before do
+            board.replace_at(Coordinate.new(1, 4), enemy_figure)
+          end
+          it 'should add 8 moves' do
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves_coordinates.length).to be 8
+          end
+          it 'should add move with coordinate 1,4' do
+            expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+                any? { |point| point.x == 1 && point.y == 4 }).to be_truthy
+          end
+        end
+        context 'and ally figure stay at 1,4' do
+          before do
+            board.replace_at(Coordinate.new(1, 4), ally_figure)
+          end
+          it 'should add 7 moves' do
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves_coordinates.length).to be 7
+          end
+          it 'should not add move with coordinate 1,4' do
+            expect(PossibleMoves.new(figure,figure_coordinate,board).moves_coordinates.
+                any? { |point| point.x == 1 && point.y == 4 }).to be_falsey
           end
         end
       end
