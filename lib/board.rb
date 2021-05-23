@@ -45,6 +45,28 @@ class Board
     coordinate.x.between?(0, 7) && coordinate.y.between?(0, 7)
   end
 
+  def clone
+    new_board = Board.new
+    array = @board.map do |row|
+      row.map { |figure| figure }
+    end
+    new_board.instance_variable_set(:@board, array)
+    new_board
+  end
+
+  # @param color [Symbol]
+  def shah?(color)
+    opposite_color = color == :white ? :black : :white
+    @board.each_index do |y|
+      @board[y].each_index do |x|
+        next if @board[y][x].nil? || @board[y][x].color != opposite_color
+        moves = PossibleMoves.new(@board[y][x], Coordinate.new(x, y), self)
+        return true if moves.match?(nil, true, :king)
+      end
+    end
+    false
+  end
+
   # @param color [Symbol]
   def generate_possible_moves_by_color(color)
     moves = []
@@ -66,18 +88,18 @@ class Board
       step = -1
     end
     print "  "
-    point_end.step(point_start, step*-1) { |x| print " " + (97 + x).chr }
+    point_end.step(point_start, step * -1) { |x| print " " + (97 + x).chr }
     print "\n"
     point_start.step(point_end, step) do |y|
       print (y + 1).to_s + " "
-      point_end.step(point_start, step*-1) do |x|
+      point_end.step(point_start, step * -1) do |x|
         figure = @board[y][x].nil? ? "  " : @board[y][x].to_s
         print bg_color(figure, x + y)
       end
       puts " " + (y + 1).to_s
     end
     print "  "
-    point_end.step(point_start, step*-1) { |x| print " " + (97 + x).chr }
+    point_end.step(point_start, step * -1) { |x| print " " + (97 + x).chr }
     puts " "
   end
 
