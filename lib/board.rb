@@ -66,18 +66,18 @@ class Board
       step = -1
     end
     print "  "
-    point_start.step(point_end, step) { |x| print " " + (97 + x).chr }
+    point_end.step(point_start, step*-1) { |x| print " " + (97 + x).chr }
     print "\n"
     point_start.step(point_end, step) do |y|
       print (y + 1).to_s + " "
-      point_start.step(point_end, step) do |x|
+      point_end.step(point_start, step*-1) do |x|
         figure = @board[y][x].nil? ? "  " : @board[y][x].to_s
         print bg_color(figure, x + y)
       end
       puts " " + (y + 1).to_s
     end
-    print " "
-    point_start.step(point_end, step) { |x| print " " + (97 + x).chr }
+    print "  "
+    point_end.step(point_start, step*-1) { |x| print " " + (97 + x).chr }
     puts " "
   end
 
