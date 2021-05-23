@@ -72,16 +72,16 @@ class PossibleMoves
   # @param beat [Boolean] is figure beat other in any moves? nil - doesn't matter
   # @param beats [Symbol] figure beats this figure type, nil - doesn't matter
   def match?(color = nil, beat = nil, beats = nil)
-    return false if !color.nil? && color != @figure.color
+    return false if (!color.nil? && color != @figure.color) || @moves_coordinates.length == 0
     return true if beat.nil?
-    if beat == @moves_coordinates.reduce { |beat, point| beat || !@board.at(point).nil? }
+    if beat == @moves_coordinates.reduce(false) { |beat, point| beat || !@board.at(point).nil? }
       return true if beats.nil?
       @moves_coordinates.each do |point|
         return true if !@board.at(point).nil? && @board.at(point).figure == beats
       end
-      return false
+      false
     else
-      return false
+      false
     end
   end
 
