@@ -123,10 +123,10 @@ class PossibleMoves
 
   def add_move_as_part_of_row
     point = yield @start_coordinate
-    add_move(point.x, point.y)
+    @moves_coordinates << point if @board.can_move_at?(@figure, point)
     while @board.on_board?(point) && @board.at(point).nil?
       point = yield point
-      add_move(point.x, point.y)
+      @moves_coordinates << point if @board.can_move_at?(@figure, point)
     end
   end
 end
