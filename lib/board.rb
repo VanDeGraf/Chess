@@ -69,14 +69,32 @@ class Board
 
   # @param color [Symbol]
   def mate?(color)
-    generate_possible_moves_by_color(color).all? do |possible_move|
+    possible_moves = generate_possible_moves_by_color(color)
+    shah?(color) if possible_moves.empty?
+    possible_moves.all? do |possible_move|
       point_start = possible_move.start_coordinate
       possible_move.moves_coordinates.all? do |point_end|
         board_clone = clone
-        board_clone.move(point_start,point_end)
+        board_clone.move(point_start, point_end)
         board_clone.shah?(color)
       end
     end
+  end
+
+  # @param color [Symbol]
+  def stalemate?(color)
+    possible_moves = generate_possible_moves_by_color(color)
+    return false unless possible_moves.empty?
+    !shah?(color)
+  end
+
+  def deadmate?
+    figure_types = []
+    @board.flatten.each do |figure|
+      figure_types << figure.figure if !figure.nil? &&
+          !figure_types.include?(figure.figure)
+    end
+    figure_types.length == 1 && figure_types.first == :king
   end
 
   # @param color [Symbol]
