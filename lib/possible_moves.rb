@@ -1,5 +1,5 @@
 class PossibleMoves
-  attr_reader :moves_coordinates
+  attr_reader :moves_coordinates, :start_coordinate
 
   def initialize(figure, start, board)
     @figure = figure
