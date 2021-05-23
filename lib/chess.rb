@@ -49,7 +49,7 @@ class Chess
       point_start, point_end = player_turn_input
     end
     eaten_figure = @board.move(point_start, point_end)
-    @eaten_figures << eaten_figure unless eaten_figure.nil?
+    @eaten_figures[@current_player] << eaten_figure unless eaten_figure.nil?
     @current_player = @current_player == 0 ? 1 : 0
     print_game_status
   end
