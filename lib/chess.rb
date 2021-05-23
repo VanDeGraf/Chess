@@ -48,7 +48,6 @@ class Chess
       puts "Sorry, you can't move here (or from), try other coordinate: "
       point_start, point_end = player_turn_input
     end
-    # TODO: game state: check/shah
     eaten_figure = @board.move(point_start, point_end)
     @eaten_figures << eaten_figure unless eaten_figure.nil?
     @current_player = @current_player == 0 ? 1 : 0
@@ -68,10 +67,11 @@ class Chess
   def current_move_possible?(point_start, point_end)
     current_color = @current_player == 0 ? :white : :black
     possible_moves = @board.generate_possible_moves_by_color(current_color)
-    possible_moves.each do |figure_moves|
-      return true if figure_moves.can_move?(point_start, point_end)
-    end
-    false
+    can_move = possible_moves.any? { |figure_moves| figure_moves.can_move?(point_start, point_end) }
+    return false unless can_move
+    board_clone = @board.clone
+    board_clone.move(point_start, point_end)
+    !board_clone.shah?(current_color)
   end
 
   def play_game
@@ -81,7 +81,16 @@ class Chess
   end
 
   def game_end?
-    false
+    player_color = @current_player == 0 ? :white : :black
+    if @board.mate?(player_color)
+      @winner = @current_player == 0 ? 1 : 0
+      true
+    elsif @board.stalemate?(player_color) || @board.deadmate?
+      @winner = nil
+      true
+    else
+      false
+    end
   end
 
   def print_game_result
