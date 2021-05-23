@@ -68,6 +68,18 @@ class Board
   end
 
   # @param color [Symbol]
+  def mate?(color)
+    generate_possible_moves_by_color(color).all? do |possible_move|
+      point_start = possible_move.start_coordinate
+      possible_move.moves_coordinates.all? do |point_end|
+        board_clone = clone
+        board_clone.move(point_start,point_end)
+        board_clone.shah?(color)
+      end
+    end
+  end
+
+  # @param color [Symbol]
   def generate_possible_moves_by_color(color)
     moves = []
     @board.each_index do |y|
