@@ -15,10 +15,38 @@ describe PossibleMoves do
       end
     end
     context 'when color = nil, beat = nil, beats = nil and moves length == 0' do
-      it 'should return true' do
+      it 'should return false' do
         possible_moves = PossibleMoves.new(Figure.new(:pawn, :white), Coordinate.new(0, 0), board)
         possible_moves.instance_variable_set(:@moves_coordinates, [])
         expect(possible_moves.match?).to be_falsey
+      end
+    end
+    context 'when color = nil, beat = true, beats = nil and it has in moves' do
+      it 'should return true' do
+        possible_moves = PossibleMoves.new(Figure.new(:pawn, :white), Coordinate.new(0, 0), board)
+        possible_moves.instance_variable_set(:@moves_coordinates, [Coordinate.new(3, 3), Coordinate.new(0, 6)])
+        expect(possible_moves.match?(nil,true)).to be_truthy
+      end
+    end
+    context 'when color = nil, beat = true, beats = nil and it has not in moves' do
+      it 'should return false' do
+        possible_moves = PossibleMoves.new(Figure.new(:pawn, :white), Coordinate.new(0, 0), board)
+        possible_moves.instance_variable_set(:@moves_coordinates, [Coordinate.new(3, 3)])
+        expect(possible_moves.match?(nil,true)).to be_falsey
+      end
+    end
+    context 'when color = nil, beat = true, beats = :pawn and it has in moves' do
+      it 'should return true' do
+        possible_moves = PossibleMoves.new(Figure.new(:pawn, :white), Coordinate.new(0, 0), board)
+        possible_moves.instance_variable_set(:@moves_coordinates, [Coordinate.new(3, 3), Coordinate.new(0, 6)])
+        expect(possible_moves.match?(nil,true,:pawn)).to be_truthy
+      end
+    end
+    context 'when color = nil, beat = true, beats = :pawn and it beaten has in moves, but not pawn' do
+      it 'should return false' do
+        possible_moves = PossibleMoves.new(Figure.new(:pawn, :white), Coordinate.new(0, 0), board)
+        possible_moves.instance_variable_set(:@moves_coordinates, [Coordinate.new(3, 3), Coordinate.new(0, 7)])
+        expect(possible_moves.match?(nil,true,:pawn)).to be_falsey
       end
     end
   end
