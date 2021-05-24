@@ -1,6 +1,9 @@
 class PossibleMoves
   attr_reader :moves_coordinates, :start_coordinate
 
+  # @param figure [Figure]
+  # @param start [Coordinate]
+  # @param board [Board]
   def initialize(figure, start, board)
     @figure = figure
     @start_coordinate = start
@@ -42,16 +45,38 @@ class PossibleMoves
                     [2, -1],
                 ])
     elsif @figure.figure == :king
-      add_moves([
-                    [-1, 1],
-                    [0, 1],
-                    [1, 1],
-                    [1, 0],
-                    [1, -1],
-                    [0, -1],
-                    [-1, -1],
-                    [-1, 0],
-                ])
+      relative = [
+          [-1, 1],
+          [0, 1],
+          [1, 1],
+          [1, 0],
+          [1, -1],
+          [0, -1],
+          [-1, -1],
+          [-1, 0],
+      ]
+      enemy_king_coordinate = nil
+      0.upto(7) do |y|
+        break unless enemy_king_coordinate.nil?
+        0.upto(7) do |x|
+          enemy_figure = @board.at(Coordinate.new(x, y))
+          if !enemy_figure.nil? && enemy_figure.figure == :king && enemy_figure.color != figure.color
+            enemy_king_coordinate = Coordinate.new(x, y)
+            break
+          end
+        end
+      end
+      if enemy_king_coordinate.nil?
+        add_moves(relative)
+      else
+        relative.each do |r|
+          point = @start_coordinate.relative(r[0], r[1])
+          # distance between kings after move
+          if Math.sqrt((enemy_king_coordinate.x - point.x) ** 2 + (enemy_king_coordinate.y - point.y) ** 2) >= 2
+            add_move(r[0], r[1])
+          end
+        end
+      end
     elsif [:queen, :rook, :bishop].include?(@figure.figure)
       if [:queen, :rook].include?(@figure.figure)
         add_move_as_part_of_row { |point| point.relative(1, 0) }
