@@ -45,6 +45,20 @@ class Board
     coordinate.x.between?(0, 7) && coordinate.y.between?(0, 7)
   end
 
+  # @param figure_type [Symbol] nil return any figure type
+  # @param figure_color [Symbol] nil return both figure color
+  def where_is(figure_type = nil, figure_color = nil)
+    positions = []
+    @board.each_index do |y|
+      @board[y].each_index do |x|
+        next unless (figure = @board[y][x])
+        positions << Coordinate.new(x, y) if (figure_type.nil? || figure.figure == figure_type) &&
+            (figure_color.nil? || figure.color == figure_color)
+      end
+    end
+    positions
+  end
+
   def clone
     new_board = Board.new
     array = @board.map do |row|
