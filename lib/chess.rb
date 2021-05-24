@@ -66,7 +66,7 @@ class Chess
 
   def current_move_possible?(point_start, point_end)
     current_color = @current_player == 0 ? :white : :black
-    possible_moves = @board.generate_possible_moves_by_color(current_color)
+    possible_moves = @board.possible_moves(current_color)
     can_move = possible_moves.any? { |figure_moves| figure_moves.can_move?(point_start, point_end) }
     return false unless can_move
     board_clone = @board.clone
