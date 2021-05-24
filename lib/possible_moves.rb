@@ -55,17 +55,8 @@ class PossibleMoves
           [-1, -1],
           [-1, 0],
       ]
-      enemy_king_coordinate = nil
-      0.upto(7) do |y|
-        break unless enemy_king_coordinate.nil?
-        0.upto(7) do |x|
-          enemy_figure = @board.at(Coordinate.new(x, y))
-          if !enemy_figure.nil? && enemy_figure.figure == :king && enemy_figure.color != figure.color
-            enemy_king_coordinate = Coordinate.new(x, y)
-            break
-          end
-        end
-      end
+      opposite_color = @figure.color == :white ? :black : :white
+      enemy_king_coordinate = @board.where_is(:king, opposite_color).first
       if enemy_king_coordinate.nil?
         add_moves(relative)
       else

@@ -71,14 +71,10 @@ class Board
   # @param color [Symbol]
   def shah?(color)
     opposite_color = color == :white ? :black : :white
-    @board.each_index do |y|
-      @board[y].each_index do |x|
-        next if @board[y][x].nil? || @board[y][x].color != opposite_color
-        moves = PossibleMoves.new(@board[y][x], Coordinate.new(x, y), self)
-        return true if moves.match?(nil, true, :king)
-      end
+    where_is(nil, opposite_color).any? do |coordinate|
+      moves = PossibleMoves.new(at(coordinate), coordinate, self)
+      moves.match?(nil, true, :king)
     end
-    false
   end
 
   # @param color [Symbol]
@@ -114,11 +110,9 @@ class Board
   # @param color [Symbol]
   def generate_possible_moves_by_color(color)
     moves = []
-    @board.each_index do |y|
-      @board[y].each_index do |x|
-        next if @board[y][x].nil? || @board[y][x].color != color
-        moves << PossibleMoves.new(@board[y][x], Coordinate.new(x, y), self)
-      end
+    opposite_color = color == :white ? :black : :white
+    where_is(nil, opposite_color).each do |coordinate|
+      moves << PossibleMoves.new(at(coordinate), coordinate, self)
     end
     moves
   end
