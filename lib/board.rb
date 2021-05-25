@@ -1,5 +1,8 @@
+# Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
+# mate(checkmate), draw and other
 class Board
   def initialize
+    # @type [Array<Array<Figure,nil>>]
     @board = [
         [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white), Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
         [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
@@ -12,6 +15,9 @@ class Board
     ]
   end
 
+  # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
+  # @param coordinate [Coordinate]
+  # @return [Figure,nil] Figure if removed, otherwise nil
   def remove_at(coordinate)
     return nil unless on_board?(coordinate)
     figure = @board[coordinate.y][coordinate.x]
@@ -19,6 +25,10 @@ class Board
     figure
   end
 
+  # Replace in coordinate on board with figure, if there is other figure or empty, and coordinate is valid
+  # @param coordinate [Coordinate]
+  # @param new_figure [Figure]
+  # @return [Figure,nil] old Figure if exists and replaced, otherwise nil
   def replace_at(coordinate, new_figure)
     return nil unless on_board?(coordinate) && !new_figure.nil?
     figure = @board[coordinate.y][coordinate.x]
@@ -26,6 +36,10 @@ class Board
     figure
   end
 
+  # Remove figure from start coordinate and set it at empty end coordinate, or replace if there is other figure
+  # @param start_point [Coordinate]
+  # @param end_point [Coordinate]
+  # @return [Figure,nil] replaced Figure, otherwise nil
   def move(start_point, end_point)
     replace_at(end_point, remove_at(start_point))
   end
@@ -36,17 +50,24 @@ class Board
     at(coordinate).color != figure.color
   end
 
+  # Returns board cell value if coordinate is valid, otherwise return nil
+  # @param coordinate [Coordinate]
+  # @return [Figure,nil]
   def at(coordinate)
     return nil unless on_board?(coordinate)
     @board.dig(coordinate.y, coordinate.x)
   end
 
+  # Check coordinate is valid
+  # @param coordinate [Coordinate]
   def on_board?(coordinate)
     coordinate.x.between?(0, 7) && coordinate.y.between?(0, 7)
   end
 
+  # find all figures on board, filtered by it's type and color, and return that figures coordinates
   # @param figure_type [Symbol] nil return any figure type
   # @param figure_color [Symbol] nil return both figure color
+  # @return [Array<Coordinate>] empty array if not found
   def where_is(figure_type = nil, figure_color = nil)
     positions = []
     @board.each_index do |y|
@@ -68,6 +89,8 @@ class Board
     new_board
   end
 
+  # check inputted color is in shah(check) state, i.e. any enemy figure has possible move at next turn to beat king with
+  # inputted color
   # @param color [Symbol]
   def shah?(color)
     opposite_color = color == :white ? :black : :white
@@ -77,6 +100,8 @@ class Board
     end
   end
 
+  # check inputted color is in mate(checkmate) state, i.e. after all possible moves inputted color is in shah state, or
+  # now is in shah state and no possible moves
   # @param color [Symbol]
   def mate?(color)
     moves = possible_moves(color)
@@ -91,6 +116,7 @@ class Board
     end
   end
 
+  # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
     possible_moves = possible_moves(color)
@@ -98,6 +124,7 @@ class Board
     !shah?(color)
   end
 
+  # check is in deadmate state, i.e. both colors figures can move, but can't beat other, so can't win or lose
   def deadmate?
     figure_types = []
     @board.flatten.each do |figure|
@@ -116,6 +143,9 @@ class Board
     moves
   end
 
+  # draw in Unix console current board state with figures, and rotated to white or black figures side
+  # @param rotate [Boolean] true - white, false - black
+  # @return [Void]
   def print_board(rotate = false)
     point_start = 0
     point_end = 7
@@ -142,6 +172,7 @@ class Board
 
   private
 
+  # set background color for board cells
   def bg_color(string, color_i)
     color_i.odd? ? "\e[46m#{string}\e[0m" : "\e[44m#{string}\e[0m"
   end
