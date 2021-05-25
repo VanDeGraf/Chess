@@ -58,6 +58,32 @@ class Board
     @board[coordinate.y][coordinate.x]
   end
 
+  # If coordinate invalid, return false; If not empty and color opposite, return true
+  # @param color [Figure,Symbol] use 'color = Figure.color' if color is Figure
+  # @param coordinate [Coordinate]
+  def there_enemy?(color, coordinate)
+    color = color.color if color.is_a?(Figure)
+    cell = at(coordinate)
+    return false unless cell
+    cell.color != color
+  end
+
+  # If coordinate invalid, return false; If not empty and color same, return true
+  # @param color [Figure,Symbol] use 'color = Figure.color' if color is Figure
+  # @param coordinate [Coordinate]
+  def there_ally?(color, coordinate)
+    color = color.color if color.is_a?(Figure)
+    cell = at(coordinate)
+    return false unless cell
+    cell.color == color
+  end
+
+  # If coordinate invalid, return false; If empty, return true
+  # @param coordinate [Coordinate]
+  def there_empty?(coordinate)
+    on_board?(coordinate) && @board[coordinate.y][coordinate.x]
+  end
+
   # Check coordinate is valid
   # @param coordinate [Coordinate]
   def on_board?(coordinate)
