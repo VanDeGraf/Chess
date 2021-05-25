@@ -55,7 +55,7 @@ class Board
   # @return [Figure,nil]
   def at(coordinate)
     return nil unless on_board?(coordinate)
-    @board.dig(coordinate.y, coordinate.x)
+    @board[coordinate.y][coordinate.x]
   end
 
   # Check coordinate is valid
