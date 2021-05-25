@@ -44,12 +44,6 @@ class Board
     replace_at(end_point, remove_at(start_point))
   end
 
-  def can_move_at?(figure, coordinate)
-    return false unless on_board?(coordinate)
-    return true if at(coordinate).nil?
-    at(coordinate).color != figure.color
-  end
-
   # Returns board cell value if coordinate is valid, otherwise return nil
   # @param coordinate [Coordinate]
   # @return [Figure,nil]
