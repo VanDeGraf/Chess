@@ -69,9 +69,7 @@ class Chess
     possible_moves = @board.possible_moves(current_color)
     can_move = possible_moves.any? { |figure_moves| figure_moves.can_move?(point_start, point_end) }
     return false unless can_move
-    board_clone = @board.clone
-    board_clone.move(point_start, point_end)
-    !board_clone.shah?(current_color)
+    !@board.shah_after_move?(current_color, point_start, point_end)
   end
 
   def play_game

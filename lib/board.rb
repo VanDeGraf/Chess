@@ -120,6 +120,16 @@ class Board
     end
   end
 
+  # create copy of board and do move on it, return shah state for inputted color on board copy
+  # @param point_start [Coordinate]
+  # @param point_end [Coordinate]
+  # @param color [Symbol]
+  def shah_after_move?(color, point_start, point_end)
+    board_clone = clone
+    board_clone.move(point_start, point_end)
+    board_clone.shah?(color)
+  end
+
   # check inputted color is in mate(checkmate) state, i.e. after all possible moves inputted color is in shah state, or
   # now is in shah state and no possible moves
   # @param color [Symbol]
@@ -129,9 +139,7 @@ class Board
     moves.all? do |possible_move|
       point_start = possible_move.start_coordinate
       possible_move.moves_coordinates.all? do |point_end|
-        board_clone = clone
-        board_clone.move(point_start, point_end)
-        board_clone.shah?(color)
+        shah_after_move?(color, point_start, point_end)
       end
     end
   end
