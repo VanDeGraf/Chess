@@ -1,6 +1,6 @@
 # generate possible moves of figure, depends by type and color of it, and depends by other figures on board
 class PossibleMoves
-  attr_reader :moves_coordinates, :start_coordinate
+  attr_reader :moves, :start_coordinate
 
   # @param figure [Figure]
   # @param start [Coordinate]
@@ -12,11 +12,11 @@ class PossibleMoves
     @start_coordinate = start
     # @type [Board]
     @board = board
-    # @type [Array<Coordinate>]
-    @moves_coordinates = build_moves
+    # @type [Array<Move>]
+    @moves = build_moves
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def pawn_moves
     moves = []
     # pawn possible moves depends of it's direction on board
@@ -46,7 +46,7 @@ class PossibleMoves
     moves.compact
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def knight_moves
     # for each default knight moves add move if there is enemy or empty
     get_move_relative([
@@ -64,7 +64,7 @@ class PossibleMoves
     end
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def king_moves
     opposite_color = @figure.color == :white ? :black : :white
     enemy_king_coordinate = @board.where_is(:king, opposite_color).first
@@ -89,7 +89,7 @@ class PossibleMoves
     # TODO: king special move - castling
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def bishop_moves
     # for every diagonal direction add coordinate if it's valid and there empty or enemy, then if added, try add next
     # coordinate on this direction
@@ -104,7 +104,7 @@ class PossibleMoves
     end
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def rook_moves
     # for every diagonal direction add coordinate if it's valid and there empty or enemy, then if added, try add next
     # coordinate on this direction
@@ -119,13 +119,13 @@ class PossibleMoves
     end
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def queen_moves
     # queen can all of can bishop and rook
     bishop_moves + rook_moves
   end
 
-  # @return [Array<Coordinate>]
+  # @return [Array<Move>]
   def build_moves
     case @figure.figure
     when :pawn
@@ -143,35 +143,6 @@ class PossibleMoves
     end
   end
 
-  # @param color [Symbol] figure color, nil - doesn't matter
-  # @param beat [Boolean] is figure beat other in any moves? nil - doesn't matter
-  # @param beats [Symbol] figure beats this figure type, nil - doesn't matter
-  def match?(color = nil, beat = nil, beats = nil)
-    return false if (!color.nil? && color != @figure.color) || @moves_coordinates.length == 0
-    return true if beat.nil?
-    if beat == @moves_coordinates.reduce(false) { |beat, point| beat || !@board.at(point).nil? }
-      return true if beats.nil?
-      @moves_coordinates.each do |point|
-        return true if !@board.at(point).nil? && @board.at(point).figure == beats
-      end
-      false
-    else
-      false
-    end
-  end
-
-  # @param point_start [Coordinate]
-  # @param point_end [Coordinate]
-  def can_move?(point_start, point_end)
-    return false if @start_coordinate.x != point_start.x ||
-        @start_coordinate.y != point_start.y
-    @moves_coordinates.each do |move|
-      return true if move.x == point_end.x &&
-          move.y == point_end.y
-    end
-    false
-  end
-
   private
 
   # @overload get_move_relative(x,y)
@@ -179,17 +150,30 @@ class PossibleMoves
   #   @param y [Numeric]
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
-  #   @return [Coordinate, nil]
+  #   @return [Move, nil]
   # @overload get_move_relative(moves)
   #   @param moves [Array<Array<Fixnum>>]
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
-  #   @return [Array<Coordinate>]
+  #   @return [Array<Move>]
   def get_move_relative(*args)
     if args.length == 2 && args[0].is_a?(Fixnum) && args[1].is_a?(Fixnum)
       point = @start_coordinate.relative(args[0], args[1])
       if yield(point)
-        point
+        if @board.there_empty?(point)
+          Move.new(:move, {
+              figure: @figure,
+              point_start: @start_coordinate,
+              point_end: point
+          })
+        else
+          Move.new(:capture, {
+              figure: @figure,
+              point_start: @start_coordinate,
+              point_end: point,
+              captured: @board.at(point)
+          })
+        end
       else
         nil
       end
@@ -205,20 +189,20 @@ class PossibleMoves
   #   @param y [Fixnum]
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
-  #   @return [Array<Coordinate>]
+  #   @return [Array<Move>]
   # @overload get_moves_by_direction(directions)
   #   @param directions [Array<Array<Fixnum>>]
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
-  #   @return [Array<Coordinate>]
+  #   @return [Array<Move>]
   def get_moves_by_direction(*args)
     if args.length == 2 && args[0].is_a?(Fixnum) && args[1].is_a?(Fixnum)
       moves = []
       iteration = 1
       loop do
-        coordinate = get_move_relative(args[0] * iteration, args[1] * iteration) { |point| yield point }
-        break if coordinate.nil?
-        moves << coordinate
+        move = get_move_relative(args[0] * iteration, args[1] * iteration) { |point| yield point }
+        break if move.nil?
+        moves << move
         iteration += 1
       end
       moves
