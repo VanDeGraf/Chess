@@ -24,6 +24,10 @@ class Coordinate
     Coordinate.new(@x + x_add, @y + y_add)
   end
 
+  def ==(other)
+    @x == other.x && @y == other.y
+  end
+
   # Represents chess string coordinate to table coordinate object
   # @param coordinate [String]
   # @example "a1" >> 0,0
