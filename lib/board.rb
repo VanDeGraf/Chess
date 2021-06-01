@@ -13,12 +13,16 @@ class Board
         [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
         [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black), Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)],
     ]
+    # @type [Array<Figure>]
+    @eaten = []
+    # @type [Array<Move>]
+    @history = []
   end
 
   # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
   # @param coordinate [Coordinate]
   # @return [Figure,nil] Figure if removed, otherwise nil
-  def remove_at(coordinate)
+  def remove_at!(coordinate)
     return nil unless on_board?(coordinate)
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = nil
@@ -29,19 +33,37 @@ class Board
   # @param coordinate [Coordinate]
   # @param new_figure [Figure]
   # @return [Figure,nil] old Figure if exists and replaced, otherwise nil
-  def replace_at(coordinate, new_figure)
+  def replace_at!(coordinate, new_figure)
     return nil unless on_board?(coordinate) && !new_figure.nil?
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = new_figure
     figure
   end
 
-  # Remove figure from start coordinate and set it at empty end coordinate, or replace if there is other figure
-  # @param start_point [Coordinate]
-  # @param end_point [Coordinate]
-  # @return [Figure,nil] replaced Figure, otherwise nil
-  def move(start_point, end_point)
-    replace_at(end_point, remove_at(start_point))
+  # Do one of possible chess moves depends of inputted move data on current board and save in history, also update eaten
+  # figures
+  # @param action [Move]
+  # @return [Void]
+  def move!(action)
+    return if action.nil?
+    if action.kind == :move
+      remove_at!(action.options[:point_start])
+      replace_at!(action.options[:point_end], action.options[:figure])
+    elsif action.kind == :capture
+      remove_at!(action.options[:point_start])
+      @eaten << replace_at!(action.options[:point_end], action.options[:figure])
+    end
+    # TODO: promotion, en passant, castling
+    @history << action
+  end
+
+  # in clone of current board do move and return that clone
+  # @param action [Move]
+  # @return [Board]
+  def move(action)
+    new_board = clone
+    new_board.move!(action)
+    new_board
   end
 
   # Returns board cell value if coordinate is valid, otherwise return nil
@@ -106,6 +128,8 @@ class Board
       row.map { |figure| figure }
     end
     new_board.instance_variable_set(:@board, array)
+    new_board.instance_variable_set(:@history, @history.clone)
+    new_board.instance_variable_set(:@eaten, @eaten.clone)
     new_board
   end
 
@@ -115,31 +139,24 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      moves = PossibleMoves.new(at(coordinate), coordinate, self)
-      moves.match?(nil, true, :king)
+      PossibleMoves.new(at(coordinate), coordinate, self).moves.
+          any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
-  end
-
-  # create copy of board and do move on it, return shah state for inputted color on board copy
-  # @param point_start [Coordinate]
-  # @param point_end [Coordinate]
-  # @param color [Symbol]
-  def shah_after_move?(color, point_start, point_end)
-    board_clone = clone
-    board_clone.move(point_start, point_end)
-    board_clone.shah?(color)
   end
 
   # check inputted color is in mate(checkmate) state, i.e. after all possible moves inputted color is in shah state, or
   # now is in shah state and no possible moves
   # @param color [Symbol]
   def mate?(color)
-    moves = possible_moves(color)
-    shah?(color) if moves.empty?
-    moves.all? do |possible_move|
-      point_start = possible_move.start_coordinate
-      possible_move.moves_coordinates.all? do |point_end|
-        shah_after_move?(color, point_start, point_end)
+    turn_moves = []
+    where_is(nil, color).each do |coordinate|
+      figure_moves = PossibleMoves.new(at(coordinate), coordinate, self)
+      turn_moves << figure_moves unless figure_moves.moves.empty?
+    end
+    shah?(color) if turn_moves.empty?
+    turn_moves.all? do |figure_moves|
+      figure_moves.moves.all? do |move_action|
+        move(move_action).shah?(color)
       end
     end
   end
@@ -147,8 +164,12 @@ class Board
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
-    possible_moves = possible_moves(color)
-    return false unless possible_moves.empty?
+    turn_moves = []
+    where_is(nil, color).each do |coordinate|
+      figure_moves = PossibleMoves.new(at(coordinate), coordinate, self)
+      turn_moves << figure_moves unless figure_moves.moves.empty?
+    end
+    return false unless turn_moves.empty?
     !shah?(color)
   end
 
@@ -160,15 +181,6 @@ class Board
           !figure_types.include?(figure.figure)
     end
     figure_types.length == 1 && figure_types.first == :king
-  end
-
-  # @param figures_color [Symbol]
-  def possible_moves(figures_color)
-    moves = []
-    where_is(nil, figures_color).each do |coordinate|
-      moves << PossibleMoves.new(at(coordinate), coordinate, self)
-    end
-    moves
   end
 
   # draw in Unix console current board state with figures, and rotated to white or black figures side
