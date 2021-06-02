@@ -40,7 +40,26 @@ class PossibleMoves
       @board.on_board?(point) && @board.there_enemy?(@figure, point)
     end
 
-    # TODO: pawn special move - en passant
+    # pawn can do special move named en passant,
+    # that algorithm check is last move do enemy pawn toward on 2 near with current pawn
+    [-1, 1].each do |shift|
+      enemy_point_start = @start_coordinate.relative(shift, move_direction * 2)
+      enemy_point_end = @start_coordinate.relative(shift, 0)
+      move = @board.history.last
+      if !move.nil? &&
+          move.kind == :move &&
+          move.options[:figure].figure == :pawn &&
+          move.options[:point_end] == enemy_point_end &&
+          move.options[:point_start] == enemy_point_start
+        moves << Move.new(:en_passant, {
+            figure: @figure,
+            point_start: @start_coordinate,
+            point_end: @start_coordinate.relative(shift, move_direction),
+            captured: move.options[:figure],
+            captured_at: enemy_point_start,
+        })
+      end
+    end
     # TODO: pawn special move - promotion
 
     moves.compact
