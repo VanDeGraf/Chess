@@ -1,6 +1,8 @@
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board
+  attr_reader :history, :eaten
+
   def initialize
     # @type [Array<Array<Figure,nil>>]
     @board = [
