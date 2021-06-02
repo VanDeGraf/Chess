@@ -18,13 +18,29 @@ class PossibleMoves
 
   # @return [Array<Move>]
   def pawn_moves
+    promotion_figures = [:queen, :knight, :rook, :bishop]
     moves = []
+
     # pawn possible moves depends of it's direction on board
     move_direction = @figure.color == :white ? 1 : -1
 
     # pawn can move towards 1 cell, if there empty cell
-    moves << get_move_relative(0, 1 * move_direction) do |point|
+    move = get_move_relative(0, 1 * move_direction) do |point|
       @board.on_board?(point) && @board.there_empty?(point)
+    end
+    # pawn can do special move named promotion, if pawn move towards at last empty board cell
+    if !move.nil? &&
+        (move.options[:point_end].y == 0 || move.options[:point_end].y == 7)
+      promotion_figures.each do |figure_type|
+        moves << Move.new(:promotion_move, {
+            figure: move.options[:figure],
+            point_start: move.options[:point_start],
+            point_end: move.options[:point_end],
+            promoted_to: Figure.new(figure_type, move.options[:figure].color),
+        })
+      end
+    else
+      moves << move
     end
 
     # pawn can move towards 2 cell, if can move towards 1 cell, there empty cell and
@@ -36,8 +52,25 @@ class PossibleMoves
     end
 
     # pawn can beat enemy at towards-left and towards-right diagonal cells, if there enemy
-    moves << get_move_relative([[-1, 1 * move_direction], [1, 1 * move_direction]]) do |point|
+    moves_temp = get_move_relative([[-1, 1 * move_direction], [1, 1 * move_direction]]) do |point|
       @board.on_board?(point) && @board.there_enemy?(@figure, point)
+    end
+    moves_temp.each do |move|
+      # pawn can do special move named promotion, if pawn capture one of toward diagonals at last board cells
+      if !move.nil? &&
+          (move.options[:point_end].y == 0 || move.options[:point_end].y == 7)
+        promotion_figures.each do |figure_type|
+          moves << Move.new(:promotion_capture, {
+              figure: move.options[:figure],
+              point_start: move.options[:point_start],
+              point_end: move.options[:point_end],
+              promoted_to: Figure.new(figure_type, move.options[:figure].color),
+              captured: move.options[:captured],
+          })
+        end
+      else
+        moves << move
+      end
     end
 
     # pawn can do special move named en passant,
@@ -60,7 +93,6 @@ class PossibleMoves
         })
       end
     end
-    # TODO: pawn special move - promotion
 
     moves.compact
   end
