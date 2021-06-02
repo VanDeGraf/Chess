@@ -226,18 +226,21 @@ class PossibleMoves
   def build_moves
     case @figure.figure
     when :pawn
-      return pawn_moves
+      moves = pawn_moves
     when :knight
-      return knight_moves
+      moves = knight_moves
     when :king
-      return king_moves
+      moves = king_moves
     when :bishop
-      return bishop_moves
+      moves = bishop_moves
     when :rook
-      return rook_moves
+      moves = rook_moves
     when :queen
-      return queen_moves
+      moves = queen_moves
+    else
+      moves = []
     end
+    moves.map { |move| @board.move(move).shah?(@figure.color) ? nil : move }.compact
   end
 
   private
