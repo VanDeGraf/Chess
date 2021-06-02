@@ -117,27 +117,73 @@ class PossibleMoves
 
   # @return [Array<Move>]
   def king_moves
+    moves = []
     opposite_color = @figure.color == :white ? :black : :white
     enemy_king_coordinate = @board.where_is(:king, opposite_color).first
 
     # for each default king moves add move if there is enemy or empty and distance between opposite kings
     # is more or equal 2
-    get_move_relative([
-                          [-1, 1],
-                          [0, 1],
-                          [1, 1],
-                          [1, 0],
-                          [1, -1],
-                          [0, -1],
-                          [-1, -1],
-                          [-1, 0],
-                      ]) do |point|
+    moves << get_move_relative([
+                                   [-1, 1],
+                                   [0, 1],
+                                   [1, 1],
+                                   [1, 0],
+                                   [1, -1],
+                                   [0, -1],
+                                   [-1, -1],
+                                   [-1, 0],
+                               ]) do |point|
       @board.on_board?(point) &&
           (@board.there_enemy?(@figure, point) || @board.there_empty?(point)) &&
           (enemy_king_coordinate.nil? ||
               Math.sqrt((enemy_king_coordinate.x - point.x) ** 2 + (enemy_king_coordinate.y - point.y) ** 2) >= 2)
     end
-    # TODO: king special move - castling
+
+    # king can do special move named castling,
+    # it possible, if king never move, not state shah now and on every path cells, one of rooks never moved and between
+    # them cells is empty
+    unless @board.shah?(@figure.color) || @board.history.any? { |move|
+      move.options[:figure].figure == :king &&
+          move.options[:figure].color == @figure.color
+    }
+      y = @figure.color == :white ? 0 : 7
+      direction = :white ? 1 : -1
+
+      [:castling_short, :castling_long].each do |castling_type|
+        if castling_type == :castling_short
+          rook_coordinate = Coordinate.new(3 * direction, y)
+          direction = :white ? 1 : -1
+        else
+          rook_coordinate = Coordinate.new(4 * direction, y)
+          direction = :white ? -1 : 1
+          next unless @board.there_empty?(@start_coordinate.relative(3 * direction, 0))
+        end
+
+        moves << Move.new(castling_type, {
+            figure: @figure,
+            support_figure: @board.at(rook_coordinate),
+            king_point_start: @start_coordinate,
+            king_point_end: @start_coordinate.relative(2 * direction, 0),
+            rook_point_start: rook_coordinate,
+            rook_point_end: @start_coordinate.relative(1 * direction, 0),
+        }) if @board.there_empty?(@start_coordinate.relative(1 * direction, 0)) &&
+            @board.there_empty?(@start_coordinate.relative(2 * direction, 0)) &&
+            @board.there_ally?(@figure.color, rook_coordinate) &&
+            !@board.history.any? { |move| move.options[:point_start] == rook_coordinate } &&
+            !@board.move(Move.new(:move, {
+                figure: @figure,
+                point_start: @start_coordinate,
+                point_end: @start_coordinate.relative(1 * direction, 0),
+            })).shah?(@figure.color) &&
+            !@board.move(Move.new(:move, {
+                figure: @figure,
+                point_start: @start_coordinate,
+                point_end: @start_coordinate.relative(2 * direction, 0),
+            })).shah?(@figure.color)
+      end
+    end
+
+    moves.flatten.compact
   end
 
   # @return [Array<Move>]
