@@ -99,7 +99,7 @@ class Board
   # If coordinate invalid, return false; If empty, return true
   # @param coordinate [Coordinate]
   def there_empty?(coordinate)
-    on_board?(coordinate) && @board[coordinate.y][coordinate.x]
+    on_board?(coordinate) && @board[coordinate.y][coordinate.x].nil?
   end
 
   # Check coordinate is valid
@@ -124,6 +124,7 @@ class Board
     positions
   end
 
+  # @return [Board]
   def clone
     new_board = Board.new
     array = @board.map do |row|
@@ -141,7 +142,7 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      PossibleMoves.new(at(coordinate), coordinate, self).moves.
+      PossibleMoves.new(at(coordinate), coordinate, self, false).moves.
           any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
   end
