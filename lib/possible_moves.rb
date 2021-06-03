@@ -5,7 +5,8 @@ class PossibleMoves
   # @param figure [Figure]
   # @param start [Coordinate]
   # @param board [Board]
-  def initialize(figure, start, board)
+  # @param check_shah [Boolean]
+  def initialize(figure, start, board, check_shah = true)
     # @type [Figure]
     @figure = figure
     # @type [Coordinate]
@@ -13,7 +14,7 @@ class PossibleMoves
     # @type [Board]
     @board = board
     # @type [Array<Move>]
-    @moves = build_moves
+    @moves = build_moves(check_shah)
   end
 
   # @return [Array<Move>]
@@ -175,8 +176,9 @@ class PossibleMoves
     bishop_moves + rook_moves
   end
 
+  # @param check_shah [Boolean]
   # @return [Array<Move>]
-  def build_moves
+  def build_moves(check_shah)
     case @figure.figure
     when :pawn
       moves = pawn_moves
@@ -193,7 +195,11 @@ class PossibleMoves
     else
       moves = []
     end
-    moves.map { |move| @board.move(move).shah?(@figure.color) ? nil : move }.compact
+    if check_shah
+      moves.map { |move| @board.move(move).shah?(@figure.color) ? nil : move }.compact
+    else
+      moves
+    end
   end
 
   # king and rook can do special move named castling, it possible, if king never move, not state shah on current and on
