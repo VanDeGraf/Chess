@@ -167,12 +167,10 @@ class Board
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
-    turn_moves = []
     where_is(nil, color).each do |coordinate|
-      figure_moves = PossibleMoves.new(at(coordinate), coordinate, self)
-      turn_moves << figure_moves unless figure_moves.moves.empty?
+      return false unless PossibleMoves.new(at(coordinate), coordinate, self).moves.empty?
     end
-    return false unless turn_moves.empty?
+    return false unless PossibleMoves.castling(self, color).empty?
     !shah?(color)
   end
 
