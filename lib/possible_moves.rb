@@ -313,6 +313,7 @@ class PossibleMoves
         move = get_move_relative(args[0] * iteration, args[1] * iteration) { |point| yield point }
         break if move.nil?
         moves << move
+        break if move.kind == :capture
         iteration += 1
       end
       moves
