@@ -1,3 +1,7 @@
+require './lib/move'
+require './lib/figure'
+require './lib/coordinate'
+require './lib/moves_generator'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board
@@ -154,8 +158,8 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      PossibleMoves.generate_from(coordinate, self, false)
-                   .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
+      MovesGenerator.generate_from(coordinate, self, check_shah: false)
+                    .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
   end
 
@@ -165,19 +169,19 @@ class Board
   def mate?(color)
     moves = []
     where_is(nil, color).each do |coordinate|
-      moves += PossibleMoves.generate_from(coordinate, self)
+      moves += MovesGenerator.generate_from(coordinate, self)
     end
     shah?(color) if moves.empty?
-    moves.all? {  |move_action| move(move_action).shah?(color) }
+    moves.all? { |move_action| move(move_action).shah?(color) }
   end
 
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
     where_is(nil, color).each do |coordinate|
-      return false unless PossibleMoves.generate_from(coordinate, self).empty?
+      return false unless MovesGenerator.generate_from(coordinate, self).empty?
     end
-    return false unless PossibleMoves.castling(self, color).empty?
+    return false unless MovesGenerator.castling(self, color).empty?
 
     !shah?(color)
   end

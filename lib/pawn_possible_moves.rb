@@ -1,5 +1,6 @@
+require './lib/figure_possible_moves'
 # pawn moves generator
-class PawnPossibleMoves < PossibleMoves
+class PawnPossibleMoves < FigurePossibleMoves
   def initialize(figure, start, board)
     super
     @move_direction = @figure.color == :white ? 1 : -1
@@ -39,17 +40,16 @@ class PawnPossibleMoves < PossibleMoves
   # @param move [Move]
   # @return [Array<Move>]
   def promotions_after_move(move)
-    moves = []
-    moves unless move.options[:point_end].y.zero? || move.options[:point_end].y == 7
-    @promotion_figures.each do |figure_type|
-      moves << Move.new(:promotion_move, {
-                          figure: move.options[:figure],
-                          point_start: move.options[:point_start],
-                          point_end: move.options[:point_end],
-                          promoted_to: Figure.new(figure_type, move.options[:figure].color)
-                        })
+    return [] unless move.options[:point_end].y.zero? || move.options[:point_end].y == 7
+
+    @promotion_figures.map do |figure_type|
+      Move.new(:promotion_move, {
+                 figure: move.options[:figure],
+                 point_start: move.options[:point_start],
+                 point_end: move.options[:point_end],
+                 promoted_to: Figure.new(figure_type, move.options[:figure].color)
+               })
     end
-    moves
   end
 
   # @return [Array<Move>]

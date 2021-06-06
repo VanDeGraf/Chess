@@ -1,5 +1,6 @@
+require './lib/figure_possible_moves'
 # bishop moves generator
-class BishopPossibleMoves < PossibleMoves
+class BishopPossibleMoves < FigurePossibleMoves
   def generate_moves
     get_moves_by_direction([
                              [1, 1],

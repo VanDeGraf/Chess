@@ -1,5 +1,6 @@
+require './lib/figure_possible_moves'
 # king moves generator
-class KingPossibleMoves < PossibleMoves
+class KingPossibleMoves < FigurePossibleMoves
   # @return [Array<Move>]
   def generate_moves
     opposite_color = @figure.color == :white ? :black : :white

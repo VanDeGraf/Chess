@@ -2,7 +2,7 @@ require './lib/coordinate'
 require './lib/figure'
 require './lib/move'
 require './lib/board'
-require './lib/possible_moves'
+require './lib/moves_generator'
 
 class Chess
   def initialize
@@ -28,7 +28,7 @@ class Chess
     puts "\nPlayer #{@player_names[1]}(Black) eats:"
     @board.eaten.each { |figure| print figure.to_s if figure.color == :black }
     print "\n"
-    @board.print_board(@current_player.zero?)
+    @board.print_board(rotate: @current_player.zero?)
   end
 
   def player_name_input
@@ -44,10 +44,10 @@ class Chess
     puts "Player #{@player_names[@current_player]} turn."
     current_color = @current_player.zero? ? :white : :black
     possible_moves = @board.where_is(nil, current_color).map do |coordinate|
-      PossibleMoves.generate_from(coordinate, @board)
+      MovesGenerator.generate_from(coordinate, @board)
     end
     default_moves = []
-    special_moves = PossibleMoves.castling(@board, current_color)
+    special_moves = MovesGenerator.castling(@board, current_color)
     possible_moves.flatten.each do |move|
       if move.kind == :move || move.kind == :capture
         default_moves << move
@@ -64,9 +64,9 @@ class Chess
         when :en_passant
           puts "en passant from #{move.options[:point_start]} to #{move.options[:point_end]}"
         when :promotion_move
-          puts "pawn move to #{move.options[:point_end]} and promotion to #{move.options[:promotion_to].figure}"
+          puts "pawn move to #{move.options[:point_end]} and promotion to #{move.options[:promoted_to].figure}"
         when :promotion_capture
-          puts "pawn capture enemy at #{move.options[:point_end]} and promotion to #{move.options[:promotion_to].figure}"
+          puts "pawn capture enemy at #{move.options[:point_end]} and promotion to #{move.options[:promoted_to].figure}"
         when :castling_short
           puts 'castling short'
         when :castling_long
