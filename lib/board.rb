@@ -120,8 +120,8 @@ class Board
   end
 
   # find all figures on board, filtered by it's type and color, and return that figures coordinates
-  # @param figure_type [Symbol] nil return any figure type
-  # @param figure_color [Symbol] nil return both figure color
+  # @param figure_type [Symbol,nil] nil return any figure type
+  # @param figure_color [Symbol,nil] nil return both figure color
   # @return [Array<Coordinate>] empty array if not found
   def where_is(figure_type = nil, figure_color = nil)
     positions = []
@@ -154,7 +154,7 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      PossibleMoves.new(at(coordinate), coordinate, self, false).moves
+      PossibleMoves.generate_from(coordinate, self, false)
                    .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
   end
@@ -163,24 +163,19 @@ class Board
   # now is in shah state and no possible moves
   # @param color [Symbol]
   def mate?(color)
-    turn_moves = []
+    moves = []
     where_is(nil, color).each do |coordinate|
-      figure_moves = PossibleMoves.new(at(coordinate), coordinate, self)
-      turn_moves << figure_moves unless figure_moves.moves.empty?
+      moves += PossibleMoves.generate_from(coordinate, self)
     end
-    shah?(color) if turn_moves.empty?
-    turn_moves.all? do |figure_moves|
-      figure_moves.moves.all? do |move_action|
-        move(move_action).shah?(color)
-      end
-    end
+    shah?(color) if moves.empty?
+    moves.all? {  |move_action| move(move_action).shah?(color) }
   end
 
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
     where_is(nil, color).each do |coordinate|
-      return false unless PossibleMoves.new(at(coordinate), coordinate, self).moves.empty?
+      return false unless PossibleMoves.generate_from(coordinate, self).empty?
     end
     return false unless PossibleMoves.castling(self, color).empty?
 
@@ -200,7 +195,7 @@ class Board
   # draw in Unix console current board state with figures, and rotated to white or black figures side
   # @param rotate [Boolean] true - white, false - black
   # @return [Void]
-  def print_board(rotate = false)
+  def print_board(rotate: false)
     point_start = 0
     point_end = 7
     step = 1

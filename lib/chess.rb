@@ -44,10 +44,10 @@ class Chess
     puts "Player #{@player_names[@current_player]} turn."
     current_color = @current_player.zero? ? :white : :black
     possible_moves = @board.where_is(nil, current_color).map do |coordinate|
-      PossibleMoves.new(@board.at(coordinate), coordinate, @board).moves
+      PossibleMoves.generate_from(coordinate, @board)
     end
     default_moves = []
-    special_moves = []
+    special_moves = PossibleMoves.castling(@board, current_color)
     possible_moves.flatten.each do |move|
       if move.kind == :move || move.kind == :capture
         default_moves << move
