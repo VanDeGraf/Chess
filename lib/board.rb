@@ -66,8 +66,24 @@ class Board
     when :capture
       remove_at!(action.options[:point_start])
       @eaten << replace_at!(action.options[:point_end], action.options[:figure])
+    when :promotion_move
+      remove_at!(action.options[:point_start])
+      replace_at!(action.options[:point_end], action.options[:promoted_to])
+    when :promotion_capture
+      remove_at!(action.options[:point_start])
+      @eaten << replace_at!(action.options[:point_end], action.options[:promoted_to])
+    when :en_passant
+      @eaten << remove_at!(action.options[:captured_at])
+      remove_at!(action.options[:point_start])
+      replace_at!(action.options[:point_end], action.options[:figure])
+    when :castling_short || :castling_long
+      remove_at!(action.options[:king_point_start])
+      replace_at!(action.options[:king_point_end], action.options[:figure])
+      remove_at!(action.options[:rook_point_start])
+      replace_at!(action.options[:rook_point_end], action.options[:support_figure])
+    else
+      return
     end
-    # TODO: promotion, en passant, castling
     @history << action
   end
 
