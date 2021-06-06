@@ -9,11 +9,11 @@ describe PossibleMoves do
   let(:figure) { Figure.new(:pawn, :white) }
 
   describe '#pawn_moves' do
-    context "when board is empty" do
+    context 'when board is empty' do
       before do
         board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
       end
-      context "when white pawn stay on board alone at coordinate 1,1" do
+      context 'when white pawn stay on board alone at coordinate 1,1' do
         let(:figure) { Figure.new(:pawn, :white) }
         let(:figure_coordinate) { Coordinate.new(1, 1) }
         before do
@@ -23,18 +23,18 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 2
         end
         it 'should add move with coordinate 1,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 1,3 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 3)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy stay at 2,2' do
           before do
@@ -44,11 +44,11 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 3
           end
           it 'should add move with coordinate 2,2 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(2, 2)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and enemy stay at 1,3' do
@@ -60,11 +60,11 @@ describe PossibleMoves do
           end
 
           it 'should add move with coordinate 1,2 and kind :move' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :move &&
                       move.options[:point_end] == Coordinate.new(1, 2)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and enemy stay at 1,2' do
@@ -76,7 +76,7 @@ describe PossibleMoves do
           end
         end
       end
-      context "when black pawn stay on board alone at coordinate 1,6" do
+      context 'when black pawn stay on board alone at coordinate 1,6' do
         let(:figure) { Figure.new(:pawn, :black) }
         let(:figure_coordinate) { Coordinate.new(1, 6) }
         before do
@@ -86,18 +86,18 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 2
         end
         it 'should add move with coordinate 1,5 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 5)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 1,4 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 4)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy stay at 2,5' do
           before do
@@ -107,11 +107,11 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 3
           end
           it 'should add move with coordinate 2,5 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(2, 5)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and enemy stay at 1,4' do
@@ -123,11 +123,11 @@ describe PossibleMoves do
           end
 
           it 'should add move with coordinate 1,5 and kind :move' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :move &&
                       move.options[:point_end] == Coordinate.new(1, 5)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and enemy stay at 1,5' do
@@ -141,8 +141,8 @@ describe PossibleMoves do
       end
     end
   end
-  describe "#knight_moves" do
-    context "when board is empty" do
+  describe '#knight_moves' do
+    context 'when board is empty' do
       before do
         board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
       end
@@ -158,60 +158,60 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 8
         end
         it 'should add move with coordinate 1,4 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 4)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 3,4 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(3, 4)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 4,3 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(4, 3)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 4,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(4, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 3,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(3, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 1,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,3 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 3)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy figure stay at 1,4' do
           before do
@@ -221,11 +221,11 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 8
           end
           it 'should add move with coordinate 1,4 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(1, 4)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and ally figure stay at 1,4' do
@@ -236,17 +236,17 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 7
           end
           it 'should not add move with coordinate 1,4' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(1, 4)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
       end
     end
   end
-  describe "#king_moves" do
-    context "when board is empty" do
+  describe '#king_moves' do
+    context 'when board is empty' do
       before do
         board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
       end
@@ -262,60 +262,60 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 8
         end
         it 'should add move with coordinate 1,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 2,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(2, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 2,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(2, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 2,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(2, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 1,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy figure stay at 1,2' do
           before do
@@ -325,11 +325,11 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board, false).moves.length).to be 8
           end
           it 'should add move with coordinate 1,2 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(1, 2)
-                }).to be_truthy
+                end).to be_truthy
           end
         end
         context 'and ally figure stay at 1,2' do
@@ -340,18 +340,18 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 7
           end
           it 'should not add move with coordinate 1,2' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(1, 2)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
       end
     end
     # TODO: more edges
   end
-  describe "#bishop_moves" do
-    context "when board is empty" do
+  describe '#bishop_moves' do
+    context 'when board is empty' do
       before do
         board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
       end
@@ -367,46 +367,46 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 11
         end
         it 'should add move with coordinate 1,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 1,3 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 3)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,4 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 4)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 3,3 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(3, 3)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 7,7 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(7, 7)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy figure stay at 1,1' do
           before do
@@ -416,17 +416,17 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 10
           end
           it 'should add move with coordinate 1,1 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(1, 1)
-                }).to be_truthy
+                end).to be_truthy
           end
           it 'should not add move with coordinate 0,0' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(0, 0)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
         context 'and ally figure stay at 1,1' do
@@ -437,23 +437,23 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 9
           end
           it 'should not add move with coordinate 1,1' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(1, 1)
-                }).to be_falsey
+                end).to be_falsey
           end
           it 'should not add move with coordinate 0,0' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(0, 0)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
       end
     end
   end
-  describe "#rook_moves" do
-    context "when board is empty" do
+  describe '#rook_moves' do
+    context 'when board is empty' do
       before do
         board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
       end
@@ -469,46 +469,46 @@ describe PossibleMoves do
           expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 14
         end
         it 'should add move with coordinate 1,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(1, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 0,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(0, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 2,1 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(2, 1)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 2,0 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(2, 0)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 3,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(3, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         it 'should add move with coordinate 7,2 and kind :move' do
-          expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-              any? { |move|
+          expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+              .any? do |move|
                 move.kind == :move &&
                     move.options[:point_end] == Coordinate.new(7, 2)
-              }).to be_truthy
+              end).to be_truthy
         end
         context 'and enemy figure stay at 1,2' do
           before do
@@ -518,17 +518,17 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 13
           end
           it 'should add move with coordinate 1,2 and kind :capture' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.kind == :capture &&
                       move.options[:point_end] == Coordinate.new(1, 2)
-                }).to be_truthy
+                end).to be_truthy
           end
           it 'should not add move with coordinate 0,2' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(0, 2)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
         context 'and ally figure stay at 1,2' do
@@ -539,24 +539,26 @@ describe PossibleMoves do
             expect(PossibleMoves.new(figure, figure_coordinate, board).moves.length).to be 12
           end
           it 'should not add move with coordinate 1,2' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(1, 2)
-                }).to be_falsey
+                end).to be_falsey
           end
           it 'should not add move with coordinate 0,2' do
-            expect(PossibleMoves.new(figure, figure_coordinate, board).moves.
-                any? { |move|
+            expect(PossibleMoves.new(figure, figure_coordinate, board).moves
+                .any? do |move|
                   move.options[:point_end] == Coordinate.new(0, 2)
-                }).to be_falsey
+                end).to be_falsey
           end
         end
       end
     end
   end
-  describe "#queen_moves" do
-    let(:pm) { PossibleMoves.new(Figure.new(:pawn, :white),
-                                 Coordinate.new(0, 0), board, false) }
+  describe '#queen_moves' do
+    let(:pm) do
+      PossibleMoves.new(Figure.new(:pawn, :white),
+                        Coordinate.new(0, 0), board, false)
+    end
     before do
       allow(pm).to receive(:bishop_moves).and_return([])
       allow(pm).to receive(:rook_moves).and_return([])
@@ -574,8 +576,10 @@ describe PossibleMoves do
     end
   end
   describe '#build_moves' do
-    let(:pm) { PossibleMoves.new(Figure.new(:pawn, :white),
-                                 Coordinate.new(1, 1), board, false) }
+    let(:pm) do
+      PossibleMoves.new(Figure.new(:pawn, :white),
+                        Coordinate.new(1, 1), board, false)
+    end
     before do
       allow(pm).to receive(:pawn_moves).and_return([])
       allow(pm).to receive(:knight_moves).and_return([])
@@ -586,8 +590,8 @@ describe PossibleMoves do
       allow(board).to receive(:move).and_return(board)
       allow(board).to receive(:shah?).and_return(false)
     end
-    context "when check_shah true" do
-      context "and has moves" do
+    context 'when check_shah true' do
+      context 'and has moves' do
         before do
           allow(pm).to receive(:pawn_moves).and_return([Move.new(:test, {})])
         end
@@ -596,15 +600,15 @@ describe PossibleMoves do
           pm.build_moves(true)
         end
       end
-      context "and has not moves" do
+      context 'and has not moves' do
         it 'should not call board shah?' do
           expect(board).to_not receive(:shah?)
           pm.build_moves(true)
         end
       end
     end
-    context "when check_shah false" do
-      context "and has moves" do
+    context 'when check_shah false' do
+      context 'and has moves' do
         before do
           allow(pm).to receive(:pawn_moves).and_return([Move.new(:test, {})])
         end
@@ -613,49 +617,49 @@ describe PossibleMoves do
           pm.build_moves(false)
         end
       end
-      context "and has not moves" do
+      context 'and has not moves' do
         it 'should not call board shah?' do
           expect(board).to_not receive(:shah?)
           pm.build_moves(false)
         end
       end
     end
-    context "when figure type is :pawn" do
+    context 'when figure type is :pawn' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :pawn) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:pawn_moves)
         pm.build_moves(true)
       end
     end
-    context "when figure type is :knight" do
+    context 'when figure type is :knight' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :knight) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:knight_moves)
         pm.build_moves(true)
       end
     end
-    context "when figure type is :king" do
+    context 'when figure type is :king' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :king) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:king_moves)
         pm.build_moves(true)
       end
     end
-    context "when figure type is :bishop" do
+    context 'when figure type is :bishop' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :bishop) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:bishop_moves)
         pm.build_moves(true)
       end
     end
-    context "when figure type is :rook" do
+    context 'when figure type is :rook' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :rook) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:rook_moves)
         pm.build_moves(true)
       end
     end
-    context "when figure type is :queen" do
+    context 'when figure type is :queen' do
       before { pm.instance_variable_get(:@figure).instance_variable_set(:@figure, :queen) }
       it 'should call #pawn_moves' do
         expect(pm).to receive(:queen_moves)
@@ -663,8 +667,8 @@ describe PossibleMoves do
       end
     end
   end
-  describe ".castling" do
-    context "when board is default" do
+  describe '.castling' do
+    context 'when board is default' do
       it 'should return empty array' do
         expect(PossibleMoves.castling(board, :white)).to eql([])
       end

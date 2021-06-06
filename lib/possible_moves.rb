@@ -19,7 +19,7 @@ class PossibleMoves
 
   # @return [Array<Move>]
   def pawn_moves
-    promotion_figures = [:queen, :knight, :rook, :bishop]
+    promotion_figures = %i[queen knight rook bishop]
     moves = []
 
     # pawn possible moves depends of it's direction on board
@@ -30,15 +30,14 @@ class PossibleMoves
       @board.on_board?(point) && @board.there_empty?(point)
     end
     # pawn can do special move named promotion, if pawn move towards at last empty board cell
-    if !move.nil? &&
-        (move.options[:point_end].y == 0 || move.options[:point_end].y == 7)
+    if !move.nil? && (move.options[:point_end].y.zero? || move.options[:point_end].y == 7)
       promotion_figures.each do |figure_type|
         moves << Move.new(:promotion_move, {
-            figure: move.options[:figure],
-            point_start: move.options[:point_start],
-            point_end: move.options[:point_end],
-            promoted_to: Figure.new(figure_type, move.options[:figure].color),
-        })
+                            figure: move.options[:figure],
+                            point_start: move.options[:point_start],
+                            point_end: move.options[:point_end],
+                            promoted_to: Figure.new(figure_type, move.options[:figure].color)
+                          })
       end
     else
       moves << move
@@ -48,8 +47,8 @@ class PossibleMoves
     #   only from first position depends by direction(color)
     moves << get_move_relative(0, 2 * move_direction) do |point|
       (@start_coordinate.y == 1 || @start_coordinate.y == 6) &&
-          moves.compact.length == 1 &&
-          @board.there_empty?(point)
+        moves.compact.length == 1 &&
+        @board.there_empty?(point)
     end
 
     # pawn can beat enemy at towards-left and towards-right diagonal cells, if there enemy
@@ -59,15 +58,15 @@ class PossibleMoves
     moves_temp.each do |move|
       # pawn can do special move named promotion, if pawn capture one of toward diagonals at last board cells
       if !move.nil? &&
-          (move.options[:point_end].y == 0 || move.options[:point_end].y == 7)
+         (move.options[:point_end].y == 0 || move.options[:point_end].y == 7)
         promotion_figures.each do |figure_type|
           moves << Move.new(:promotion_capture, {
-              figure: move.options[:figure],
-              point_start: move.options[:point_start],
-              point_end: move.options[:point_end],
-              promoted_to: Figure.new(figure_type, move.options[:figure].color),
-              captured: move.options[:captured],
-          })
+                              figure: move.options[:figure],
+                              point_start: move.options[:point_start],
+                              point_end: move.options[:point_end],
+                              promoted_to: Figure.new(figure_type, move.options[:figure].color),
+                              captured: move.options[:captured]
+                            })
         end
       else
         moves << move
@@ -80,19 +79,19 @@ class PossibleMoves
       enemy_point_start = @start_coordinate.relative(shift, move_direction * 2)
       enemy_point_end = @start_coordinate.relative(shift, 0)
       move = @board.history.last
-      if !move.nil? &&
-          move.kind == :move &&
-          move.options[:figure].figure == :pawn &&
-          move.options[:point_end] == enemy_point_end &&
-          move.options[:point_start] == enemy_point_start
-        moves << Move.new(:en_passant, {
-            figure: @figure,
-            point_start: @start_coordinate,
-            point_end: @start_coordinate.relative(shift, move_direction),
-            captured: move.options[:figure],
-            captured_at: enemy_point_start,
-        })
-      end
+      next unless !move.nil? &&
+                  move.kind == :move &&
+                  move.options[:figure].figure == :pawn &&
+                  move.options[:point_end] == enemy_point_end &&
+                  move.options[:point_start] == enemy_point_start
+
+      moves << Move.new(:en_passant, {
+                          figure: @figure,
+                          point_start: @start_coordinate,
+                          point_end: @start_coordinate.relative(shift, move_direction),
+                          captured: move.options[:figure],
+                          captured_at: enemy_point_start
+                        })
     end
 
     moves.compact
@@ -102,17 +101,17 @@ class PossibleMoves
   def knight_moves
     # for each default knight moves add move if there is enemy or empty
     get_move_relative([
-                          [-1, 2],
-                          [1, 2],
-                          [-1, -2],
-                          [1, -2],
-                          [-2, 1],
-                          [-2, -1],
-                          [2, 1],
-                          [2, -1],
+                        [-1, 2],
+                        [1, 2],
+                        [-1, -2],
+                        [1, -2],
+                        [-2, 1],
+                        [-2, -1],
+                        [2, 1],
+                        [2, -1]
                       ]) do |point|
       @board.on_board?(point) &&
-          (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
+        (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
     end
   end
 
@@ -124,19 +123,19 @@ class PossibleMoves
     # for each default king moves add move if there is enemy or empty and distance between opposite kings
     # is more or equal 2
     get_move_relative([
-                          [-1, 1],
-                          [0, 1],
-                          [1, 1],
-                          [1, 0],
-                          [1, -1],
-                          [0, -1],
-                          [-1, -1],
-                          [-1, 0],
+                        [-1, 1],
+                        [0, 1],
+                        [1, 1],
+                        [1, 0],
+                        [1, -1],
+                        [0, -1],
+                        [-1, -1],
+                        [-1, 0]
                       ]) do |point|
       @board.on_board?(point) &&
-          (@board.there_enemy?(@figure, point) || @board.there_empty?(point)) &&
-          (enemy_king_coordinate.nil? ||
-              Math.sqrt((enemy_king_coordinate.x - point.x) ** 2 + (enemy_king_coordinate.y - point.y) ** 2) >= 2)
+        (@board.there_enemy?(@figure, point) || @board.there_empty?(point)) &&
+        (enemy_king_coordinate.nil? ||
+          Math.sqrt((enemy_king_coordinate.x - point.x)**2 + (enemy_king_coordinate.y - point.y)**2) >= 2)
     end
   end
 
@@ -145,13 +144,13 @@ class PossibleMoves
     # for every diagonal direction add coordinate if it's valid and there empty or enemy, then if added, try add next
     # coordinate on this direction
     get_moves_by_direction([
-                               [1, 1],
-                               [1, -1],
-                               [-1, -1],
-                               [-1, 1]
+                             [1, 1],
+                             [1, -1],
+                             [-1, -1],
+                             [-1, 1]
                            ]) do |point|
       @board.on_board?(point) &&
-          (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
+        (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
     end
   end
 
@@ -160,13 +159,13 @@ class PossibleMoves
     # for every diagonal direction add coordinate if it's valid and there empty or enemy, then if added, try add next
     # coordinate on this direction
     get_moves_by_direction([
-                               [0, 1],
-                               [1, 0],
-                               [0, -1],
-                               [-1, 0]
+                             [0, 1],
+                             [1, 0],
+                             [0, -1],
+                             [-1, 0]
                            ]) do |point|
       @board.on_board?(point) &&
-          (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
+        (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
     end
   end
 
@@ -179,22 +178,22 @@ class PossibleMoves
   # @param check_shah [Boolean]
   # @return [Array<Move>]
   def build_moves(check_shah)
-    case @figure.figure
-    when :pawn
-      moves = pawn_moves
-    when :knight
-      moves = knight_moves
-    when :king
-      moves = king_moves
-    when :bishop
-      moves = bishop_moves
-    when :rook
-      moves = rook_moves
-    when :queen
-      moves = queen_moves
-    else
-      moves = []
-    end
+    moves = case @figure.figure
+            when :pawn
+              pawn_moves
+            when :knight
+              knight_moves
+            when :king
+              king_moves
+            when :bishop
+              bishop_moves
+            when :rook
+              rook_moves
+            when :queen
+              queen_moves
+            else
+              []
+            end
     if check_shah
       moves.map { |move| @board.move(move).shah?(@figure.color) ? nil : move }.compact
     else
@@ -209,16 +208,18 @@ class PossibleMoves
   # @return [Array<Move>]
   def self.castling(board, color)
     moves = []
-    return moves if board.shah?(color) || board.history.any? { |move|
+    return moves if board.shah?(color) || board.history.any? do |move|
       move.options[:figure].figure == :king &&
-          move.options[:figure].color == color
-    }
+      move.options[:figure].color == color
+    end
+
     king_coordinate = board.where_is(:king, color).first
     return moves if king_coordinate.nil?
+
     king_figure = board.at(king_coordinate)
     y = color == :white ? 0 : 7
 
-    [:castling_short, :castling_long].each do |castling_type|
+    %i[castling_short castling_long].each do |castling_type|
       direction = :white ? -1 : 1
       if castling_type == :castling_short
         direction = :white ? 1 : -1
@@ -228,27 +229,29 @@ class PossibleMoves
         next unless board.there_empty?(king_coordinate.relative(3 * direction, 0))
       end
 
+      next unless board.there_empty?(king_coordinate.relative(1 * direction, 0)) &&
+                  board.there_empty?(king_coordinate.relative(2 * direction, 0)) &&
+                  board.there_ally?(color, rook_coordinate) &&
+                  !board.history.any? { |move| move.options[:point_start] == rook_coordinate } &&
+                  !board.move(Move.new(:move, {
+                                         figure: king_figure,
+                                         point_start: king_coordinate,
+                                         point_end: king_coordinate.relative(1 * direction, 0)
+                                       })).shah?(color) &&
+                  !board.move(Move.new(:move, {
+                                         figure: king_figure,
+                                         point_start: king_coordinate,
+                                         point_end: king_coordinate.relative(2 * direction, 0)
+                                       })).shah?(color)
+
       moves << Move.new(castling_type, {
-          figure: king_figure,
-          support_figure: board.at(rook_coordinate),
-          king_point_start: king_coordinate,
-          king_point_end: king_coordinate.relative(2 * direction, 0),
-          rook_point_start: rook_coordinate,
-          rook_point_end: king_coordinate.relative(1 * direction, 0),
-      }) if board.there_empty?(king_coordinate.relative(1 * direction, 0)) &&
-          board.there_empty?(king_coordinate.relative(2 * direction, 0)) &&
-          board.there_ally?(color, rook_coordinate) &&
-          !board.history.any? { |move| move.options[:point_start] == rook_coordinate } &&
-          !board.move(Move.new(:move, {
-              figure: king_figure,
-              point_start: king_coordinate,
-              point_end: king_coordinate.relative(1 * direction, 0),
-          })).shah?(color) &&
-          !board.move(Move.new(:move, {
-              figure: king_figure,
-              point_start: king_coordinate,
-              point_end: king_coordinate.relative(2 * direction, 0),
-          })).shah?(color)
+                          figure: king_figure,
+                          support_figure: board.at(rook_coordinate),
+                          king_point_start: king_coordinate,
+                          king_point_end: king_coordinate.relative(2 * direction, 0),
+                          rook_point_start: rook_coordinate,
+                          rook_point_end: king_coordinate.relative(1 * direction, 0)
+                        })
     end
     moves
   end
@@ -266,29 +269,27 @@ class PossibleMoves
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
   #   @return [Array<Move>]
-  def get_move_relative(*args)
-    if args.length == 2 && args[0].is_a?(Fixnum) && args[1].is_a?(Fixnum)
+  def get_move_relative(*args, &block)
+    if args.length == 2 && args[0].is_a?(Integer) && args[1].is_a?(Integer)
       point = @start_coordinate.relative(args[0], args[1])
       if yield(point)
         if @board.there_empty?(point)
           Move.new(:move, {
-              figure: @figure,
-              point_start: @start_coordinate,
-              point_end: point
-          })
+                     figure: @figure,
+                     point_start: @start_coordinate,
+                     point_end: point
+                   })
         else
           Move.new(:capture, {
-              figure: @figure,
-              point_start: @start_coordinate,
-              point_end: point,
-              captured: @board.at(point)
-          })
+                     figure: @figure,
+                     point_start: @start_coordinate,
+                     point_end: point,
+                     captured: @board.at(point)
+                   })
         end
-      else
-        nil
       end
     elsif args.length == 1 && args[0].is_a?(Array)
-      args[0].map { |relative| get_move_relative(relative[0], relative[1]) { |params| yield params } }.compact
+      args[0].map { |relative| get_move_relative(relative[0], relative[1], &block) }.compact
     else
       raise ArgumentError
     end
@@ -305,20 +306,22 @@ class PossibleMoves
   #   @yieldparam point [Coordinate]
   #   @yieldreturn [Boolean]
   #   @return [Array<Move>]
-  def get_moves_by_direction(*args)
-    if args.length == 2 && args[0].is_a?(Fixnum) && args[1].is_a?(Fixnum)
+  def get_moves_by_direction(*args, &block)
+    if args.length == 2 && args[0].is_a?(Integer) && args[1].is_a?(Integer)
       moves = []
       iteration = 1
       loop do
-        move = get_move_relative(args[0] * iteration, args[1] * iteration) { |point| yield point }
+        move = get_move_relative(args[0] * iteration, args[1] * iteration, &block)
         break if move.nil?
+
         moves << move
         break if move.kind == :capture
+
         iteration += 1
       end
       moves
     elsif args.length == 1 && args[0].is_a?(Array)
-      args[0].map { |direction| get_moves_by_direction(direction[0], direction[1]) { |point| yield point } }.flatten
+      args[0].map { |direction| get_moves_by_direction(direction[0], direction[1], &block) }.flatten
     end
   end
 end

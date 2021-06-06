@@ -2,17 +2,17 @@
 class Figure
   # Unicode symbol assoc with chess figure types
   $figure = {
-      rook: "♜",
-      knight: "♞",
-      bishop: "♝",
-      queen: "♛",
-      king: "♚",
-      pawn: "♟",
+    rook: '♜',
+    knight: '♞',
+    bishop: '♝',
+    queen: '♛',
+    king: '♚',
+    pawn: '♟'
   }
   # Console color for opposites figure groups
   $color = {
-      white: 37,
-      black: 30,
+    white: 37,
+    black: 30
   }
 
   attr_reader :figure, :color, :coordinate

@@ -6,14 +6,18 @@ class Board
   def initialize
     # @type [Array<Array<Figure,nil>>]
     @board = [
-        [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white), Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
-        [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
-        [nil, nil, nil, nil, nil, nil, nil, nil],
-        [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
-        [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black), Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)],
+      [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white),
+       Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
+      [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white),
+       Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [nil, nil, nil, nil, nil, nil, nil, nil],
+      [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black),
+       Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
+      [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black),
+       Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)]
     ]
     # @type [Array<Figure>]
     @eaten = []
@@ -26,6 +30,7 @@ class Board
   # @return [Figure,nil] Figure if removed, otherwise nil
   def remove_at!(coordinate)
     return nil unless on_board?(coordinate)
+
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = nil
     figure
@@ -37,6 +42,7 @@ class Board
   # @return [Figure,nil] old Figure if exists and replaced, otherwise nil
   def replace_at!(coordinate, new_figure)
     return nil unless on_board?(coordinate) && !new_figure.nil?
+
     figure = @board[coordinate.y][coordinate.x]
     @board[coordinate.y][coordinate.x] = new_figure
     figure
@@ -48,10 +54,12 @@ class Board
   # @return [Void]
   def move!(action)
     return if action.nil?
-    if action.kind == :move
+
+    case action.kind
+    when :move
       remove_at!(action.options[:point_start])
       replace_at!(action.options[:point_end], action.options[:figure])
-    elsif action.kind == :capture
+    when :capture
       remove_at!(action.options[:point_start])
       @eaten << replace_at!(action.options[:point_end], action.options[:figure])
     end
@@ -73,6 +81,7 @@ class Board
   # @return [Figure,nil]
   def at(coordinate)
     return nil unless on_board?(coordinate)
+
     @board[coordinate.y][coordinate.x]
   end
 
@@ -83,6 +92,7 @@ class Board
     color = color.color if color.is_a?(Figure)
     cell = at(coordinate)
     return false unless cell
+
     cell.color != color
   end
 
@@ -93,6 +103,7 @@ class Board
     color = color.color if color.is_a?(Figure)
     cell = at(coordinate)
     return false unless cell
+
     cell.color == color
   end
 
@@ -117,8 +128,9 @@ class Board
     @board.each_index do |y|
       @board[y].each_index do |x|
         next unless (figure = @board[y][x])
+
         positions << Coordinate.new(x, y) if (figure_type.nil? || figure.figure == figure_type) &&
-            (figure_color.nil? || figure.color == figure_color)
+                                             (figure_color.nil? || figure.color == figure_color)
       end
     end
     positions
@@ -142,8 +154,8 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      PossibleMoves.new(at(coordinate), coordinate, self, false).moves.
-          any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
+      PossibleMoves.new(at(coordinate), coordinate, self, false).moves
+                   .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
   end
 
@@ -171,6 +183,7 @@ class Board
       return false unless PossibleMoves.new(at(coordinate), coordinate, self).moves.empty?
     end
     return false unless PossibleMoves.castling(self, color).empty?
+
     !shah?(color)
   end
 
@@ -179,7 +192,7 @@ class Board
     figure_types = []
     @board.flatten.each do |figure|
       figure_types << figure.figure if !figure.nil? &&
-          !figure_types.include?(figure.figure)
+                                       !figure_types.include?(figure.figure)
     end
     figure_types.length == 1 && figure_types.first == :king
   end
@@ -195,20 +208,20 @@ class Board
       point_start, point_end = point_end, point_start
       step = -1
     end
-    print "  "
-    point_end.step(point_start, step * -1) { |x| print " " + (97 + x).chr }
+    print '  '
+    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
     print "\n"
     point_start.step(point_end, step) do |y|
-      print (y + 1).to_s + " "
+      print "#{y + 1} "
       point_end.step(point_start, step * -1) do |x|
-        figure = @board[y][x].nil? ? "  " : @board[y][x].to_s
+        figure = @board[y][x].nil? ? '  ' : @board[y][x].to_s
         print bg_color(figure, x + y)
       end
-      puts " " + (y + 1).to_s
+      puts " #{y + 1}"
     end
-    print "  "
-    point_end.step(point_start, step * -1) { |x| print " " + (97 + x).chr }
-    puts " "
+    print '  '
+    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
+    puts ' '
   end
 
   private

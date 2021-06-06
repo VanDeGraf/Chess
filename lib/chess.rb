@@ -1,7 +1,8 @@
-require "./lib/coordinate.rb"
-require "./lib/figure.rb"
-require "./lib/board.rb"
-require "./lib/possible_moves.rb"
+require './lib/coordinate'
+require './lib/figure'
+require './lib/move'
+require './lib/board'
+require './lib/possible_moves'
 
 class Chess
   def initialize
@@ -9,32 +10,31 @@ class Chess
     @player_names = []
     @winner = nil
     @current_player = 0
-    @eaten_figures = [[], []]
   end
 
   def introdution
-    puts "Welcome to Chess!"
-    puts "Player White, say your name: "
+    puts 'Welcome to Chess!'
+    puts 'Player White, say your name: '
     @player_names << player_name_input
-    puts "Player Black, say your name: "
+    puts 'Player Black, say your name: '
     @player_names << player_name_input
     print_game_status
   end
 
   def print_game_status
-    puts "---------------------------------"
+    puts '---------------------------------'
     puts "Player #{@player_names[0]}(White) eats:"
-    @eaten_figures[0].each { |figure| print figure.to_s }
+    @board.eaten.each { |figure| print figure.to_s if figure.color == :white }
     puts "\nPlayer #{@player_names[1]}(Black) eats:"
-    @eaten_figures[1].each { |figure| print figure.to_s }
+    @board.eaten.each { |figure| print figure.to_s if figure.color == :black }
     print "\n"
-    @board.print_board(@current_player == 0)
+    @board.print_board(@current_player.zero?)
   end
 
   def player_name_input
     input = gets.chomp
     until input.length >= 3
-      puts "Wrong input! Name length must more than 2! Type right: "
+      puts 'Wrong input! Name length must more than 2! Type right: '
       input = gets.chomp
     end
     input
@@ -42,34 +42,93 @@ class Chess
 
   def player_turn
     puts "Player #{@player_names[@current_player]} turn."
-    puts "Type your figure coordinate and endpoint coordinate (delim: space): "
-    point_start, point_end = player_turn_input
-    until current_move_possible?(point_start, point_end)
-      puts "Sorry, you can't move here (or from), try other coordinate: "
-      point_start, point_end = player_turn_input
+    current_color = @current_player.zero? ? :white : :black
+    possible_moves = @board.where_is(nil, current_color).map do |coordinate|
+      PossibleMoves.new(@board.at(coordinate), coordinate, @board).moves
     end
-    eaten_figure = @board.move(point_start, point_end)
-    @eaten_figures[@current_player] << eaten_figure unless eaten_figure.nil?
-    @current_player = @current_player == 0 ? 1 : 0
+    default_moves = []
+    special_moves = []
+    possible_moves.flatten.each do |move|
+      if move.kind == :move || move.kind == :capture
+        default_moves << move
+      else
+        special_moves << move
+      end
+    end
+
+    unless special_moves.empty?
+      puts 'You can do one of this special moves: '
+      special_moves.each_with_index do |move, index|
+        print "#{index + 1}) "
+        case move.kind
+        when :en_passant
+          puts "en passant from #{move.options[:point_start]} to #{move.options[:point_end]}"
+        when :promotion_move
+          puts "pawn move to #{move.options[:point_end]} and promotion to #{move.options[:promotion_to].figure}"
+        when :promotion_capture
+          puts "pawn capture enemy at #{move.options[:point_end]} and promotion to #{move.options[:promotion_to].figure}"
+        when :castling_short
+          puts 'castling short'
+        when :castling_long
+          puts 'castling long'
+        end
+      end
+    end
+
+    move = player_turn_input(default_moves, special_moves)
+    @board.move!(move)
+    @current_player = @current_player.zero? ? 1 : 0
     print_game_status
   end
 
-  def player_turn_input
+  def player_turn_input_parse
     input = gets.chomp
-    until input.match?(/^[a-h][1-8] [a-h][1-8]$/)
-      puts "Wrong input! Try again: "
+    until input.match?(%r{^([a-h][1-8] [a-h][1-8])|(/[a-z]+ ?(\S* ?)*)|(s \d+)$})
+      puts 'Wrong input! Try again: '
       input = gets.chomp
     end
-    input = input.split
-    [Coordinate.from_s(input[0]), Coordinate.from_s(input[1])]
+    case input[0]
+    when '/'
+      input = input[1..input.length - 1].split
+      {
+        action: :command,
+        command: input.shift,
+        arguments: input
+      }
+    when 's'
+      {
+        action: :special_move,
+        move_index: input.split[1].to_i - 1
+      }
+    else
+      input = input.split
+      {
+        action: :move,
+        point_start: Coordinate.from_s(input[0]),
+        point_end: Coordinate.from_s(input[1])
+      }
+    end
   end
 
-  def current_move_possible?(point_start, point_end)
-    current_color = @current_player == 0 ? :white : :black
-    possible_moves = @board.possible_moves(current_color)
-    can_move = possible_moves.any? { |figure_moves| figure_moves.can_move?(point_start, point_end) }
-    return false unless can_move
-    !@board.shah_after_move?(current_color, point_start, point_end)
+  def player_turn_input(default_moves, special_moves)
+    puts 'Type your figure coordinate and endpoint coordinate (delim: space), ' \
+         'special move with s and number or command: '
+    input = player_turn_input_parse
+    case input[:action]
+    when :move
+      default_moves.any? do |move|
+        return move if move.options[:point_start] == input[:point_start] &&
+                       move.options[:point_end] == input[:point_end]
+      end
+      puts "Sorry, you can't move here (or from)."
+      player_turn_input(default_moves, special_moves)
+    when :special_move
+      unless !special_moves.empty? && input[:move_index].between?(0, special_moves.length - 1)
+        puts 'Mismatch number of special move choice.'
+        player_turn_input(default_moves, special_moves)
+      end
+      special_moves[input[:move_index]]
+    end
   end
 
   def play_game
@@ -79,9 +138,9 @@ class Chess
   end
 
   def game_end?
-    player_color = @current_player == 0 ? :white : :black
+    player_color = @current_player.zero? ? :white : :black
     if @board.mate?(player_color)
-      @winner = @current_player == 0 ? 1 : 0
+      @winner = @current_player.zero? ? 1 : 0
       true
     elsif @board.stalemate?(player_color) || @board.deadmate?
       @winner = nil
