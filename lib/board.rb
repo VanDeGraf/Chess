@@ -191,6 +191,11 @@ class Board
     moves.all? { |move_action| move(move_action).shah?(color) }
   end
 
+  # @param color [Symbol]
+  def draw?(color)
+    stalemate?(color) || deadmate?
+  end
+
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
@@ -202,14 +207,30 @@ class Board
     !shah?(color)
   end
 
-  # check is in deadmate state, i.e. both colors figures can move, but can't beat other, so can't win or lose
   def deadmate?
-    figure_types = []
-    @board.flatten.each do |figure|
-      figure_types << figure.figure if !figure.nil? &&
-                                       !figure_types.include?(figure.figure)
+    return true if figures_on_board([
+                                      { king: 1 },
+                                      { king: 1 }
+                                    ])
+    return true if figures_on_board([
+                                      { king: 1 },
+                                      { king: 1, bishop: 1 }
+                                    ])
+    return true if figures_on_board([
+                                      { king: 1 },
+                                      { king: 1, knight: 1 }
+                                    ])
+
+    if figures_on_board([
+                          { king: 1, bishop: 1 },
+                          { king: 1, bishop: 1 }
+                        ])
+      bishops_coordinate = where_is(:bishop, nil)
+      bc1sum = bishops_coordinate[0].x + bishops_coordinate[0].y
+      bc2sum = bishops_coordinate[1].x + bishops_coordinate[1].y
+      return true if (bc1sum.even? && bc2sum.even?) || (bc1sum.odd? && bc2sum.odd?)
     end
-    figure_types.length == 1 && figure_types.first == :king
+    false
   end
 
   # draw in Unix console current board state with figures, and rotated to white or black figures side
@@ -244,5 +265,20 @@ class Board
   # set background color for board cells
   def bg_color(string, color_i)
     color_i.odd? ? "\e[46m#{string}\e[0m" : "\e[44m#{string}\e[0m"
+  end
+
+  def figures_on_board(figures)
+    figures_by_color = { white: {}, black: {} }
+    @board.flatten.each do |figure|
+      next if figure.nil?
+
+      if figures_by_color[figure.color].key?(figure.figure)
+        figures_by_color[figure.color][figure.figure] += 1
+      else
+        figures_by_color[figure.color][figure.figure] = 1
+      end
+    end
+    (figures[0].eql?(figures_by_color[:white]) && figures[1].eql?(figures_by_color[:black])) ||
+      (figures[1].eql?(figures_by_color[:white]) && figures[0].eql?(figures_by_color[:black]))
   end
 end

@@ -46,18 +46,68 @@ describe Board do
     # TODO
   end
   describe '#deadmate?' do
+    before do
+      board.instance_variable_set(:@board, Array.new(8) { Array.new(8, nil) })
+    end
+    context 'when on board white king, black king' do
+      before do
+        board.replace_at!(Coordinate.new(0, 0), Figure.new(:king, :white))
+        board.replace_at!(Coordinate.new(0, 7), Figure.new(:king, :black))
+      end
+      it 'should return true' do
+        expect(board.deadmate?).to be_truthy
+      end
+      context 'and white knight' do
+        it 'should return true' do
+          board.replace_at!(Coordinate.new(1, 0), Figure.new(:knight, :white))
+          expect(board.deadmate?).to be_truthy
+        end
+      end
+      context 'and white bishop' do
+        before do
+          board.replace_at!(Coordinate.new(1, 0), Figure.new(:bishop, :white))
+        end
+        it 'should return true' do
+          expect(board.deadmate?).to be_truthy
+        end
+        context 'and black bishop on same diagonal' do
+          it 'should return true' do
+            board.replace_at!(Coordinate.new(2, 1), Figure.new(:bishop, :black))
+            expect(board.deadmate?).to be_truthy
+          end
+        end
+        context 'and black bishop on different diagonal' do
+          it 'should return true' do
+            board.replace_at!(Coordinate.new(1, 1), Figure.new(:bishop, :black))
+            expect(board.deadmate?).to be_falsey
+          end
+        end
+      end
+    end
+    context 'when example deadmate with kings, bishops, and pawns on board' do
+      it 'should return true' do
+        board.instance_variable_set(:@board, [
+                                      Array.new(8, nil),
+                                      Array.new(8, nil),
+                                      [nil, Figure.new(:pawn, :white), nil, Figure.new(:bishop, :white),
+                                       Figure.new(:king, :white), nil, nil, nil],
+                                      [Figure.new(:pawn, :white), Figure.new(:pawn, :black), Figure.new(:pawn, :white), nil,
+                                       Figure.new(:pawn, :white), nil, Figure.new(:pawn, :white), nil],
+                                      [Figure.new(:pawn, :black), nil, Figure.new(:pawn, :black), nil, Figure.new(:pawn, :black), nil,
+                                       Figure.new(:pawn, :black), Figure.new(:pawn, :white)],
+                                      [nil, nil, nil, nil, nil, nil, nil, Figure.new(:pawn, :black)],
+                                      [nil, nil, Figure.new(:bishop, :black), nil, Figure.new(:king, :black), nil, nil,
+                                       nil],
+                                      Array.new(8, nil)
+                                    ])
+        expect(board.deadmate?).to be_truthy
+      end
+    end
+  end
+  describe '#n_fold_repetition?' do
     # TODO
   end
-  describe '#threefold_repetition?' do
-    # TODO
-  end
-  describe '#fivefold_repetition?' do
-    # TODO
-  end
-  describe '#fifty_move?' do
-    # TODO
-  end
-  describe '#seventy_five_move?' do
+  describe '#n_move?' do
     # TODO
   end
 end

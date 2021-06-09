@@ -142,7 +142,7 @@ class Chess
     if @board.mate?(player_color)
       @winner = @current_player.zero? ? 1 : 0
       true
-    elsif @board.stalemate?(player_color) || @board.deadmate?
+    elsif @board.draw?(player_color)
       @winner = nil
       true
     else
