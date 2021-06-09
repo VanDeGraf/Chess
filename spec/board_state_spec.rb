@@ -108,6 +108,35 @@ describe Board do
     # TODO
   end
   describe '#n_move?' do
-    # TODO
+    context 'when n is 5' do
+      context 'when history length < 5' do
+        it 'should return false' do
+          expect(board.n_move?(5)).to be_falsey
+        end
+      end
+      context 'when last history has capture' do
+        it 'should return false' do
+          history = Array.new(5, Move.new(:move, { figure: Figure.new(:king, :white) }))
+          history << Move.new(:capture, { figure: Figure.new(:pawn, :white) })
+          board.instance_variable_set(:@history, history)
+          expect(board.n_move?(5)).to be_falsey
+        end
+      end
+      context 'when last history has pawn move' do
+        it 'should return false' do
+          history = Array.new(5, Move.new(:move, { figure: Figure.new(:king, :white) }))
+          history << Move.new(:move, { figure: Figure.new(:pawn, :white) })
+          board.instance_variable_set(:@history, history)
+          expect(board.n_move?(5)).to be_falsey
+        end
+      end
+      context 'when last history has not pawn move or capture' do
+        it 'should return true' do
+          history = Array.new(5, Move.new(:move, { figure: Figure.new(:king, :white) }))
+          board.instance_variable_set(:@history, history)
+          expect(board.n_move?(5)).to be_truthy
+        end
+      end
+    end
   end
 end

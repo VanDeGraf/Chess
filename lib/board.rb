@@ -193,7 +193,7 @@ class Board
 
   # @param color [Symbol]
   def draw?(color)
-    stalemate?(color) || deadmate?
+    stalemate?(color) || deadmate? || n_move?(75)
   end
 
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
@@ -231,6 +231,17 @@ class Board
       return true if (bc1sum.even? && bc2sum.even?) || (bc1sum.odd? && bc2sum.odd?)
     end
     false
+  end
+
+  # generic check Fifty-move and Seventy-five-move draw rules
+  # @param turns_count [Integer]
+  def n_move?(turns_count)
+    return false if @history.length < turns_count
+
+    @history.last(turns_count).none? do |move|
+      %i[capture promotion_capture promotion_move].include?(move.kind) ||
+        (move.kind == :move && move.options[:figure].figure == :pawn)
+    end
   end
 
   # draw in Unix console current board state with figures, and rotated to white or black figures side
