@@ -24,7 +24,8 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
     * Draw: 
       [Draw by agreement](https://en.wikipedia.org/wiki/Draw_by_agreement), 
       Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
-      Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule)
+      Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),
+      [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
       
 * Save\Load game to file  
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
