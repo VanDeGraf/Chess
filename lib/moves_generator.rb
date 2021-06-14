@@ -27,8 +27,6 @@ module MovesGenerator
             when :queen
               BishopPossibleMoves.new(figure, coordinate, board).generate_moves +
               RookPossibleMoves.new(figure, coordinate, board).generate_moves
-            else
-              []
             end
     moves = moves.map { |move| board.move(move).shah?(figure.color) ? nil : move }.compact if check_shah
     moves

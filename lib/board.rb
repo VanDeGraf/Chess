@@ -281,39 +281,7 @@ class Board
     @repetition_hash.any? { |_hash, count| count >= repetition_count }
   end
 
-  # draw in Unix console current board state with figures, and rotated to white or black figures side
-  # @param rotate [Boolean] true - white, false - black
-  # @return [Void]
-  def print_board(rotate: false)
-    point_start = 0
-    point_end = 7
-    step = 1
-    if rotate
-      point_start, point_end = point_end, point_start
-      step = -1
-    end
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    print "\n"
-    point_start.step(point_end, step) do |y|
-      print "#{y + 1} "
-      point_end.step(point_start, step * -1) do |x|
-        figure = @board[y][x].nil? ? '  ' : @board[y][x].to_s
-        print bg_color(figure, x + y)
-      end
-      puts " #{y + 1}"
-    end
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    puts ' '
-  end
-
   private
-
-  # set background color for board cells
-  def bg_color(string, color_i)
-    color_i.odd? ? "\e[46m#{string}\e[0m" : "\e[44m#{string}\e[0m"
-  end
 
   def figures_on_board(figures)
     figures_by_color = { white: {}, black: {} }

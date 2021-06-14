@@ -50,8 +50,6 @@ class FigurePossibleMoves
       end
     elsif args.length == 1 && args[0].is_a?(Array)
       args[0].map { |relative| get_move_relative(relative[0], relative[1], &block) }.compact
-    else
-      raise ArgumentError
     end
   end
 
