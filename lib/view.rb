@@ -146,7 +146,7 @@ module View
   # @return [Void]
   def self.draw_game_turn(options)
     draw_board(options[:board])
-    puts "Player #{options[:player].name} (#{options[:player].color}) turn."
+    puts "Player #{options[:player]} turn."
     unless options[:special_moves].nil?
       puts options[:special_moves][:description_message]
       options[:special_moves][:moves].each_with_index do |move_desc, i|
@@ -169,7 +169,7 @@ module View
     if options[:winner].nil?
       puts "\nDraw! No winners!"
     else
-      puts "\nPlayer #{options[:winner].name} Win! Congratulations!"
+      puts "\nPlayer #{options[:winner]} Win! Congratulations!"
     end
     draw_input(options)
   end

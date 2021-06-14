@@ -50,4 +50,8 @@ class Player
       name: input
     }
   end
+
+  def to_s
+    "#{@name}(#{@color})"
+  end
 end
