@@ -229,19 +229,19 @@ module View
   # @return [Void]
   def self.draw_figure_at(coordinate, figure)
     if figure.nil?
-      print '  '
-      return
+      figure_string = '  '
+    else
+      unicode = {
+        rook: '♜',
+        knight: '♞',
+        bishop: '♝',
+        queen: '♛',
+        king: '♚',
+        pawn: '♟'
+      }
+      color_num = figure.color == :white ? 37 : 30
+      figure_string = " \e[#{color_num}m#{unicode[figure.figure]}\e[0m"
     end
-    unicode = {
-      rook: '♜',
-      knight: '♞',
-      bishop: '♝',
-      queen: '♛',
-      king: '♚',
-      pawn: '♟'
-    }
-    color_num = figure.color == :white ? 37 : 30
-    figure_string = " \e[#{color_num}m#{unicode[figure.figure]}\e[0m"
     print((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
   end
 
