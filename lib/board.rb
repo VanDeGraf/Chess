@@ -27,6 +27,7 @@ class Board
     @eaten = []
     # @type [Array<Move>]
     @history = []
+    @repetition_hash = {}
   end
 
   # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
@@ -56,7 +57,7 @@ class Board
   # figures
   # @param action [Move]
   # @return [Void]
-  def move!(action)
+  def move!(action, repetition_hash: true)
     return if action.nil?
 
     case action.kind
@@ -85,6 +86,7 @@ class Board
       return
     end
     @history << action
+    repetition_add if repetition_hash
   end
 
   # in clone of current board do move and return that clone
@@ -92,7 +94,7 @@ class Board
   # @return [Board]
   def move(action)
     new_board = clone
-    new_board.move!(action)
+    new_board.move!(action, repetition_hash: false)
     new_board
   end
 
@@ -168,6 +170,36 @@ class Board
     new_board
   end
 
+  def repetition_add
+    return if history.last.nil?
+
+    color = history.last.options[:figure].color
+    castling = MovesGenerator.castling(self, color).length
+    en_passant = where_is(:pawn, color).any? do |coordinate|
+      MovesGenerator.generate_from(coordinate, self).any? { |move| move.kind == :en_passant }
+    end
+    hash = color == :white ? 'w' : 'b'
+    hash += castling.to_s
+    hash += en_passant ? '1' : '0'
+    @board.each do |row|
+      row.each do |figure|
+        hash += if figure.nil?
+                  '-'
+                elsif figure.figure == :knight
+                  'n'
+                else
+                  figure.figure[0]
+                end
+      end
+    end
+
+    if @repetition_hash.key?(hash)
+      @repetition_hash[hash] += 1
+    else
+      @repetition_hash[hash] = 1
+    end
+  end
+
   # check inputted color is in shah(check) state, i.e. any enemy figure has possible move at next turn to beat king with
   # inputted color
   # @param color [Symbol]
@@ -193,7 +225,7 @@ class Board
 
   # @param color [Symbol]
   def draw?(color)
-    stalemate?(color) || deadmate? || n_move?(75)
+    stalemate?(color) || deadmate? || n_move?(75) || n_fold_repetition?(5)
   end
 
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
@@ -242,6 +274,11 @@ class Board
       %i[capture promotion_capture promotion_move].include?(move.kind) ||
         (move.kind == :move && move.options[:figure].figure == :pawn)
     end
+  end
+
+  # @param repetition_count [Integer]
+  def n_fold_repetition?(repetition_count)
+    @repetition_hash.any? { |_hash, count| count >= repetition_count }
   end
 
   # draw in Unix console current board state with figures, and rotated to white or black figures side
