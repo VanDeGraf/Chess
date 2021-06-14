@@ -77,7 +77,7 @@ describe Board do
           end
         end
         context 'and black bishop on different diagonal' do
-          it 'should return true' do
+          it 'should return false' do
             board.replace_at!(Coordinate.new(1, 1), Figure.new(:bishop, :black))
             expect(board.deadmate?).to be_falsey
           end
