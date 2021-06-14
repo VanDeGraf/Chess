@@ -6,6 +6,7 @@ require './lib/moves_generator'
 require './lib/player'
 require './lib/view'
 
+# Single chess game scope
 class Game
   def initialize(players = [], board = Board.new)
     @board = board
