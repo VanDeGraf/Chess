@@ -5,6 +5,7 @@ require './lib/board'
 require './lib/moves_generator'
 require './lib/player'
 require './lib/view'
+require 'yaml'
 
 # Single chess game scope
 class Game
@@ -38,5 +39,32 @@ class Game
     else
       false
     end
+  end
+
+  # @return [Player]
+  def current_player
+    @players[@current_player]
+  end
+
+  SAVE_DIR = 'saves'.freeze
+
+  def save(filename)
+    Dir.mkdir(SAVE_DIR) unless Dir.exist?(SAVE_DIR)
+    filename = Game.full_name_of_save_file(filename)
+    File.write(filename, YAML.dump(self))
+  end
+
+  def self.full_name_of_save_file(filename)
+    "#{SAVE_DIR}/#{filename}.yaml"
+  end
+
+  # @return [Game, nil]
+  def self.load(filename)
+    filename = full_name_of_save_file(filename)
+    return nil unless File.exist?(filename)
+
+    YAML.safe_load(File.read(filename), permitted_classes: [
+                     Game, Board, Figure, Player, Move, Coordinate, Symbol
+                   ], aliases: true)
   end
 end

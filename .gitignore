@@ -2,3 +2,4 @@ lib/test.rb
 spec/coverage
 Gemfile.lock
 .idea
+saves
