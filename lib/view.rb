@@ -1,3 +1,5 @@
+require './lib/console'
+
 module View
   def self.main_menu
     options = {
@@ -5,25 +7,39 @@ module View
       header: 'Main Menu',
       input: {
         actions: [
-          'Play game Human vs Human'
-          # 'Play game Human vs Computer',
-          # 'Play game Computer vs Computer',
-          # 'Load saved game',
+          { delimiter: '' },
+          { play_human_vs_human: 'Play game Human vs Human' },
+          { play_human_vs_computer: 'Play game Human vs Computer' },
+          { play_computer_vs_computer: 'Play game Computer vs Computer' },
+          { delimiter: '' },
+          { load_game: 'Load saved game' },
+          { import_from_PGN: 'Import game save from PGN format file and load it' },
+          { delimiter: '' },
+          { rules: 'Show chess game rules' },
+          { cmd_help: 'Show in game console commands' },
+          { delimiter: '' },
+          { quit: 'Exit from the program' },
+          { delimiter: '' }
         ],
         description_message: 'Enter the number of the action you would like to perform: ',
         error_message: nil
       }
     }
-    update(options)
-    menu_input(options)
+    Console.update(options)
+    until yield((command = Console.menu_input(options))).nil?
+      Console.update(options)
+    end
+    command
   end
 
-  def self.game_turn(board, player)
-    possible_moves = board.where_is(nil, player.color).map do |coordinate|
-      MovesGenerator.generate_from(coordinate, board)
+  # @param game [Game]
+  # @return [Move, Symbol]
+  def self.game_turn(game)
+    possible_moves = game.board.where_is(nil, game.current_player.color).map do |coordinate|
+      MovesGenerator.generate_from(coordinate, game.board)
     end
     default_moves = []
-    special_moves = MovesGenerator.castling(board, player.color)
+    special_moves = MovesGenerator.castling(game.board, game.current_player.color)
     possible_moves.flatten.each do |move|
       if move.kind == :move || move.kind == :capture
         default_moves << move
@@ -33,10 +49,9 @@ module View
     end
     options = {
       screen: :game_turn,
-      player: player,
-      board: board,
+      game: game,
       input: {
-        description_message: 'Type your figure coordinate and endpoint coordinate (delim: space) [a1 a1], ' \
+        description_message: 'Type your figure coordinate and endpoint coordinate [a1 a1], ' \
                                 'special move with s and number [s 1] or command [/help]',
         error_message: nil
       }
@@ -60,31 +75,35 @@ module View
         end
       end
     end
-    update(options)
-    until (move = player_turn_input(default_moves, special_moves, options))
-      update(options)
+    Console.update(options)
+    until (action = Console.player_turn_input(default_moves, special_moves, options))
+      Console.update(options)
     end
-    move
+    action
   end
 
-  def self.end_game(board, winner)
+  # @param game [Game]
+  def self.end_game(game)
     options = {
       screen: :end_game,
-      board: board,
-      winner: winner,
+      game: game,
       input: {
         actions: [
-          'Go to Main Menu'
-          # 'Save this game',
-          # 'Export this game',
-          # 'Show turns history',
+          { show_history: 'Show turns history' },
+          { save_game: 'Save this game' },
+          { export_to_PGN: 'Export this game' },
+          { main_menu: 'Go to Main Menu' },
+          { quit: 'Exit from the program' }
         ],
         description_message: 'Enter the number of the action you would like to perform: ',
         error_message: nil
       }
     }
-    update(options)
-    menu_input(options)
+    Console.update(options)
+    until yield((command = Console.menu_input(options))).nil?
+      Console.update(options)
+    end
+    command
   end
 
   def self.player_welcome(color)
@@ -96,167 +115,29 @@ module View
         error_message: nil
       }
     }
-    update(options)
+    Console.update(options)
     while !(name = Player.name_input_parse).nil? && name[:action] == :error
       options[:input][:error_message] = name[:msg]
-      update(options)
+      Console.update(options)
     end
     Player.new(name[:name], color)
   end
 
-  def self.menu_input(options)
-    input = gets.chomp
-    until input.match?(/^\d+$/) && input.to_i.between?(1, options[:input][:actions].length)
-      if !input.match?(/^\d+$/)
-        options[:input][:error_message] = 'Only positive integer can be inputted!'
-      elsif !input.to_i.between?(1, options[:input][:actions].length)
-        options[:input][:error_message] = "Integer must be between 1 and #{options[:input][:actions].length}!"
-      end
-      update(options)
-      input = gets.chomp
-    end
-    input.to_i
-  end
-
-  # @param default_moves [Array<Move>]
-  # @param special_moves [Array<Move>]
-  # @return [Move, nil]
-  def self.player_turn_input(default_moves, special_moves, options)
-    input = options[:player].turn_input_parse
-
-    case input[:action]
-    when :error
-      options[:input][:error_message] = input[:msg]
-      return nil
-    when :move
-      default_moves.any? do |move|
-        return move if move.options[:point_start] == input[:point_start] &&
-                       move.options[:point_end] == input[:point_end]
-      end
-      options[:input][:error_message] = "Sorry, you can't move here (or from)."
-    when :special_move
-      unless !special_moves.empty? && input[:move_index].between?(0, special_moves.length - 1)
-        options[:input][:error_message] = 'Mismatch number of special move choice.'
-      end
-      return special_moves[input[:move_index]]
-    end
-    nil
-  end
-
-  # @return [Void]
-  def self.draw_game_turn(options)
-    draw_board(options[:board])
-    puts "Player #{options[:player]} turn."
-    unless options[:special_moves].nil?
-      puts options[:special_moves][:description_message]
-      options[:special_moves][:moves].each_with_index do |move_desc, i|
-        puts "#{i + 1}) #{move_desc}"
-      end
-    end
-    draw_input(options)
-  end
-
-  # @return [Void]
-  def self.draw_main_menu(options)
-    puts "\t#{options[:header]}"
-    draw_input(options)
-  end
-
-  # @return [Void]
-  def self.draw_end_game(options)
-    puts "\tGame is over!"
-    draw_board(options[:board])
-    if options[:winner].nil?
-      puts "\nDraw! No winners!"
-    else
-      puts "\nPlayer #{options[:winner]} Win! Congratulations!"
-    end
-    draw_input(options)
-  end
-
-  # @return [Void]
-  def self.draw_input(options)
-    if !options[:input][:actions].nil? && options[:input][:actions].is_a?(Array)
-      options[:input][:actions].each_with_index { |action, i| puts "#{i + 1})#{action}" }
-    end
-    puts "Input error: #{options[:input][:error_message]}" unless options[:input][:error_message].nil?
-    puts options[:input][:description_message]
-  end
-
-  # @param options [Hash]
-  # @return [Void]
-  def self.update(options)
-    system('clear') || system('cls')
-    draw_main_menu(options) if options[:screen] == :main_menu
-    draw_game_turn(options) if options[:screen] == :game_turn
-    draw_end_game(options) if options[:screen] == :end_game
-    draw_input(options) if options[:screen] == :player_welcome
-  end
-
-  # @param board [Board]
-  # @return [Void]
-  def self.draw_board(board)
-    rotated_to_player = if board.history.last.nil?
-                          :white
-                        else
-                          board.history.last.options[:figure].color == :white ? :black : :white
-                        end
-    point_start = 0
-    point_end = 7
-    step = 1
-    if rotated_to_player == :white
-      point_start, point_end = point_end, point_start
-      step = -1
-    end
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    print "\n"
-    point_start.step(point_end, step) do |y|
-      print "#{y + 1} "
-      point_end.step(point_start, step * -1) do |x|
-        coordinate = Coordinate.new(x, y)
-        draw_figure_at(coordinate, board.at(coordinate))
-      end
-      puts " #{y + 1}"
-    end
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    puts ' '
-  end
-
-  # @param coordinate [Coordinate]
-  # @param figure [Figure,nil]
-  # @return [Void]
-  def self.draw_figure_at(coordinate, figure)
-    if figure.nil?
-      figure_string = '  '
-    else
-      unicode = {
-        rook: '♜',
-        knight: '♞',
-        bishop: '♝',
-        queen: '♛',
-        king: '♚',
-        pawn: '♟'
+  def self.save_name_input
+    options = {
+      screen: :save_name_input,
+      input: {
+        filter: /^[a-zA-Z \d]+$/,
+        description_message: 'Enter the name of save file: ',
+        error_message: nil
       }
-      color_num = figure.color == :white ? 37 : 30
-      figure_string = " \e[#{color_num}m#{unicode[figure.figure]}\e[0m"
-    end
-    print((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
-  end
-
-  # @param figure [Figure]
-  # @return [Void]
-  def self.draw_figure(figure)
-    unicode = {
-      rook: '♜',
-      knight: '♞',
-      bishop: '♝',
-      queen: '♛',
-      king: '♚',
-      pawn: '♟'
     }
-    color_num = figure.color == :white ? 37 : 30
-    print " \e[#{color_num}m#{unicode[figure.figure]}\e[0m"
+    Console.update(options)
+    until (save_name = Console.param_input(options)) &&
+          (!block_given? || yield(save_name))
+      options[:input][:error_message] = 'File read exception or not found!'
+      Console.update(options)
+    end
+    save_name
   end
 end

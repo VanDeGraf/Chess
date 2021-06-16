@@ -9,6 +9,8 @@ require 'yaml'
 
 # Single chess game scope
 class Game
+  attr_reader :board, :winner
+
   def initialize(players = [], board = Board.new)
     @board = board
     @winner = nil
@@ -16,24 +18,37 @@ class Game
     @players = players
   end
 
+  # @return [Symbol, nil]
   def player_turn
-    move = View.game_turn(@board, @players[@current_player])
-    @board.move!(move)
-    @current_player = @current_player.zero? ? 1 : 0
+    action = View.game_turn(self)
+    if action.is_a?(Move)
+      @board.move!(action)
+      @current_player = @current_player.zero? ? 1 : 0
+      save('autosave')
+      nil
+    else
+      action
+    end
   end
 
-  def play_game
+  # @return [Symbol, nil]
+  def play_game(&block)
     @players[0] = View.player_welcome(:white) if @players[0].nil?
     @players[1] = View.player_welcome(:black) if @players[1].nil?
-    player_turn until game_end?
-    View.end_game(@board, @winner)
+    until game_end?
+      action = player_turn
+      return action if !action.nil? && yield(action).nil?
+    end
+    until yield((action = View.end_game(self, &block))).nil?
+    end
+    action
   end
 
   def game_end?
-    if @board.mate?(@players[@current_player].color)
+    if @board.mate?(current_player.color)
       @winner = @players[@current_player.zero? ? 1 : 0]
       true
-    elsif @board.draw?(@players[@current_player].color)
+    elsif @board.draw?(current_player.color)
       @winner = nil
       true
     else
