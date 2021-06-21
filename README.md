@@ -11,8 +11,10 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
   [promotion](https://en.wikipedia.org/wiki/Promotion_(chess))
 * Game states:
     * Win\Lose: 
-      [Checkmate](https://en.wikipedia.org/wiki/Checkmate)
+      [Checkmate](https://en.wikipedia.org/wiki/Checkmate),
+      [Resignation](https://en.wikipedia.org/wiki/Rules_of_chess#Resigning)
     * Draw:
+      [Draw by agreement](https://en.wikipedia.org/wiki/Draw_by_agreement),
       [Stalemate](https://en.wikipedia.org/wiki/Stalemate),
       incomplete [Dead position](https://en.wikipedia.org/wiki/Rules_of_chess#Dead_position),
       [Seventy-five move](https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule),
@@ -20,11 +22,8 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
 * Save\Load game to file
 ### Not implemented features yet:
-* Game states:
-    * Win\Lose: 
-      [Resignation](https://en.wikipedia.org/wiki/Rules_of_chess#Resigning)
-    * Draw: 
-      [Draw by agreement](https://en.wikipedia.org/wiki/Draw_by_agreement), 
+* Game states:      
+    * Draw:
       Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
       Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),      
       

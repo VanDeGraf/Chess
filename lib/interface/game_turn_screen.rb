@@ -108,9 +108,17 @@ class GameTurnScreen < Screen
     when 'mm'
       :main_menu
     when 'draw'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
+      :draw if AcceptRequestScreen.show_and_read(
+        "#{@game.current_player}, are you sure you want to offer a draw to your opponent?"
+      ) && AcceptRequestScreen.show_and_read(
+        "#{@game.current_player} wants to end the game in a draw, #{@game.opposite_player} do you agree?"
+      )
     when 'surrender'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
+      :surrender if AcceptRequestScreen.show_and_read(
+        "#{@game.current_player}, are you sure you want surrender?"
+      ) && AcceptRequestScreen.show_and_read(
+        "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
+      )
     when 'history'
       MessageScreen.show('Sorry, this feature not implemented yet!')
     when 'help'

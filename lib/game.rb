@@ -20,6 +20,7 @@ class Game
     @winner = nil
     @current_player = 0
     @players = players
+    @finished = false
   end
 
   # @return [Symbol, nil]
@@ -31,7 +32,18 @@ class Game
       save('autosave')
       nil
     else
-      action
+      case action
+      when :draw
+        @winner = nil
+        @finished = true
+        nil
+      when :surrender
+        @winner = opposite_player
+        @finished = true
+        nil
+      else
+        action
+      end
     end
   end
 
@@ -39,7 +51,7 @@ class Game
   def play_game
     @players[0] = PlayerNameRequestScreen.show_and_read(:white) if @players[0].nil?
     @players[1] = PlayerNameRequestScreen.show_and_read(:black) if @players[1].nil?
-    until game_end?
+    until @finished || (@finished = game_end?)
       action = player_turn
       return action unless action.nil?
     end
@@ -61,6 +73,11 @@ class Game
   # @return [Player]
   def current_player
     @players[@current_player]
+  end
+
+  # @return [Player]
+  def opposite_player
+    @players[@current_player.zero? ? 1 : 0]
   end
 
   SAVE_DIR = File.expand_path('../saves', __dir__).freeze
