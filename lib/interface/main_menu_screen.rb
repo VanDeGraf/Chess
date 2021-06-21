@@ -3,7 +3,6 @@ class MainMenuScreen < Screen
     menu_actions = [
       MenuAction.new(:play_human_vs_human, 'Play game Human vs Human'),
       MenuAction.new(:play_human_vs_computer, 'Play game Human vs Computer'),
-      MenuAction.new(:play_computer_vs_computer, 'Play game Computer vs Computer'),
       MenuAction.new(:load_game, 'Load saved game'),
       MenuAction.new(:import_from_PGN, 'Import game save from PGN format file and load it'),
       MenuAction.new(:rules, 'Show chess game rules'),
@@ -26,8 +25,6 @@ class MainMenuScreen < Screen
       command = @input.handle_console_input { |_| draw }
       case command
       when :play_human_vs_computer
-        MessageScreen.show('Sorry, this feature not implemented yet!')
-      when :play_computer_vs_computer
         MessageScreen.show('Sorry, this feature not implemented yet!')
       when :import_from_PGN
         MessageScreen.show('Sorry, this feature not implemented yet!')
