@@ -1,7 +1,4 @@
-require_relative 'move'
-require_relative 'figure'
-require_relative 'board'
-require_relative 'coordinate'
+require_relative '../board'
 # generate possible moves of figure, depends by type and color of it, and depends by other figures on board
 class FigurePossibleMoves
   # @param figure [Figure]

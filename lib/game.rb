@@ -1,8 +1,4 @@
-require_relative 'coordinate'
-require_relative 'figure'
-require_relative 'move'
 require_relative 'board'
-require_relative 'moves_generator'
 require_relative 'player'
 require_relative 'interface/screen'
 require_relative 'interface/message_screen'
