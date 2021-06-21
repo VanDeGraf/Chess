@@ -5,7 +5,6 @@ class MainMenuScreen < Screen
       MenuAction.new(:play_human_vs_computer, 'Play game Human vs Computer'),
       MenuAction.new(:load_game, 'Load saved game'),
       MenuAction.new(:import_from_PGN, 'Import game save from PGN format file and load it'),
-      MenuAction.new(:rules, 'Show chess game rules'),
       MenuAction.new(:cmd_help, 'Show in game console commands'),
       MenuAction.new(:quit, 'Exit from the program')
     ]
@@ -27,8 +26,6 @@ class MainMenuScreen < Screen
       when :play_human_vs_computer
         MessageScreen.show('Sorry, this feature not implemented yet!')
       when :import_from_PGN
-        MessageScreen.show('Sorry, this feature not implemented yet!')
-      when :rules
         MessageScreen.show('Sorry, this feature not implemented yet!')
       when :cmd_help
         CommandHelpScreen.show

@@ -115,8 +115,6 @@ class GameTurnScreen < Screen
       MessageScreen.show('Sorry, this feature not implemented yet!')
     when 'help'
       CommandHelpScreen.show
-    when 'rules'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
     when 'quit'
       :quit
     else

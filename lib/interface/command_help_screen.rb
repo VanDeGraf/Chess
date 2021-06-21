@@ -10,7 +10,6 @@ class CommandHelpScreen < MessageScreen
         "/surrender - admit defeat, the opponent must accept it\n" /
         "/history - show game turns history\n" /
         "/help - show this screen\n" /
-        "/rules - show game rules\n" /
         "/quit - exit from this application\n"
     )
     @header = 'Commands'
