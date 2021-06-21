@@ -18,6 +18,7 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       [Seventy-five move](https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule),
       [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition)
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
+* Save\Load game to file
 ### Not implemented features yet:
 * Game states:
     * Win\Lose: 
@@ -27,7 +28,6 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
       Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),      
       
-* Save\Load game to file  
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
 * Turns history shown and movement
 * Game with time control
