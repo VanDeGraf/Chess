@@ -1,10 +1,17 @@
-require './lib/coordinate'
-require './lib/figure'
-require './lib/move'
-require './lib/board'
-require './lib/moves_generator'
-require './lib/player'
-require './lib/view'
+require_relative 'coordinate'
+require_relative 'figure'
+require_relative 'move'
+require_relative 'board'
+require_relative 'moves_generator'
+require_relative 'player'
+require_relative 'interface/screen'
+require_relative 'interface/message_screen'
+require_relative 'interface/accept_request_screen'
+require_relative 'interface/save_load_screen'
+require_relative 'interface/player_name_request_screen'
+require_relative 'interface/main_menu_screen'
+require_relative 'interface/game_turn_screen'
+require_relative 'interface/game_end_screen'
 require 'yaml'
 
 # Single chess game scope
@@ -20,7 +27,7 @@ class Game
 
   # @return [Symbol, nil]
   def player_turn
-    action = View.game_turn(self)
+    action = GameTurnScreen.show_and_read(self)
     if action.is_a?(Move)
       @board.move!(action)
       @current_player = @current_player.zero? ? 1 : 0
@@ -32,16 +39,14 @@ class Game
   end
 
   # @return [Symbol, nil]
-  def play_game(&block)
-    @players[0] = View.player_welcome(:white) if @players[0].nil?
-    @players[1] = View.player_welcome(:black) if @players[1].nil?
+  def play_game
+    @players[0] = PlayerNameRequestScreen.show_and_read(:white) if @players[0].nil?
+    @players[1] = PlayerNameRequestScreen.show_and_read(:black) if @players[1].nil?
     until game_end?
       action = player_turn
-      return action if !action.nil? && yield(action).nil?
+      return action unless action.nil?
     end
-    until yield((action = View.end_game(self, &block))).nil?
-    end
-    action
+    nil
   end
 
   def game_end?
@@ -61,7 +66,7 @@ class Game
     @players[@current_player]
   end
 
-  SAVE_DIR = 'saves'.freeze
+  SAVE_DIR = File.expand_path('../saves', __dir__).freeze
 
   def save(filename)
     Dir.mkdir(SAVE_DIR) unless Dir.exist?(SAVE_DIR)

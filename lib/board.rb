@@ -1,7 +1,7 @@
-require './lib/move'
-require './lib/figure'
-require './lib/coordinate'
-require './lib/moves_generator'
+require_relative 'move'
+require_relative 'figure'
+require_relative 'coordinate'
+require_relative 'moves_generator'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board

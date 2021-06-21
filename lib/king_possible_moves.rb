@@ -1,4 +1,4 @@
-require './lib/figure_possible_moves'
+require_relative 'figure_possible_moves'
 # king moves generator
 class KingPossibleMoves < FigurePossibleMoves
   # @return [Array<Move>]

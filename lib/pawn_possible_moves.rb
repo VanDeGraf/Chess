@@ -1,4 +1,4 @@
-require './lib/figure_possible_moves'
+require_relative 'figure_possible_moves'
 # pawn moves generator
 class PawnPossibleMoves < FigurePossibleMoves
   def initialize(figure, start, board)

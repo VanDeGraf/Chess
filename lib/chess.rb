@@ -1,4 +1,4 @@
-require './lib/game'
+require_relative 'game'
 
 class Chess
   def initialize
@@ -7,66 +7,46 @@ class Chess
 
   def start
     await_main_menu_command
-    Console.update
   end
 
   # @return [Void]
   def await_main_menu_command
-    command = View.main_menu do |command|
+    returned_command = nil
+    loop do
+      command = if returned_command.nil?
+                  MainMenuScreen.show_and_read
+                else
+                  returned_command
+                end
+      returned_command = nil
       case command
-      when :play_human_vs_computer
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :play_computer_vs_computer
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :import_from_PGN
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :rules
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :cmd_help
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      else
-        nil
+      when :play_human_vs_human
+        @game = Game.new
+        returned_command = await_play_game_command
+      when :load_game
+        @game = SaveLoadScreen.show_and_read(:load)
+        returned_command = await_play_game_command
+      when :quit
+        Interface.clear_console
+        break
       end
-    end
-    case command
-    when :play_human_vs_human
-      @game = Game.new
-      await_play_game_command
-    when :load_game
-      save_name = View.save_name_input { |save_name| File.exist?(Game.full_name_of_save_file(save_name)) }
-      @game = Game.load(save_name)
-      await_play_game_command
     end
   end
 
-  # @return [Void]
+  # @return [Symbol, nil]
   def await_play_game_command
-    end_game_command = @game.play_game do |in_game_command|
-      case in_game_command
-      when :save_game
-        save_name = View.save_name_input
-        @game.save(save_name)
-        Console.popup_message("Game saved successfully to #{Game.full_name_of_save_file(save_name)}")
-      when :export_to_PGN
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :show_history
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :draw
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :surrender
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :rules
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      when :cmd_help
-        Console.popup_message('Sorry, this feature not implemented yet!')
-      else
-        nil
-      end
+    command = @game.play_game
+    case command
+    when nil
+      await_end_game_command
+    else
+      command
     end
-    case end_game_command
-    when :main_menu
-      await_main_menu_command
-    end
+  end
+
+  # @return [Symbol]
+  def await_end_game_command
+    GameEndScreen.show_and_read(@game)
   end
 end
 

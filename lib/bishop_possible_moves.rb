@@ -1,4 +1,4 @@
-require './lib/figure_possible_moves'
+require_relative 'figure_possible_moves'
 # bishop moves generator
 class BishopPossibleMoves < FigurePossibleMoves
   def generate_moves

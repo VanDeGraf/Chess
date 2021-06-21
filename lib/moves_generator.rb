@@ -1,9 +1,9 @@
-require './lib/figure_possible_moves'
-require './lib/bishop_possible_moves'
-require './lib/king_possible_moves'
-require './lib/knight_possible_moves'
-require './lib/pawn_possible_moves'
-require './lib/rook_possible_moves'
+require_relative 'figure_possible_moves'
+require_relative 'bishop_possible_moves'
+require_relative 'king_possible_moves'
+require_relative 'knight_possible_moves'
+require_relative 'pawn_possible_moves'
+require_relative 'rook_possible_moves'
 # moves generation methods
 module MovesGenerator
   # @param coordinate [Coordinate]

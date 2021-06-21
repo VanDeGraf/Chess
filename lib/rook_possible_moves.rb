@@ -1,4 +1,4 @@
-require './lib/figure_possible_moves'
+require_relative 'figure_possible_moves'
 # rook moves generator
 class RookPossibleMoves < FigurePossibleMoves
   def generate_moves
