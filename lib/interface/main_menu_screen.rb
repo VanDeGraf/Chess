@@ -31,7 +31,7 @@ class MainMenuScreen < Screen
       when :rules
         MessageScreen.show('Sorry, this feature not implemented yet!')
       when :cmd_help
-        MessageScreen.show('Sorry, this feature not implemented yet!')
+        CommandHelpScreen.show
       else
         return command
       end

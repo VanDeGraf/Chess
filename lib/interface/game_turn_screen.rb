@@ -43,7 +43,6 @@ class GameTurnScreen < Screen
     puts @input.draw
   end
 
-
   # @return [Symbol, Move]
   def handle_input
     loop do
@@ -115,7 +114,7 @@ class GameTurnScreen < Screen
     when 'history'
       MessageScreen.show('Sorry, this feature not implemented yet!')
     when 'help'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
+      CommandHelpScreen.show
     when 'rules'
       MessageScreen.show('Sorry, this feature not implemented yet!')
     when 'quit'
