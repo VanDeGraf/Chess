@@ -43,7 +43,7 @@ class GameTurnScreen < Screen
     puts @input.draw
   end
 
-  # @return [Symbol, Move]
+  # @return [Symbol, Movement]
   def handle_input
     loop do
       action = @input.handle_console_input do |input|
@@ -131,7 +131,7 @@ class GameTurnScreen < Screen
     end
   end
 
-  # @return [Move, nil]
+  # @return [Movement, nil]
   def handle_input_move(action)
     @default_moves.any? do |move|
       return move if move.options[:point_start] == action[:point_start] &&
@@ -141,7 +141,7 @@ class GameTurnScreen < Screen
     nil
   end
 
-  # @return [Move, nil]
+  # @return [Movement, nil]
   def handle_input_special_move(action)
     if !@special_moves.empty? && action[:move_index].between?(0, @special_moves.length - 1)
       return @special_moves[action[:move_index]]
@@ -153,10 +153,10 @@ class GameTurnScreen < Screen
 
   def calculate_moves
     possible_moves = @game.board.where_is(nil, @game.current_player.color).map do |coordinate|
-      MovesGenerator.generate_from(coordinate, @game.board)
+      MovementGenerator.generate_from(coordinate, @game.board)
     end
     @default_moves = []
-    @special_moves = MovesGenerator.castling(@game.board, @game.current_player.color)
+    @special_moves = MovementGenerator.castling(@game.board, @game.current_player.color)
     possible_moves.flatten.each do |move|
       if move.kind == :move || move.kind == :capture
         @default_moves << move

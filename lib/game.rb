@@ -26,7 +26,7 @@ class Game
   # @return [Symbol, nil]
   def player_turn
     action = GameTurnScreen.show_and_read(self)
-    if action.is_a?(Move)
+    if action.is_a?(Movement)
       @board.move!(action)
       @current_player = @current_player.zero? ? 1 : 0
       save('autosave')
@@ -98,7 +98,7 @@ class Game
     return nil unless File.exist?(filename)
 
     YAML.safe_load(File.read(filename), permitted_classes: [
-                     Game, Board, Figure, Player, Move, Coordinate, Symbol
+                     Game, Board, Figure, Player, Movement, Coordinate, Symbol
                    ], aliases: true)
   end
 end

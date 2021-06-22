@@ -1,6 +1,6 @@
 require './lib/board'
 
-describe PawnPossibleMoves do
+describe PawnMovement do
   describe '#generate_moves' do
     let(:board) { Board.new }
     context 'when board is empty' do

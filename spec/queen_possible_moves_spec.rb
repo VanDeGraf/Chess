@@ -15,88 +15,88 @@ context 'Queen possible moves' do
         board.replace_at!(figure_coordinate, figure)
       end
       it 'should add 25 moves' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board).length).to be 25
+        expect(MovementGenerator.generate_from(figure_coordinate, board).length).to be 25
       end
       it 'should add move with coordinate 1,1 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(1, 1)
                end).to be_truthy
       end
       it 'should add move with coordinate 0,0 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(0, 0)
                end).to be_truthy
       end
       it 'should add move with coordinate 1,3 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(1, 3)
                end).to be_truthy
       end
       it 'should add move with coordinate 0,4 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(0, 4)
                end).to be_truthy
       end
       it 'should add move with coordinate 3,3 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(3, 3)
                end).to be_truthy
       end
       it 'should add move with coordinate 7,7 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(7, 7)
                end).to be_truthy
       end
       it 'should add move with coordinate 1,2 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(1, 2)
                end).to be_truthy
       end
       it 'should add move with coordinate 0,2 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(0, 2)
                end).to be_truthy
       end
       it 'should add move with coordinate 2,1 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(2, 1)
                end).to be_truthy
       end
       it 'should add move with coordinate 2,0 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(2, 0)
                end).to be_truthy
       end
       it 'should add move with coordinate 3,2 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(3, 2)
                end).to be_truthy
       end
       it 'should add move with coordinate 7,2 and kind :move' do
-        expect(MovesGenerator.generate_from(figure_coordinate, board)
-                        .any? do |move|
+        expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                .any? do |move|
                  move.kind == :move &&
                    move.options[:point_end] == Coordinate.new(7, 2)
                end).to be_truthy
@@ -106,18 +106,18 @@ context 'Queen possible moves' do
           board.replace_at!(Coordinate.new(1, 1), enemy_figure)
         end
         it 'should add 24 moves' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board).length).to be 24
+          expect(MovementGenerator.generate_from(figure_coordinate, board).length).to be 24
         end
         it 'should add move with coordinate 1,1 and kind :capture' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.kind == :capture &&
                      move.options[:point_end] == Coordinate.new(1, 1)
                  end).to be_truthy
         end
         it 'should not add move with coordinate 0,0' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(0, 0)
                  end).to be_falsey
         end
@@ -127,17 +127,17 @@ context 'Queen possible moves' do
           board.replace_at!(Coordinate.new(1, 1), ally_figure)
         end
         it 'should add 23 moves' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board).length).to be 23
+          expect(MovementGenerator.generate_from(figure_coordinate, board).length).to be 23
         end
         it 'should not add move with coordinate 1,1' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(1, 1)
                  end).to be_falsey
         end
         it 'should not add move with coordinate 0,0' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(0, 0)
                  end).to be_falsey
         end
@@ -147,18 +147,18 @@ context 'Queen possible moves' do
           board.replace_at!(Coordinate.new(1, 2), enemy_figure)
         end
         it 'should add 24 moves' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board).length).to be 24
+          expect(MovementGenerator.generate_from(figure_coordinate, board).length).to be 24
         end
         it 'should add move with coordinate 1,2 and kind :capture' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.kind == :capture &&
                      move.options[:point_end] == Coordinate.new(1, 2)
                  end).to be_truthy
         end
         it 'should not add move with coordinate 0,2' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(0, 2)
                  end).to be_falsey
         end
@@ -168,17 +168,17 @@ context 'Queen possible moves' do
           board.replace_at!(Coordinate.new(1, 2), ally_figure)
         end
         it 'should add 23 moves' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board).length).to be 23
+          expect(MovementGenerator.generate_from(figure_coordinate, board).length).to be 23
         end
         it 'should not add move with coordinate 1,2' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(1, 2)
                  end).to be_falsey
         end
         it 'should not add move with coordinate 0,2' do
-          expect(MovesGenerator.generate_from(figure_coordinate, board)
-                          .any? do |move|
+          expect(MovementGenerator.generate_from(figure_coordinate, board)
+                                  .any? do |move|
                    move.options[:point_end] == Coordinate.new(0, 2)
                  end).to be_falsey
         end

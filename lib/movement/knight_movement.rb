@@ -1,7 +1,7 @@
-require_relative 'figure_possible_moves'
+require_relative 'figure_movement'
 # knight moves generator
-class KnightPossibleMoves < FigurePossibleMoves
-  # @return [Array<Move>]
+class KnightMovement < FigureMovement
+  # @return [Array<Movement>]
   def generate_moves
     get_move_relative([
                         [-1, 2],

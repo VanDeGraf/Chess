@@ -1,7 +1,7 @@
 require_relative 'coordinate'
-require_relative 'moves/move'
+require_relative 'movement/move'
 require_relative 'figure'
-require_relative 'moves/moves_generator'
+require_relative 'movement/movement_generator'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board
@@ -25,7 +25,7 @@ class Board
     ]
     # @type [Array<Figure>]
     @eaten = []
-    # @type [Array<Move>]
+    # @type [Array<Movement>]
     @history = []
     @repetition_hash = {}
   end
@@ -55,7 +55,7 @@ class Board
 
   # Do one of possible chess moves depends of inputted move data on current board and save in history, also update eaten
   # figures
-  # @param action [Move]
+  # @param action [Movement]
   # @return [Void]
   def move!(action, repetition_hash: true)
     return if action.nil?
@@ -90,7 +90,7 @@ class Board
   end
 
   # in clone of current board do move and return that clone
-  # @param action [Move]
+  # @param action [Movement]
   # @return [Board]
   def move(action)
     new_board = clone
@@ -174,9 +174,9 @@ class Board
     return if history.last.nil?
 
     color = history.last.options[:figure].color
-    castling = MovesGenerator.castling(self, color).length
+    castling = MovementGenerator.castling(self, color).length
     en_passant = where_is(:pawn, color).any? do |coordinate|
-      MovesGenerator.generate_from(coordinate, self).any? { |move| move.kind == :en_passant }
+      MovementGenerator.generate_from(coordinate, self).any? { |move| move.kind == :en_passant }
     end
     hash = color == :white ? 'w' : 'b'
     hash += castling.to_s
@@ -206,8 +206,8 @@ class Board
   def shah?(color)
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
-      MovesGenerator.generate_from(coordinate, self, check_shah: false)
-                    .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
+      MovementGenerator.generate_from(coordinate, self, check_shah: false)
+                       .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
     end
   end
 
@@ -217,7 +217,7 @@ class Board
   def mate?(color)
     moves = []
     where_is(nil, color).each do |coordinate|
-      moves += MovesGenerator.generate_from(coordinate, self)
+      moves += MovementGenerator.generate_from(coordinate, self)
     end
     shah?(color) if moves.empty?
     moves.all? { |move_action| move(move_action).shah?(color) }
@@ -232,9 +232,9 @@ class Board
   # @param color [Symbol]
   def stalemate?(color)
     where_is(nil, color).each do |coordinate|
-      return false unless MovesGenerator.generate_from(coordinate, self).empty?
+      return false unless MovementGenerator.generate_from(coordinate, self).empty?
     end
-    return false unless MovesGenerator.castling(self, color).empty?
+    return false unless MovementGenerator.castling(self, color).empty?
 
     !shah?(color)
   end

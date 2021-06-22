@@ -165,7 +165,7 @@ describe Board do
     end
     context 'when action not nil' do
       let(:move) do
-        Move.new(:move, {
+        Movement.new(:move, {
                    figure: board.at(Coordinate.new(0, 1)),
                    point_start: Coordinate.new(0, 1),
                    point_end: Coordinate.new(0, 2)
@@ -206,7 +206,7 @@ describe Board do
     end
     context "when board's fields history and eaten not empty" do
       before do
-        board.history.push(Move.new(:test, { test: 'test' }))
+        board.history.push(Movement.new(:test, { test: 'test' }))
         board.eaten.push(Figure.new(:test, :test))
       end
       it 'should return new instance of same class' do

@@ -1,6 +1,6 @@
-require_relative 'figure_possible_moves'
+require_relative 'figure_movement'
 # rook moves generator
-class RookPossibleMoves < FigurePossibleMoves
+class RookMovement < FigureMovement
   def generate_moves
     get_moves_by_direction([
                              [0, 1],

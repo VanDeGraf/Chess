@@ -1,7 +1,7 @@
-require_relative 'figure_possible_moves'
+require_relative 'figure_movement'
 # king moves generator
-class KingPossibleMoves < FigurePossibleMoves
-  # @return [Array<Move>]
+class KingMovement < FigureMovement
+  # @return [Array<Movement>]
   def generate_moves
     opposite_color = @figure.color == :white ? :black : :white
     enemy_king_coordinate = @board.where_is(:king, opposite_color).first

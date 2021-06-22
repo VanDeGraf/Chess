@@ -49,7 +49,7 @@ describe Game do
   end
   describe '#player_turn' do
     before do
-      allow(View).to receive(:game_turn).and_return(Move.new(:test))
+      allow(View).to receive(:game_turn).and_return(Movement.new(:test))
       allow(board).to receive(:move!)
     end
     it 'should get move from view' do

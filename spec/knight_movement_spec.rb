@@ -1,6 +1,6 @@
 require './lib/board'
 
-describe KnightPossibleMoves do
+describe KnightMovement do
   describe '#generate_moves' do
     let(:board) { Board.new }
     context 'when board is empty' do

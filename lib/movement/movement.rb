@@ -1,4 +1,4 @@
-class Move
+class Movement
   attr_reader :kind, :options
 
   # @param kind [Symbol] type of figure moving
