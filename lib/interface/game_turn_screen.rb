@@ -24,17 +24,19 @@ class GameTurnScreen < Screen
     unless @special_moves.empty?
       puts 'You can do one of this special moves: '
       @special_moves.each_with_index do |move, i|
-        desc = case move.kind
-               when :en_passant
-                 "en passant from #{move.options[:point_start]} to #{move.options[:point_end]}"
-               when :promotion_move
-                 "pawn move to #{move.options[:point_end]} and promotion to #{move.options[:promoted_to].figure}"
-               when :promotion_capture
-                 "pawn capture enemy at #{move.options[:point_end]} and promotion to #{move.options[:promoted_to].figure}"
-               when :castling_short
-                 'castling short'
-               when :castling_long
-                 'castling long'
+        desc = case move
+               when EnPassant
+                 "en passant from #{move.point_start} to #{move.point_end}"
+               when PromotionMove
+                 "pawn move to #{move.point_end} and promotion to #{move.promoted_to.figure}"
+               when PromotionCapture
+                 "pawn capture enemy at #{move.point_end} and promotion to #{move.promoted_to.figure}"
+               when Castling
+                 if move.short
+                   'castling short'
+                 else
+                   'castling long'
+                 end
                end
         puts "#{i + 1}) #{desc}"
       end
@@ -134,8 +136,8 @@ class GameTurnScreen < Screen
   # @return [Movement, nil]
   def handle_input_move(action)
     @default_moves.any? do |move|
-      return move if move.options[:point_start] == action[:point_start] &&
-                     move.options[:point_end] == action[:point_end]
+      return move if move.point_start == action[:point_start] &&
+                     move.point_end == action[:point_end]
     end
     @input.error_message = "Sorry, you can't move here (or from)."
     nil
@@ -158,10 +160,10 @@ class GameTurnScreen < Screen
     @default_moves = []
     @special_moves = MovementGenerator.castling(@game.board, @game.current_player.color)
     possible_moves.flatten.each do |move|
-      if move.kind == :move || move.kind == :capture
-        @default_moves << move
-      else
+      if move.special?
         @special_moves << move
+      else
+        @default_moves << move
       end
     end
   end

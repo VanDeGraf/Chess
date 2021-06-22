@@ -98,7 +98,8 @@ class Game
     return nil unless File.exist?(filename)
 
     YAML.safe_load(File.read(filename), permitted_classes: [
-                     Game, Board, Figure, Player, Movement, Coordinate, Symbol
+                     Game, Board, Figure, Player, Movement, Move, Capture, EnPassant, PromotionCapture, PromotionMove,
+                     Castling, Coordinate, Symbol
                    ], aliases: true)
   end
 end

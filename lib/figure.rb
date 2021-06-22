@@ -10,4 +10,8 @@ class Figure
     # @type [Symbol]
     @color = color
   end
+
+  def to_s
+    @figure.to_s
+  end
 end

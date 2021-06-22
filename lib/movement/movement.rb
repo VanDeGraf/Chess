@@ -1,10 +1,12 @@
 class Movement
-  attr_reader :kind, :options
+  attr_reader :figure
 
-  # @param kind [Symbol] type of figure moving
-  # @param options [Hash] params of moving
-  def initialize(kind, options = {})
-    @kind = kind
-    @options = options
+  # @param figure [Figure]
+  def initialize(figure)
+    @figure = figure
+  end
+
+  def special?
+    false
   end
 end

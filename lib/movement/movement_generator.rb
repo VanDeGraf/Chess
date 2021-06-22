@@ -9,6 +9,7 @@ module MovementGenerator
   # @param coordinate [Coordinate]
   # @param board [Board]
   # @return [Array<Movement>]
+
   def self.generate_from(coordinate, board, check_shah: true)
     figure = board.at(coordinate)
     return [] if figure.nil?
@@ -37,11 +38,12 @@ module MovementGenerator
   # @param board [Board]
   # @param color [Symbol]
   # @return [Array<Movement>]
+
   def self.castling(board, color)
     moves = []
     return moves if board.shah?(color) || board.history.any? do |move|
-      move.options[:figure].figure == :king &&
-      move.options[:figure].color == color
+      move.figure.figure == :king &&
+      move.figure.color == color
     end
 
     king_coordinate = board.where_is(:king, color).first
@@ -63,26 +65,21 @@ module MovementGenerator
       next unless board.there_empty?(king_coordinate.relative(1 * direction, 0)) &&
                   board.there_empty?(king_coordinate.relative(2 * direction, 0)) &&
                   board.there_ally?(color, rook_coordinate) &&
-                  board.history.none? { |move| move.options[:point_start] == rook_coordinate } &&
-                  !board.move(Movement.new(:move, {
-                                             figure: king_figure,
-                                             point_start: king_coordinate,
-                                             point_end: king_coordinate.relative(1 * direction, 0)
-                                           })).shah?(color) &&
-                  !board.move(Movement.new(:move, {
-                                             figure: king_figure,
-                                             point_start: king_coordinate,
-                                             point_end: king_coordinate.relative(2 * direction, 0)
-                                           })).shah?(color)
+                  board.history.none? { |move| move.point_start == rook_coordinate } &&
+                  !board.move(Move.new(king_figure, king_coordinate,
+                                       king_coordinate.relative(1 * direction, 0))).shah?(color) &&
+                  !board.move(Move.new(king_figure, king_coordinate,
+                                       king_coordinate.relative(2 * direction, 0))).shah?(color)
 
-      moves << Movement.new(castling_type, {
-                              figure: king_figure,
-                              support_figure: board.at(rook_coordinate),
-                              king_point_start: king_coordinate,
-                              king_point_end: king_coordinate.relative(2 * direction, 0),
-                              rook_point_start: rook_coordinate,
-                              rook_point_end: king_coordinate.relative(1 * direction, 0)
-                            })
+      moves << Castling.new(
+        king_figure,
+        board.at(rook_coordinate),
+        king_coordinate,
+        king_coordinate.relative(2 * direction, 0),
+        rook_coordinate,
+        king_coordinate.relative(1 * direction, 0),
+        castling_type == :castling_short
+      )
     end
     moves
   end

@@ -10,7 +10,7 @@ module Interface
     rotated_to_player = if board.history.last.nil?
                           :white
                         else
-                          board.history.last.options[:figure].color == :white ? :black : :white
+                          board.history.last.figure.color == :white ? :black : :white
                         end
     point_start = 0
     point_end = 7

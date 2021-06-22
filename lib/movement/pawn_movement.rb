@@ -37,49 +37,33 @@ class PawnMovement < FigureMovement
     end
   end
 
-  # @param move [Movement]
-  # @return [Array<Movement>]
+  # @param move [Move]
+  # @return [Array<PromotionMove>]
   def promotions_after_move(move)
-    return [] unless move.options[:point_end].y.zero? || move.options[:point_end].y == 7
+    return [] unless move.point_end.y.zero? || move.point_end.y == 7
 
-    @promotion_figures.map do |figure_type|
-      Movement.new(:promotion_move, {
-                     figure: move.options[:figure],
-                     point_start: move.options[:point_start],
-                     point_end: move.options[:point_end],
-                     promoted_to: Figure.new(figure_type, move.options[:figure].color)
-                   })
-    end
+    PromotionMove.from_move(move)
   end
 
-  # @return [Array<Movement>]
   def capture
     get_move_relative([[-1, 1 * @move_direction], [1, 1 * @move_direction]]) do |point|
       @board.on_board?(point) && @board.there_enemy?(@figure, point)
     end
   end
 
-  # @param capture_moves [Array<Movement>]
-  # @return [Array<Movement>]
+  # @param capture_moves [Array<Capture>]
+  # @return [Array<PromotionCapture>]
   def promotions_after_capture(capture_moves)
     moves = []
     capture_moves.each do |move|
-      next unless move.options[:point_end].y.zero? || move.options[:point_end].y == 7
+      next unless move.point_end.y.zero? || move.point_end.y == 7
 
-      @promotion_figures.each do |figure_type|
-        moves << Movement.new(:promotion_capture, {
-                                figure: move.options[:figure],
-                                point_start: move.options[:point_start],
-                                point_end: move.options[:point_end],
-                                promoted_to: Figure.new(figure_type, move.options[:figure].color),
-                                captured: move.options[:captured]
-                              })
-      end
+      moves += PromotionCapture.from_capture(move)
     end
     moves
   end
 
-  # @return [Array<Movement>]
+  # @return [Array<EnPassant>]
   def en_passant
     moves = []
     [-1, 1].each do |shift|
@@ -87,18 +71,18 @@ class PawnMovement < FigureMovement
       enemy_point_end = @start_coordinate.relative(shift, 0)
       last_move = @board.history.last
       next unless !last_move.nil? &&
-                  last_move.kind == :move &&
-                  last_move.options[:figure].figure == :pawn &&
-                  last_move.options[:point_end] == enemy_point_end &&
-                  last_move.options[:point_start] == enemy_point_start
+                  last_move.is_a?(Move) &&
+                  last_move.figure.figure == :pawn &&
+                  last_move.point_end == enemy_point_end &&
+                  last_move.point_start == enemy_point_start
 
-      moves << Movement.new(:en_passant, {
-                              figure: @figure,
-                              point_start: @start_coordinate,
-                              point_end: @start_coordinate.relative(shift, @move_direction),
-                              captured: last_move.options[:figure],
-                              captured_at: enemy_point_start
-                            })
+      moves << EnPassant.new(
+        @figure,
+        @start_coordinate,
+        @start_coordinate.relative(shift, @move_direction),
+        last_move.figure,
+        enemy_point_end
+      )
     end
     moves
   end

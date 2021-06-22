@@ -1,5 +1,4 @@
 require_relative 'coordinate'
-require_relative 'movement/move'
 require_relative 'figure'
 require_relative 'movement/movement_generator'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
@@ -55,37 +54,37 @@ class Board
 
   # Do one of possible chess moves depends of inputted move data on current board and save in history, also update eaten
   # figures
-  # @param action [Movement]
+  # @param movement [Movement]
   # @return [Void]
-  def move!(action, repetition_hash: true)
-    return if action.nil?
+  def move!(movement, repetition_hash: true)
+    return if movement.nil?
 
-    case action.kind
-    when :move
-      remove_at!(action.options[:point_start])
-      replace_at!(action.options[:point_end], action.options[:figure])
-    when :capture
-      remove_at!(action.options[:point_start])
-      @eaten << replace_at!(action.options[:point_end], action.options[:figure])
-    when :promotion_move
-      remove_at!(action.options[:point_start])
-      replace_at!(action.options[:point_end], action.options[:promoted_to])
-    when :promotion_capture
-      remove_at!(action.options[:point_start])
-      @eaten << replace_at!(action.options[:point_end], action.options[:promoted_to])
-    when :en_passant
-      @eaten << remove_at!(action.options[:captured_at])
-      remove_at!(action.options[:point_start])
-      replace_at!(action.options[:point_end], action.options[:figure])
-    when :castling_short || :castling_long
-      remove_at!(action.options[:king_point_start])
-      replace_at!(action.options[:king_point_end], action.options[:figure])
-      remove_at!(action.options[:rook_point_start])
-      replace_at!(action.options[:rook_point_end], action.options[:support_figure])
+    case movement
+    when PromotionMove
+      remove_at!(movement.point_start)
+      replace_at!(movement.point_end, movement.promoted_to)
+    when PromotionCapture
+      remove_at!(movement.point_start)
+      @eaten << replace_at!(movement.point_end, movement.promoted_to)
+    when EnPassant
+      @eaten << remove_at!(movement.captured_at)
+      remove_at!(movement.point_start)
+      replace_at!(movement.point_end, movement.figure)
+    when Castling
+      remove_at!(movement.king_point_start)
+      replace_at!(movement.king_point_end, movement.figure)
+      remove_at!(movement.rook_point_start)
+      replace_at!(movement.rook_point_end, movement.rook)
+    when Capture
+      remove_at!(movement.point_start)
+      @eaten << replace_at!(movement.point_end, movement.figure)
+    when Move
+      remove_at!(movement.point_start)
+      replace_at!(movement.point_end, movement.figure)
     else
       return
     end
-    @history << action
+    @history << movement
     repetition_add if repetition_hash
   end
 
@@ -173,10 +172,10 @@ class Board
   def repetition_add
     return if history.last.nil?
 
-    color = history.last.options[:figure].color
+    color = history.last.figure.color
     castling = MovementGenerator.castling(self, color).length
     en_passant = where_is(:pawn, color).any? do |coordinate|
-      MovementGenerator.generate_from(coordinate, self).any? { |move| move.kind == :en_passant }
+      MovementGenerator.generate_from(coordinate, self).any? { |move| move.is_a?(EnPassant) }
     end
     hash = color == :white ? 'w' : 'b'
     hash += castling.to_s
@@ -207,7 +206,7 @@ class Board
     opposite_color = color == :white ? :black : :white
     where_is(nil, opposite_color).any? do |coordinate|
       MovementGenerator.generate_from(coordinate, self, check_shah: false)
-                       .any? { |move| move.kind == :capture && move.options[:captured].figure == :king }
+                       .any? { |move| move.is_a?(Capture) && move.captured.figure == :king }
     end
   end
 
@@ -271,8 +270,8 @@ class Board
     return false if @history.length < turns_count
 
     @history.last(turns_count).none? do |move|
-      %i[capture promotion_capture promotion_move].include?(move.kind) ||
-        (move.kind == :move && move.options[:figure].figure == :pawn)
+      [Capture, PromotionCapture, PromotionMove].include?(move.class) ||
+        (move.is_a?(Move) && move.figure.figure == :pawn)
     end
   end
 
