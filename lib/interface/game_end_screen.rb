@@ -23,7 +23,7 @@ class GameEndScreen < Screen
       command = @input.handle_console_input { |_| draw }
       case command
       when :show_history
-        MessageScreen.show('Sorry, this feature not implemented yet!')
+        TurnHistoryScreen.show(@game)
       when :save_game
         SaveLoadScreen.show_and_read(:save, game: @game)
       when :export_to_PGN

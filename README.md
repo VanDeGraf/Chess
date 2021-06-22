@@ -21,6 +21,7 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition)
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
 * Save\Load game to file
+* Turns history shown and movement
 ### Not implemented features yet:
 * Game states:      
     * Draw:
@@ -28,6 +29,5 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),      
       
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
-* Turns history shown and movement
 * Game with time control
 * Simple Computer AI

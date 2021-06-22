@@ -122,7 +122,7 @@ class GameTurnScreen < Screen
         "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
       )
     when 'history'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
+      TurnHistoryScreen.show(@game)
     when 'help'
       CommandHelpScreen.show
     when 'quit'
