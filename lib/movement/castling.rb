@@ -29,4 +29,8 @@ class Castling < Movement
   def special?
     true
   end
+
+  def to_s
+    "castling #{@short ? 'short' : 'long'}"
+  end
 end

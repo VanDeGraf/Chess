@@ -9,4 +9,8 @@ class Capture < Move
     super(figure, point_start, point_end)
     @captured = captured
   end
+
+  def to_s
+    "move #{@figure} from #{@point_start} and capture #{@captured} at #{@point_end}"
+  end
 end

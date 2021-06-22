@@ -14,6 +14,10 @@ class PromotionMove < Move
     true
   end
 
+  def to_s
+    "#{super}, then promotion to #{@promoted_to}"
+  end
+
   PROMOTION_FIGURES = %i[queen knight rook bishop].freeze
 
   # @param move [Move]

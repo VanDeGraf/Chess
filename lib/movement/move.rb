@@ -13,4 +13,8 @@ class Move < Movement
   def special?
     false
   end
+
+  def to_s
+    "move #{@figure} from #{@point_start} to #{@point_end}"
+  end
 end

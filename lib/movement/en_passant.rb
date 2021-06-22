@@ -14,4 +14,8 @@ class EnPassant < Capture
   def special?
     true
   end
+
+  def to_s
+    "en passant from #{@point_start} to #{@point_end}"
+  end
 end

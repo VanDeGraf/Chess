@@ -15,13 +15,18 @@ class PromotionCapture < Capture
     true
   end
 
+  def to_s
+    "#{super}, then promotion to #{@promoted_to}"
+  end
+
   PROMOTION_FIGURES = %i[queen knight rook bishop].freeze
 
   # @param capture [Capture]
   # @return [Array<PromotionCapture>]
   def self.from_capture(capture)
     PROMOTION_FIGURES.map do |figure_type|
-      new(capture.figure, capture.point_start, capture.point_end, capture.captured, Figure.new(figure_type, capture.figure.color))
+      new(capture.figure, capture.point_start, capture.point_end, capture.captured,
+          Figure.new(figure_type, capture.figure.color))
     end
   end
 end
