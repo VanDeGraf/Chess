@@ -22,6 +22,7 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
 * Save\Load game to file
 * Turns history shown and movement
+* Simple Computer AI
 ### Not implemented features yet:
 * Game states:      
     * Draw:
@@ -30,4 +31,3 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
 * Game with time control
-* Simple Computer AI

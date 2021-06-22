@@ -23,6 +23,9 @@ class Chess
       when :play_human_vs_human
         @game = Game.new
         returned_command = await_play_game_command
+      when :play_human_vs_computer
+        @game = Game.new([nil, Computer.new(:black)])
+        returned_command = await_play_game_command
       when :load_game
         @game = SaveLoadScreen.show_and_read(:load)
         returned_command = await_play_game_command

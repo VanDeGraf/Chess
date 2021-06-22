@@ -23,8 +23,6 @@ class MainMenuScreen < Screen
     loop do
       command = @input.handle_console_input { |_| draw }
       case command
-      when :play_human_vs_computer
-        MessageScreen.show('Sorry, this feature not implemented yet!')
       when :import_from_PGN
         MessageScreen.show('Sorry, this feature not implemented yet!')
       when :cmd_help

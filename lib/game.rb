@@ -1,5 +1,6 @@
 require_relative 'board'
 require_relative 'player'
+require_relative 'computer'
 require_relative 'interface/screen'
 require_relative 'interface/message_screen'
 require_relative 'interface/accept_request_screen'
@@ -26,7 +27,11 @@ class Game
 
   # @return [Symbol, nil]
   def player_turn
-    action = GameTurnScreen.show_and_read(self)
+    action = if current_player.is_a?(Computer)
+               current_player.turn(self)
+             else
+               GameTurnScreen.show_and_read(self)
+             end
     if action.is_a?(Movement)
       @board.move!(action)
       @current_player = @current_player.zero? ? 1 : 0
@@ -100,7 +105,7 @@ class Game
 
     YAML.safe_load(File.read(filename), permitted_classes: [
                      Game, Board, Figure, Player, Movement, Move, Capture, EnPassant, PromotionCapture, PromotionMove,
-                     Castling, Coordinate, Symbol
+                     Castling, Coordinate, Symbol, Computer
                    ], aliases: true)
   end
 end

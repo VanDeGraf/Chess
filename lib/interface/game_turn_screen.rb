@@ -110,17 +110,25 @@ class GameTurnScreen < Screen
     when 'mm'
       :main_menu
     when 'draw'
-      :draw if AcceptRequestScreen.show_and_read(
+      if @game.opposite_player.is_a?(Computer)
+        MessageScreen.show("Computer player can't accept your draw request!")
+      elsif AcceptRequestScreen.show_and_read(
         "#{@game.current_player}, are you sure you want to offer a draw to your opponent?"
       ) && AcceptRequestScreen.show_and_read(
         "#{@game.current_player} wants to end the game in a draw, #{@game.opposite_player} do you agree?"
       )
+        :draw
+      end
     when 'surrender'
-      :surrender if AcceptRequestScreen.show_and_read(
+      if @game.opposite_player.is_a?(Computer)
+        MessageScreen.show("Computer player can't accept your surrender request!")
+      elsif AcceptRequestScreen.show_and_read(
         "#{@game.current_player}, are you sure you want surrender?"
       ) && AcceptRequestScreen.show_and_read(
         "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
       )
+        :surrender
+      end
     when 'history'
       TurnHistoryScreen.show(@game)
     when 'help'
