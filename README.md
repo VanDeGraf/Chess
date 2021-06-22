@@ -21,7 +21,7 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition)
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
 * Save\Load game to file
-* Turns history shown and movement
+* Turns history shown
 * Simple Computer AI
 ### Not implemented features yet:
 * Game states:      
