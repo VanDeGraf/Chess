@@ -1,12 +1,6 @@
 class SaveLoadScreen < Screen
   def initialize(type, game: nil)
-    header = type == :save ? 'Save Current Game' : 'Load Game From File'
-    input_desc = if type == :load
-                   'Enter the name of existed save (without file extension)'
-                 else
-                   'Enter the name of new save file (without file extension)'
-                 end
-    super(header, input: ScreenDataInput.new(input_desc, filter: /^[a-zA-Z \d]+$/))
+    super(HEADERS[type], input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type], filter: /^[a-zA-Z \d_]+$/))
     @type = type
     @game = game
   end
@@ -22,19 +16,24 @@ class SaveLoadScreen < Screen
 
   def handle_input
     loop do
-      save_name = @input.handle_console_input do |save_name|
-        if save_name.nil?
+      filename = @input.handle_console_input do |input|
+        if input.nil?
           draw
           next
         end
-        if @type == :load && !File.exist?(Game.full_name_of_save_file(save_name))
+        if @type == :load && !File.exist?(Game.full_name_of_save_file(input))
           @input.error_message = 'Save file with this name not found!'
           next
         end
-        save_name
+        if @type == :import && !File.exist?(Game.full_name_of_export_file(input))
+          @input.error_message = 'PGN formatted save file with this name not found!'
+          next
+        end
+        input
       end
-      filename = Game.full_name_of_save_file(save_name)
-      if @type == :save
+      case @type
+      when :save
+        filename = Game.full_name_of_save_file(filename)
         if File.exist?(filename) && !AcceptRequestScreen.show_and_read(
           'File with this name already exists, do you want rewrite it?'
         )
@@ -42,12 +41,51 @@ class SaveLoadScreen < Screen
           next
         end
 
-        @game.save(save_name)
+        @game.save(filename)
         MessageScreen.show("Game saved successfully to #{filename}")
         return @game
-      else
-        return Game.load(save_name)
+      when :load
+        filename = Game.full_name_of_save_file(filename)
+        return Game.load(filename)
+      when :export
+        filename = Game.full_name_of_export_file(filename)
+        if File.exist?(filename) && !AcceptRequestScreen.show_and_read(
+          'File with this name already exists, do you want rewrite it?' \
+            '(Export save one game to one file only!)'
+        )
+          draw
+          next
+        end
+
+        @game.export(filename)
+        MessageScreen.show("Game saved successfully as PGN formatted to #{filename}")
+        return @game
+      when :import
+        filename = Game.full_name_of_export_file(filename)
+        saves_strings = Game.split_pgn_to_saves(filename)
+        return Game.import(saves_strings[:saves].first) if saves_strings[:saves].length == 1
+
+        choice = MultipleChoiceRequestScreen.show_and_read(
+          saves_strings[:descriptions],
+          "In this PGN file founded more then one game save!\n" \
+            'Here each: [{Event}] {White Player Name} vs {Black Player Name}'
+        )
+        return Game.import(saves_strings[:saves][choice])
       end
     end
   end
+
+  HEADERS = {
+    save: 'Save Current Game',
+    load: 'Load Game From File',
+    export: 'Export Current Game',
+    import: 'Import Game From File'
+  }.freeze
+
+  INPUT_DESCRIPTIONS = {
+    save: 'Enter the name of new save file (without file extension)',
+    load: 'Enter the name of existed save (without file extension)',
+    export: 'Enter the name of new PGN formatted save file (without file extension)',
+    import: 'Enter the name of existed PGN formatted save file (without file extension)'
+  }.freeze
 end
