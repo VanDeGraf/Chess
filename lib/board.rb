@@ -280,6 +280,38 @@ class Board
     @repetition_hash.any? { |_hash, count| count >= repetition_count }
   end
 
+  # @param moves [Array<Movement>]
+  # @return [Hash<String, Movement>]
+  def algebraic_notation(moves)
+    assoc = {}
+    moves.each do |movement|
+      case movement
+      when Castling
+        assoc[movement.algebraic_notation] = movement
+      when PromotionMove
+        assoc[movement.algebraic_notation] = movement
+      when EnPassant
+        assoc[movement.algebraic_notation] = movement
+      when Move || Capture || PromotionCapture
+        file_required = false
+        rank_required = false
+        moves.each do |move|
+          next if movement == move || move.point_end != movement.point_end
+          next if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+          next unless movement.figure.figure == move.figure.figure
+
+          if move.point_start.x == movement.point_start.x
+            rank_required = true
+          else
+            file_required = true
+          end
+        end
+        assoc[movement.algebraic_notation(file: file_required, rank: rank_required)] = movement
+      end
+    end
+    assoc
+  end
+
   private
 
   def figures_on_board(figures)

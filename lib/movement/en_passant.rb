@@ -18,4 +18,9 @@ class EnPassant < Capture
   def to_s
     "en passant from #{@point_start} to #{@point_end}"
   end
+
+  def algebraic_notation
+    file = @point_start.to_s.split('')[0]
+    "#{file}x#{@point_end}"
+  end
 end

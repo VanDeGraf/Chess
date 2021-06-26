@@ -20,4 +20,17 @@ class Figure
   def to_s
     @figure.to_s
   end
+
+  FIGURE_NOTATION = {
+    pawn: '',
+    bishop: 'B',
+    king: 'K',
+    knight: 'N',
+    rook: 'R',
+    queen: 'Q'
+  }.freeze
+
+  def algebraic_notation
+    FIGURE_NOTATION[@figure]
+  end
 end

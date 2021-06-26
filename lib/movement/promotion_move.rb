@@ -18,6 +18,10 @@ class PromotionMove < Move
     "#{super}, then promotion to #{@promoted_to}"
   end
 
+  def algebraic_notation
+    "#{@point_end}=#{@promoted_to.algebraic_notation}"
+  end
+
   PROMOTION_FIGURES = %i[queen knight rook bishop].freeze
 
   # @param move [Move]

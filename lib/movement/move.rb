@@ -17,4 +17,10 @@ class Move < Movement
   def to_s
     "move #{@figure} from #{@point_start} to #{@point_end}"
   end
+
+  def algebraic_notation(file: false, rank: false)
+    file = file ? @point_start.to_s.split('')[0] : ''
+    rank = rank ? @point_start.to_s.split('')[1] : ''
+    "#{@figure.algebraic_notation}#{file}#{rank}#{@point_end}"
+  end
 end

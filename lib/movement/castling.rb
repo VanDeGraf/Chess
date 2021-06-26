@@ -33,4 +33,8 @@ class Castling < Movement
   def to_s
     "castling #{@short ? 'short' : 'long'}"
   end
+
+  def algebraic_notation
+    @short ? 'O-O' : 'O-O-O'
+  end
 end
