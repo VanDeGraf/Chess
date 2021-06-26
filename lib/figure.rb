@@ -11,6 +11,12 @@ class Figure
     @color = color
   end
 
+  def ==(other)
+    return false if self.class != other.class
+
+    @figure == other.figure && @color == other.color
+  end
+
   def to_s
     @figure.to_s
   end
