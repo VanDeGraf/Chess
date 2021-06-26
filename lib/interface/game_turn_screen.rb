@@ -8,7 +8,13 @@ class GameTurnScreen < Screen
     @game = game
     @default_moves = []
     @special_moves = []
-    calculate_moves
+    @game.board.possible_moves(@game.current_player.color).each do |move|
+      if move.special?
+        @special_moves << move
+      else
+        @default_moves << move
+      end
+    end
   end
 
   def self.show_and_read(game)
@@ -160,20 +166,5 @@ class GameTurnScreen < Screen
 
     @input.error_message = 'Mismatch number of special move choice.'
     nil
-  end
-
-  def calculate_moves
-    possible_moves = @game.board.where_is(nil, @game.current_player.color).map do |coordinate|
-      MovementGenerator.generate_from(coordinate, @game.board)
-    end
-    @default_moves = []
-    @special_moves = MovementGenerator.castling(@game.board, @game.current_player.color)
-    possible_moves.flatten.each do |move|
-      if move.special?
-        @special_moves << move
-      else
-        @default_moves << move
-      end
-    end
   end
 end

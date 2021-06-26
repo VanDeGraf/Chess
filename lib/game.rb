@@ -156,9 +156,7 @@ class Game
         row << "#{(i + 2) / 2}."
       end
 
-      possible_moves = (current_board_state.where_is(nil, current_color).map do |coordinate|
-        MovementGenerator.generate_from(coordinate, current_board_state)
-      end + MovementGenerator.castling(current_board_state, current_color)).flatten
+      possible_moves = current_board_state.possible_moves(current_color)
       player_turn = nil
       assoc = current_board_state.algebraic_notation(possible_moves)
       assoc.each_pair do |string, move|
@@ -226,9 +224,7 @@ class Game
     pgn.scan(re) do |m|
       string_move = "#{m[0]}#{m[1]}#{m[2]}"
 
-      possible_moves = (game.board.where_is(nil, game.current_player.color).map do |coordinate|
-        MovementGenerator.generate_from(coordinate, game.board)
-      end + MovementGenerator.castling(game.board, game.current_player.color)).flatten
+      possible_moves = game.board.possible_moves(game.current_player.color)
 
       move = game.board.algebraic_notation(possible_moves)[string_move]
       game.board.move!(move)

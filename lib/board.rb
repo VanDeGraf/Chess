@@ -312,6 +312,14 @@ class Board
     assoc
   end
 
+  # @param color [Symbol]
+  # @return [Array<Movement>]
+  def possible_moves(color)
+    (where_is(nil, color).map do |coordinate|
+      MovementGenerator.generate_from(coordinate, self)
+    end + MovementGenerator.castling(self, color)).flatten
+  end
+
   private
 
   def figures_on_board(figures)
