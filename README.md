@@ -23,11 +23,11 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
 * Save\Load game to file
 * Turns history shown
 * Simple Computer AI
+* Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
 ### Not implemented features yet:
 * Game states:      
     * Draw:
       Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
       Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),      
       
-* Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
 * Game with time control
