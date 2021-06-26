@@ -106,7 +106,8 @@ class GameTurnScreen < Screen
       SaveLoadScreen.show_and_read(:save, game: @game)
       nil
     when 'export'
-      MessageScreen.show('Sorry, this feature not implemented yet!')
+      SaveLoadScreen.show_and_read(:export, game: @game)
+      nil
     when 'mm'
       :main_menu
     when 'draw'

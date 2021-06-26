@@ -18,13 +18,10 @@ class MainMenuScreen < Screen
     instance.handle_input
   end
 
-
   def handle_input
     loop do
       command = @input.handle_console_input { |_| draw }
       case command
-      when :import_from_PGN
-        MessageScreen.show('Sorry, this feature not implemented yet!')
       when :cmd_help
         CommandHelpScreen.show
       else

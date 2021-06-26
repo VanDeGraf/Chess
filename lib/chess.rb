@@ -29,6 +29,9 @@ class Chess
       when :load_game
         @game = SaveLoadScreen.show_and_read(:load)
         returned_command = await_play_game_command
+      when :import_from_PGN
+        @game = SaveLoadScreen.show_and_read(:import)
+        returned_command = await_play_game_command
       when :quit
         Interface.clear_console
         break

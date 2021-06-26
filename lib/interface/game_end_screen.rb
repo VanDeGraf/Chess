@@ -27,7 +27,7 @@ class GameEndScreen < Screen
       when :save_game
         SaveLoadScreen.show_and_read(:save, game: @game)
       when :export_to_PGN
-        MessageScreen.show('Sorry, this feature not implemented yet!')
+        SaveLoadScreen.show_and_read(:export, game: @game)
       else
         return command
       end
