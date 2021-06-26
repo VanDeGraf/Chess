@@ -95,7 +95,11 @@ class Game
     File.write(filename, YAML.dump(self))
   end
 
+  # @param filename [String]
+  # @return [String]
   def self.full_name_of_save_file(filename)
+    return filename if filename.include?(SAVE_DIR)
+
     "#{SAVE_DIR}/#{filename}.yaml"
   end
 
