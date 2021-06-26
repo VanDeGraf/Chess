@@ -14,7 +14,7 @@ class ScreenMenuInput < ScreenInput
     buffer.string
   end
 
-  # @return [Symbol]
+  # @return [Symbol, Integer, String]
   def handle_console_input
     handled = nil
     re = /^\d+$/
