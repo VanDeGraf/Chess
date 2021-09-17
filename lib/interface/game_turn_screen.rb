@@ -1,9 +1,30 @@
 class GameTurnScreen < Screen
   def initialize(game)
     super('Chess Game Turn', input: ScreenDataInput.new(
-      'Type your figure coordinate and endpoint coordinate [a1 a1], ' \
-                                'special move with s and number [s 1] or command [/help]',
-      filter: %r{^([a-h][1-8] [a-h][1-8])|(/[a-z]+ ?(\S* ?)*)|(s \d+)$}
+      'Enter your move or command',
+      filters: [
+        InputFilter.new(/^(([a-h][1-8]) ([a-h][1-8]))$/, handler: proc { |match_data|
+          {
+            action: :move,
+            point_start: Coordinate.from_s(match_data[2]),
+            point_end: Coordinate.from_s(match_data[3])
+          }
+        }),
+        InputFilter.new(%r{^(/([a-z]+) ?(\S* ?)*)$}, handler: proc { |match_data|
+          {
+            action: :command,
+            command: match_data[2],
+            arguments: match_data[3].split
+          }
+        }),
+        InputFilter.new(/^(s (\d+))$/, handler: proc { |match_data|
+          {
+            action: :special_move,
+            move_index: match_data[2].to_i - 1
+          }
+        })
+      ],
+      default_errmsg: "Can't parse inputted string, enter /help for more info about input."
     ))
     @game = game
     @default_moves = []
@@ -54,13 +75,7 @@ class GameTurnScreen < Screen
   # @return [Symbol, Movement]
   def handle_input
     loop do
-      action = @input.handle_console_input do |input|
-        if input.nil?
-          draw
-          next
-        end
-        input_to_action(input)
-      end
+      action = @input.handle_console_input { |_| draw }
       case action[:action]
       when :command
         command = handle_input_command(action)
@@ -80,30 +95,6 @@ class GameTurnScreen < Screen
   end
 
   private
-
-  def input_to_action(input)
-    case input[0]
-    when '/'
-      input = input[1..input.length - 1].split
-      {
-        action: :command,
-        command: input.shift,
-        arguments: input
-      }
-    when 's'
-      {
-        action: :special_move,
-        move_index: input.split[1].to_i - 1
-      }
-    else
-      input = input.split
-      {
-        action: :move,
-        point_start: Coordinate.from_s(input[0]),
-        point_end: Coordinate.from_s(input[1])
-      }
-    end
-  end
 
   # @return [Symbol, nil]
   def handle_input_command(action)

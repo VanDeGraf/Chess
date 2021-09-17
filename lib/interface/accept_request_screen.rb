@@ -1,7 +1,10 @@
 class AcceptRequestScreen < Screen
   def initialize(request_message)
     super('Request', input: ScreenDataInput.new(
-      'Enter y to accept and n to decline request', filter: /^y|n$/
+      'Enter y to accept and n to decline request',
+      filters: [
+        InputFilter.new(/^y|n$/)
+      ]
     ))
     @request_message = request_message
   end
@@ -16,13 +19,7 @@ class AcceptRequestScreen < Screen
 
   # @return [Boolean]
   def handle_input
-    @input.handle_console_input do |input|
-      if input.nil?
-        draw
-      else
-        input
-      end
-    end == 'y'
+    @input.handle_console_input { |_| draw } == 'y'
   end
 
   def draw

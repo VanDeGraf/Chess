@@ -1,29 +1,29 @@
 require_relative 'menu_action'
+require_relative 'input_filter'
 
 class ScreenDataInput < ScreenInput
   # @param description_message [String]
-  # @param filter [Regexp]
-  def initialize(description_message, filter: nil)
+  # @param filters [Array<InputFilter>]
+  # @param default_errmsg [String]
+  def initialize(description_message, filters: [], default_errmsg: nil)
     super(description_message)
-    # @type [Regexp]
-    @filter = filter
+    # @type [Array<InputFilter>]
+    @filters = filters
+    @default_errmsg = default_errmsg
   end
 
   def handle_console_input
-    handled = nil
     loop do
+      @error_message = nil
       input = gets.chomp
-      if !@filter.nil? && !@filter.match?(input)
-        @error_message = "String must follow this regexp filter: #{@filter}"
-        yield(nil)
-        next
+      @filters.each do |filter|
+        match_result = filter.match(input)
+        return match_result unless match_result.is_a?(Hash) && match_result[:action] == :error
+
+        @error_message = match_result[:error_message] unless match_result[:error_message].nil?
       end
-      if (handled = yield(input)).nil?
-        yield(nil)
-        next
-      end
-      break
+      @error_message = @default_errmsg if @error_message.nil?
+      yield(nil)
     end
-    handled
   end
 end

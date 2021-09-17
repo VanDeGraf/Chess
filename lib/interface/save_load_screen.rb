@@ -1,6 +1,8 @@
 class SaveLoadScreen < Screen
   def initialize(type, game: nil)
-    super(HEADERS[type], input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type], filter: /^[a-zA-Z \d_]+$/))
+    super(HEADERS[type], input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type], filters: [
+                                                      InputFilter.new(/^[a-zA-Z \d_]+$/)
+                                                    ]))
     @type = type
     @game = game
   end
