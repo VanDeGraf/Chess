@@ -20,15 +20,15 @@ describe PawnMovement do
         it 'should add move with coordinate 1,2 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 2)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 2)
                  end).to be_truthy
         end
         it 'should add move with coordinate 1,3 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 3)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 3)
                  end).to be_truthy
         end
         context 'and enemy stay at 2,2' do
@@ -41,8 +41,8 @@ describe PawnMovement do
           it 'should add move with coordinate 2,2 and kind :capture' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :capture &&
-                       move.options[:point_end] == Coordinate.new(2, 2)
+                     move.is_a?(Capture) &&
+                       move.point_end == Coordinate.new(2, 2)
                    end).to be_truthy
           end
         end
@@ -57,8 +57,8 @@ describe PawnMovement do
           it 'should add move with coordinate 1,2 and kind :move' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :move &&
-                       move.options[:point_end] == Coordinate.new(1, 2)
+                     move.is_a?(Move) &&
+                       move.point_end == Coordinate.new(1, 2)
                    end).to be_truthy
           end
         end
@@ -84,15 +84,15 @@ describe PawnMovement do
         it 'should add move with coordinate 1,5 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 5)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 5)
                  end).to be_truthy
         end
         it 'should add move with coordinate 1,4 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 4)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 4)
                  end).to be_truthy
         end
         context 'and enemy stay at 2,5' do
@@ -105,8 +105,8 @@ describe PawnMovement do
           it 'should add move with coordinate 2,5 and kind :capture' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :capture &&
-                       move.options[:point_end] == Coordinate.new(2, 5)
+                     move.is_a?(Capture) &&
+                       move.point_end == Coordinate.new(2, 5)
                    end).to be_truthy
           end
         end
@@ -121,8 +121,8 @@ describe PawnMovement do
           it 'should add move with coordinate 1,5 and kind :move' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :move &&
-                       move.options[:point_end] == Coordinate.new(1, 5)
+                     move.is_a?(Move) &&
+                       move.point_end == Coordinate.new(1, 5)
                    end).to be_truthy
           end
         end

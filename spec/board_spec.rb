@@ -165,11 +165,7 @@ describe Board do
     end
     context 'when action not nil' do
       let(:move) do
-        Movement.new(:move, {
-                   figure: board.at(Coordinate.new(0, 1)),
-                   point_start: Coordinate.new(0, 1),
-                   point_end: Coordinate.new(0, 2)
-                 })
+        Move.new(board.at(Coordinate.new(0, 1)), Coordinate.new(0, 1), Coordinate.new(0, 2))
       end
       it 'should update history' do
         expect { board.move!(move) }.to change { board.history.length }.by(1)
@@ -206,8 +202,9 @@ describe Board do
     end
     context "when board's fields history and eaten not empty" do
       before do
-        board.history.push(Movement.new(:test, { test: 'test' }))
-        board.eaten.push(Figure.new(:test, :test))
+        figure = Figure.new(:test, :test)
+        board.history.push(Move.new(figure, Coordinate.new(0, 0), Coordinate.new(0, 1)))
+        board.eaten.push(figure)
       end
       it 'should return new instance of same class' do
         expect(board.clone).to be_a(Board)

@@ -47,46 +47,4 @@ describe Game do
       end
     end
   end
-  describe '#player_turn' do
-    before do
-      allow(View).to receive(:game_turn).and_return(Movement.new(:test))
-      allow(board).to receive(:move!)
-    end
-    it 'should get move from view' do
-      expect(View).to receive(:game_turn)
-      game.player_turn
-    end
-    it 'should do move on board' do
-      expect(board).to receive(:move!)
-      game.player_turn
-    end
-    it 'should change current player to opposite' do
-      expect { game.player_turn }.to change { game.instance_variable_get(:@current_player) }.from(0).to(1)
-    end
-  end
-  describe '#play_game' do
-    context 'when turns before end is 3' do
-      before do
-        allow(View).to receive(:player_welcome).and_return(player1, player2)
-        allow(game).to receive(:player_turn)
-        allow(game).to receive(:game_end?).and_return(false, false, true)
-        allow(View).to receive(:end_game).and_return(1)
-      end
-      it 'should return view end menu option number' do
-        expect(game.play_game).to be_a(Integer)
-      end
-      it 'should get players names from view' do
-        expect(View).to receive(:player_welcome).twice
-        game.play_game
-      end
-      it 'should check end game 3 times' do
-        expect(game).to receive(:game_end?).exactly(3).times
-        game.play_game
-      end
-      it 'should do 2 turns' do
-        expect(game).to receive(:player_turn).exactly(2).times
-        game.play_game
-      end
-    end
-  end
 end

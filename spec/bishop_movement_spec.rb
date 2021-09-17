@@ -21,44 +21,44 @@ describe BishopMovement do
         end
         it 'should add move with coordinate 1,1 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 1)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 1)
                  end).to be_truthy
         end
         it 'should add move with coordinate 0,0 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(0, 0)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(0, 0)
                  end).to be_truthy
         end
         it 'should add move with coordinate 1,3 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 3)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 3)
                  end).to be_truthy
         end
         it 'should add move with coordinate 0,4 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(0, 4)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(0, 4)
                  end).to be_truthy
         end
         it 'should add move with coordinate 3,3 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(3, 3)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(3, 3)
                  end).to be_truthy
         end
         it 'should add move with coordinate 7,7 and kind :move' do
           expect(generator.generate_moves
-                               .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(7, 7)
+                          .any? do |move|
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(7, 7)
                  end).to be_truthy
         end
         context 'and enemy figure stay at 1,1' do
@@ -70,15 +70,15 @@ describe BishopMovement do
           end
           it 'should add move with coordinate 1,1 and kind :capture' do
             expect(generator.generate_moves
-                                 .any? do |move|
-                     move.kind == :capture &&
-                       move.options[:point_end] == Coordinate.new(1, 1)
+                            .any? do |move|
+                     move.is_a?(Capture) &&
+                       move.point_end == Coordinate.new(1, 1)
                    end).to be_truthy
           end
           it 'should not add move with coordinate 0,0' do
             expect(generator.generate_moves
-                                 .any? do |move|
-                     move.options[:point_end] == Coordinate.new(0, 0)
+                            .any? do |move|
+                     move.point_end == Coordinate.new(0, 0)
                    end).to be_falsey
           end
         end
@@ -91,14 +91,14 @@ describe BishopMovement do
           end
           it 'should not add move with coordinate 1,1' do
             expect(generator.generate_moves
-                                 .any? do |move|
-                     move.options[:point_end] == Coordinate.new(1, 1)
+                            .any? do |move|
+                     move.point_end == Coordinate.new(1, 1)
                    end).to be_falsey
           end
           it 'should not add move with coordinate 0,0' do
             expect(generator.generate_moves
-                                 .any? do |move|
-                     move.options[:point_end] == Coordinate.new(0, 0)
+                            .any? do |move|
+                     move.point_end == Coordinate.new(0, 0)
                    end).to be_falsey
           end
         end

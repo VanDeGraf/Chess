@@ -22,57 +22,57 @@ describe KnightMovement do
         it 'should add move with coordinate 1,4 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 4)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 4)
                  end).to be_truthy
         end
         it 'should add move with coordinate 3,4 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(3, 4)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(3, 4)
                  end).to be_truthy
         end
         it 'should add move with coordinate 4,3 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(4, 3)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(4, 3)
                  end).to be_truthy
         end
         it 'should add move with coordinate 4,1 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(4, 1)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(4, 1)
                  end).to be_truthy
         end
         it 'should add move with coordinate 3,0 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(3, 0)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(3, 0)
                  end).to be_truthy
         end
         it 'should add move with coordinate 1,0 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 0)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 0)
                  end).to be_truthy
         end
         it 'should add move with coordinate 0,1 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(0, 1)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(0, 1)
                  end).to be_truthy
         end
         it 'should add move with coordinate 0,3 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(0, 3)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(0, 3)
                  end).to be_truthy
         end
         context 'and enemy figure stay at 1,4' do
@@ -85,8 +85,8 @@ describe KnightMovement do
           it 'should add move with coordinate 1,4 and kind :capture' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :capture &&
-                       move.options[:point_end] == Coordinate.new(1, 4)
+                     move.is_a?(Capture) &&
+                       move.point_end == Coordinate.new(1, 4)
                    end).to be_truthy
           end
         end
@@ -100,7 +100,7 @@ describe KnightMovement do
           it 'should not add move with coordinate 1,4' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.options[:point_end] == Coordinate.new(1, 4)
+                     move.point_end == Coordinate.new(1, 4)
                    end).to be_falsey
           end
         end

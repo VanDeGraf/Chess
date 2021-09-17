@@ -22,43 +22,43 @@ describe RookMovement do
         it 'should add move with coordinate 1,2 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(1, 2)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(1, 2)
                  end).to be_truthy
         end
         it 'should add move with coordinate 0,2 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(0, 2)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(0, 2)
                  end).to be_truthy
         end
         it 'should add move with coordinate 2,1 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(2, 1)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(2, 1)
                  end).to be_truthy
         end
         it 'should add move with coordinate 2,0 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(2, 0)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(2, 0)
                  end).to be_truthy
         end
         it 'should add move with coordinate 3,2 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(3, 2)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(3, 2)
                  end).to be_truthy
         end
         it 'should add move with coordinate 7,2 and kind :move' do
           expect(generator.generate_moves
                                .any? do |move|
-                   move.kind == :move &&
-                     move.options[:point_end] == Coordinate.new(7, 2)
+                   move.is_a?(Move) &&
+                     move.point_end == Coordinate.new(7, 2)
                  end).to be_truthy
         end
         context 'and enemy figure stay at 1,2' do
@@ -71,14 +71,14 @@ describe RookMovement do
           it 'should add move with coordinate 1,2 and kind :capture' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.kind == :capture &&
-                       move.options[:point_end] == Coordinate.new(1, 2)
+                     move.is_a?(Capture) &&
+                       move.point_end == Coordinate.new(1, 2)
                    end).to be_truthy
           end
           it 'should not add move with coordinate 0,2' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.options[:point_end] == Coordinate.new(0, 2)
+                     move.point_end == Coordinate.new(0, 2)
                    end).to be_falsey
           end
         end
@@ -92,13 +92,13 @@ describe RookMovement do
           it 'should not add move with coordinate 1,2' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.options[:point_end] == Coordinate.new(1, 2)
+                     move.point_end == Coordinate.new(1, 2)
                    end).to be_falsey
           end
           it 'should not add move with coordinate 0,2' do
             expect(generator.generate_moves
                                  .any? do |move|
-                     move.options[:point_end] == Coordinate.new(0, 2)
+                     move.point_end == Coordinate.new(0, 2)
                    end).to be_falsey
           end
         end
