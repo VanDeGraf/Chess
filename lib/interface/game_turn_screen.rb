@@ -22,6 +22,12 @@ class GameTurnScreen < Screen
             action: :special_move,
             move_index: match_data[2].to_i - 1
           }
+        }),
+        InputFilter.new(/^([BNQKR]?[a-h]?[1-8]?x?[a-h][1-8]=?[BNQKR]?)|(O-O)|(O-O-O)$/, handler: proc { |match_data|
+          {
+            action: :notation_move,
+            string: match_data[0]
+          }
         })
       ],
       default_errmsg: "Can't parse inputted string, enter /help for more info about input."
@@ -85,6 +91,9 @@ class GameTurnScreen < Screen
         return move unless move.nil?
       when :move
         move = handle_input_move(action)
+        return move unless move.nil?
+      when :notation_move
+        move = handle_input_notation_move(action)
         return move unless move.nil?
       else
         next
@@ -157,5 +166,16 @@ class GameTurnScreen < Screen
 
     @input.error_message = 'Mismatch number of special move choice.'
     nil
+  end
+
+  # @return [Movement, nil]
+  def handle_input_notation_move(action)
+    move = Board.algebraic_notation(@default_moves + @special_moves)[action[:string]]
+    if move.nil?
+      @input.error_message = "Sorry, you can't move here (or from)."
+      nil
+    else
+      move
+    end
   end
 end
