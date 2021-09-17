@@ -281,8 +281,8 @@ class Board
   end
 
   # @param moves [Array<Movement>]
-  # @return [Hash<String, Movement>]
-  def algebraic_notation(moves)
+  # @return [Hash<Movement>]
+  def self.algebraic_notation(moves)
     assoc = {}
     moves.each do |movement|
       case movement
