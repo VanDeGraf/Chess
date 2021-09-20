@@ -16,7 +16,7 @@ class MultipleChoiceRequestScreen < Screen
   end
 
   def handle_input
-    @input.handle_console_input { |_| draw }
+    @input.handle_console_input(-> { draw })
   end
 
   # @param choices [Array<String>]

@@ -15,10 +15,10 @@ class ScreenInput
     buffer.string
   end
 
-  # @yieldparam input [String, nil]
-  def handle_console_input
-    until (handled = yield(gets.chomp))
-      yield(nil)
+  # @param screen_draw_method [Proc]
+  def handle_console_input(screen_draw_method)
+    until (handled = gets.chomp)
+      screen_draw_method.call
     end
     handled
   end

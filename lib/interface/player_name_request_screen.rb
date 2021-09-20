@@ -19,6 +19,6 @@ class PlayerNameRequestScreen < Screen
 
   # @return [String]
   def handle_input
-    @input.handle_console_input { |_| draw }
+    @input.handle_console_input(-> { draw })
   end
 end

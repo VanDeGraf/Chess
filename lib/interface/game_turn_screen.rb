@@ -81,7 +81,7 @@ class GameTurnScreen < Screen
   # @return [Symbol, Movement]
   def handle_input
     loop do
-      action = @input.handle_console_input { |_| draw }
+      action = @input.handle_console_input(-> { draw })
       case action[:action]
       when :command
         command = handle_input_command(action)

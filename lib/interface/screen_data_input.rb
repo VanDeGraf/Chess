@@ -12,7 +12,8 @@ class ScreenDataInput < ScreenInput
     @default_errmsg = default_errmsg
   end
 
-  def handle_console_input
+  # @param screen_draw_method [Proc]
+  def handle_console_input(screen_draw_method)
     loop do
       @error_message = nil
       input = gets.chomp
@@ -23,7 +24,7 @@ class ScreenDataInput < ScreenInput
         @error_message = match_result[:error_message] unless match_result[:error_message].nil?
       end
       @error_message = @default_errmsg if @error_message.nil?
-      yield(nil)
+      screen_draw_method.call
     end
   end
 end

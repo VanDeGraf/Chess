@@ -27,7 +27,7 @@ class SaveLoadScreen < Screen
 
   def handle_input
     loop do
-      filename = @input.handle_console_input { |_| draw }
+      filename = @input.handle_console_input(-> { draw })
       case @type
       when :save
         filename = Game.full_name_of_save_file(filename)

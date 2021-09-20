@@ -14,20 +14,21 @@ class ScreenMenuInput < ScreenInput
     buffer.string
   end
 
+  # @param screen_draw_method [Proc]
   # @return [Symbol, Integer, String]
-  def handle_console_input
+  def handle_console_input(screen_draw_method)
     handled = nil
     re = /^\d+$/
     loop do
       input = gets.chomp
       unless re.match?(input)
         @error_message = "String must follow this regexp filter: #{re}"
-        yield(nil)
+        screen_draw_method.call
         next
       end
       unless (handled = input.to_i).between?(1, @actions.length)
         @error_message = "Number must be between 1 and #{@actions.length}"
-        yield(nil)
+        screen_draw_method.call
         next
       end
       break

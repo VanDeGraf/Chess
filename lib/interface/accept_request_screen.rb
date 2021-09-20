@@ -19,7 +19,7 @@ class AcceptRequestScreen < Screen
 
   # @return [Boolean]
   def handle_input
-    @input.handle_console_input { |_| draw } == 'y'
+    @input.handle_console_input(-> { draw }) == 'y'
   end
 
   def draw

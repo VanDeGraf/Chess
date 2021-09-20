@@ -20,7 +20,7 @@ class GameEndScreen < Screen
   # @return [Symbol]
   def handle_input
     loop do
-      command = @input.handle_console_input { |_| draw }
+      command = @input.handle_console_input(-> { draw })
       case command
       when :show_history
         TurnHistoryScreen.show(@game)

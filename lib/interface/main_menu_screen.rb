@@ -20,7 +20,7 @@ class MainMenuScreen < Screen
 
   def handle_input
     loop do
-      command = @input.handle_console_input { |_| draw }
+      command = @input.handle_console_input(-> { draw })
       case command
       when :cmd_help
         CommandHelpScreen.show
