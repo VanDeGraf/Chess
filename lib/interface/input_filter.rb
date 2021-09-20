@@ -6,11 +6,22 @@ class InputFilter
     @handler = handler
   end
 
+  # @param error_message [String]
+  # @return [Hash]
+  def self.error_result(error_message = nil)
+    if error_message.nil?
+      { action: :error }
+    else
+      { action: :error,
+        error_message: error_message }
+    end
+  end
+
   # @param str [String]
   # @return [Hash]
   def match(str)
     match_data = @regexp.match(str)
-    return { action: :error } if match_data.nil? || match_data.size.zero?
+    return error_result if match_data.nil? || match_data.size.zero?
 
     if @handler.nil?
       match_data.to_s
