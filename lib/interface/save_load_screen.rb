@@ -1,7 +1,16 @@
 class SaveLoadScreen < Screen
   def initialize(type, game: nil)
     super(HEADERS[type], input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type], filters: [
-                                                      InputFilter.new(/^[a-zA-Z \d_]+$/)
+                                                      InputFilter.new(/^[a-zA-Z \d_]+$/, handler: proc { |match_data|
+                                                        filename = match_data.to_s
+                                                        if @type == :load && !File.exist?(Game.full_name_of_save_file(filename))
+                                                          InputFilter.error_result('Save file with this name not found!')
+                                                        elsif @type == :import && !File.exist?(Game.full_name_of_export_file(filename))
+                                                          InputFilter.error_result('PGN formatted save file with this name not found!')
+                                                        else
+                                                          filename
+                                                        end
+                                                      })
                                                     ]))
     @type = type
     @game = game
@@ -18,21 +27,7 @@ class SaveLoadScreen < Screen
 
   def handle_input
     loop do
-      filename = @input.handle_console_input do |input|
-        if input.nil?
-          draw
-          next
-        end
-        if @type == :load && !File.exist?(Game.full_name_of_save_file(input))
-          @input.error_message = 'Save file with this name not found!'
-          next
-        end
-        if @type == :import && !File.exist?(Game.full_name_of_export_file(input))
-          @input.error_message = 'PGN formatted save file with this name not found!'
-          next
-        end
-        input
-      end
+      filename = @input.handle_console_input { |_| draw }
       case @type
       when :save
         filename = Game.full_name_of_save_file(filename)
