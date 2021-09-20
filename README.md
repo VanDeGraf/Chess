@@ -1,10 +1,8 @@
 # Chess
-
-## Command line Chess game. 
 Game rules: [Wikipedia](https://en.wikipedia.org/wiki/Chess)  
 This project is part of [The Odin Project Curriculum](https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby-programming/lessons/ruby-final-project)
 
-### Implemented features:
+### Implemented features
 * Figures movement, include special: 
   [castling](https://en.wikipedia.org/wiki/Castling), 
   [en passant](https://en.wikipedia.org/wiki/En_passant), 
@@ -20,14 +18,26 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
       [Seventy-five move](https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule),
       [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition)
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
-* Save\Load game to file
+* Save\Load game to file (save file every turn in 'autosave')
 * Turns history shown
 * Simple Computer AI
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
-### Not implemented features yet:
+### Not implemented features yet
 * Game states:      
     * Draw:
       Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
-      Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule),      
-      
+      Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule), 
+    * Check:
+    Show warning message about that      
 * Game with time control
+
+### Installation
+* Clone the repo locally.
+* `cd` into it.
+* Run `bundle install`.
+
+### Playing
+* From the repo's root directory, run `bundle exec ruby lib/chess.rb`
+
+### Running the tests
+* To run the entire test suite, run `rspec`

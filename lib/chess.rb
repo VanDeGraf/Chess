@@ -56,4 +56,4 @@ class Chess
   end
 end
 
-# Chess.new.start
+Chess.new.start
