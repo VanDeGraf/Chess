@@ -158,7 +158,7 @@ class Game
 
       possible_moves = current_board_state.possible_moves(current_color)
       player_turn = nil
-      assoc = Board.algebraic_notation(possible_moves)
+      assoc = MovementGenerator.algebraic_notation(possible_moves)
       assoc.each_pair do |string, move|
         next if move != movement
 
@@ -226,7 +226,7 @@ class Game
 
       possible_moves = game.board.possible_moves(game.current_player.color)
 
-      move = Board.algebraic_notation(possible_moves)[string_move]
+      move = MovementGenerator.algebraic_notation(possible_moves)[string_move]
       game.board.move!(move)
 
       game.instance_variable_set(:@current_player, game.instance_variable_get(:@current_player).zero? ? 1 : 0)

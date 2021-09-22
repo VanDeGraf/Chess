@@ -170,7 +170,7 @@ class GameTurnScreen < Screen
 
   # @return [Movement, nil]
   def handle_input_notation_move(action)
-    move = Board.algebraic_notation(@default_moves + @special_moves)[action[:string]]
+    move = MovementGenerator.algebraic_notation(@default_moves + @special_moves)[action[:string]]
     if move.nil?
       @input.error_message = "Sorry, you can't move here (or from)."
       nil

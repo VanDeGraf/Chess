@@ -83,4 +83,37 @@ module MovementGenerator
     end
     moves
   end
+
+  # @param moves [Array<Movement>]
+  # @return [Hash<Movement>]
+  def self.algebraic_notation(moves)
+    assoc = {}
+    moves.each do |movement|
+      if movement.is_a?(Castling) || movement.is_a?(PromotionMove) || movement.is_a?(EnPassant)
+        assoc[movement.algebraic_notation] = movement
+      else
+        file_required, rank_required = rank_file_required?(moves, movement)
+        assoc[movement.algebraic_notation(file: file_required, rank: rank_required)] = movement
+      end
+    end
+    assoc
+  end
+
+  def self.rank_file_required?(moves, movement)
+    file_required = false
+    rank_required = false
+    moves.each do |move|
+      next if movement == move || move.point_end != movement.point_end
+      next if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+      next unless movement.figure.figure == move.figure.figure
+
+      if move.point_start.x == movement.point_start.x
+        rank_required = true
+      else
+        file_required = true
+      end
+      break
+    end
+    [file_required, rank_required]
+  end
 end
