@@ -14,6 +14,11 @@ class Movement
   # @return [Figure, nil] return captured figure, if it's happened
   def perform_movement(board) end
 
+  # @param file [Boolean]
+  # @param rank [Boolean]
+  # @return [String]
+  def algebraic_notation(file: false, rank: false) end
+
   def ==(other)
     return false if self.class != other.class
 
