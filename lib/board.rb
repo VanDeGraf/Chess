@@ -146,15 +146,26 @@ class Board
   # @return [Array<Coordinate>] empty array if not found
   def where_is(figure_type = nil, figure_color = nil)
     positions = []
-    @board.each_index do |y|
-      @board[y].each_index do |x|
-        next unless (figure = @board[y][x])
-
-        positions << Coordinate.new(x, y) if (figure_type.nil? || figure.figure == figure_type) &&
-                                             (figure_color.nil? || figure.color == figure_color)
-      end
+    each_figure(skip_empty: true) do |figure, x, y|
+      positions << Coordinate.new(x, y) if (figure_type.nil? || figure.figure == figure_type) &&
+                                           (figure_color.nil? || figure.color == figure_color)
     end
     positions
+  end
+
+  # @param skip_empty [Boolean] skip cells without figure
+  # @yieldparam figure [Figure, nil]
+  # @yieldparam x [Integer]
+  # @yieldparam y [Integer]
+  def each_figure(skip_empty: false)
+    @board.each_index do |y|
+      @board[y].each_index do |x|
+        figure = @board[y][x]
+        next if skip_empty && figure.nil?
+
+        yield(figure, x, y)
+      end
+    end
   end
 
   # @return [Board]
@@ -172,30 +183,19 @@ class Board
   def repetition_add
     return if history.last.nil?
 
-    color = history.last.figure.color
-    castling = MovementGenerator.castling(self, color).length
-    en_passant = where_is(:pawn, color).any? do |coordinate|
-      MovementGenerator.generate_from(coordinate, self).any? { |move| move.is_a?(EnPassant) }
-    end
-    hash = color == :white ? 'w' : 'b'
-    hash += castling.to_s
-    hash += en_passant ? '1' : '0'
-    @board.each do |row|
-      row.each do |figure|
-        hash += if figure.nil?
-                  '-'
-                elsif figure.figure == :knight
-                  'n'
-                else
-                  figure.figure[0]
-                end
-      end
-    end
-
+    hash = repetition_hash_summary(history.last.figure.color)
     if @repetition_hash.key?(hash)
       @repetition_hash[hash] += 1
     else
       @repetition_hash[hash] = 1
+    end
+  end
+
+  # @param color [Symbol]
+  # @return [Boolean]
+  def en_passant?(color)
+    where_is(:pawn, color).any? do |coordinate|
+      MovementGenerator.generate_from(coordinate, self).any? { |move| move.is_a?(EnPassant) }
     end
   end
 
@@ -285,27 +285,10 @@ class Board
   def self.algebraic_notation(moves)
     assoc = {}
     moves.each do |movement|
-      case movement
-      when Castling
+      if movement.is_a?(Castling) || movement.is_a?(PromotionMove) || movement.is_a?(EnPassant)
         assoc[movement.algebraic_notation] = movement
-      when PromotionMove
-        assoc[movement.algebraic_notation] = movement
-      when EnPassant
-        assoc[movement.algebraic_notation] = movement
-      when Move || Capture || PromotionCapture
-        file_required = false
-        rank_required = false
-        moves.each do |move|
-          next if movement == move || move.point_end != movement.point_end
-          next if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
-          next unless movement.figure.figure == move.figure.figure
-
-          if move.point_start.x == movement.point_start.x
-            rank_required = true
-          else
-            file_required = true
-          end
-        end
+      else
+        file_required, rank_required = rank_file_required?(moves, movement)
         assoc[movement.algebraic_notation(file: file_required, rank: rank_required)] = movement
       end
     end
@@ -323,17 +306,61 @@ class Board
   private
 
   def figures_on_board(figures)
-    figures_by_color = { white: {}, black: {} }
-    @board.flatten.each do |figure|
-      next if figure.nil?
+    figures_by_color = all_figures_by_color
+    (figures[0].eql?(figures_by_color[:white]) && figures[1].eql?(figures_by_color[:black])) ||
+      (figures[1].eql?(figures_by_color[:white]) && figures[0].eql?(figures_by_color[:black]))
+  end
 
+  def all_figures_by_color
+    figures_by_color = { white: {}, black: {} }
+    each_figure(skip_empty: true) do |figure|
       if figures_by_color[figure.color].key?(figure.figure)
         figures_by_color[figure.color][figure.figure] += 1
       else
         figures_by_color[figure.color][figure.figure] = 1
       end
     end
-    (figures[0].eql?(figures_by_color[:white]) && figures[1].eql?(figures_by_color[:black])) ||
-      (figures[1].eql?(figures_by_color[:white]) && figures[0].eql?(figures_by_color[:black]))
+    figures_by_color
+  end
+
+  # @param color [Symbol]
+  def repetition_hash_summary(color)
+    hash = color == :white ? 'w' : 'b'
+    hash += MovementGenerator.castling(self, color).length.to_s
+    hash += en_passant?(color) ? '1' : '0'
+    each_figure do |figure|
+      hash += figure_hash(figure)
+    end
+    hash
+  end
+
+  # @param figure [Figure]
+  # @return [String]
+  def figure_hash(figure)
+    if figure.nil?
+      '-'
+    elsif figure.figure == :knight
+      'n'
+    else
+      figure.figure[0]
+    end
+  end
+
+  def rank_file_required?(moves, movement)
+    file_required = false
+    rank_required = false
+    moves.each do |move|
+      next if movement == move || move.point_end != movement.point_end
+      next if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+      next unless movement.figure.figure == move.figure.figure
+
+      if move.point_start.x == movement.point_start.x
+        rank_required = true
+      else
+        file_required = true
+      end
+      break
+    end
+    [file_required, rank_required]
   end
 end
