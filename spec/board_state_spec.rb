@@ -85,7 +85,7 @@ describe Board do
       end
     end
     context 'when example deadmate with kings, bishops, and pawns on board' do
-      it 'should return true' do
+      xit 'should return true' do
         board.instance_variable_set(:@board, [
                                       Array.new(8, nil),
                                       Array.new(8, nil),
