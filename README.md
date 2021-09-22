@@ -37,7 +37,7 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
 * Run `bundle install`.
 
 ### Playing
-* From the repo's root directory, run `bundle exec ruby lib/chess.rb`
+* From the repo's root directory, run `bundle exec ruby application.rb`
 
 ### Running the tests
 * To run the entire test suite, run `rspec`

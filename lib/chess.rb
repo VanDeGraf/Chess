@@ -55,5 +55,3 @@ class Chess
     GameEndScreen.show_and_read(@game)
   end
 end
-
-Chess.new.start
