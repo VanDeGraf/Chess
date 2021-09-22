@@ -37,4 +37,12 @@ class Castling < Movement
   def algebraic_notation
     @short ? 'O-O' : 'O-O-O'
   end
+
+  def perform_movement(board)
+    board.remove_at!(king_point_start)
+    board.replace_at!(king_point_end, figure)
+    board.remove_at!(rook_point_start)
+    board.replace_at!(rook_point_end, rook)
+    nil
+  end
 end

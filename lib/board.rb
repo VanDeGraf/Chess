@@ -59,31 +59,8 @@ class Board
   def move!(movement, repetition_hash: true)
     return if movement.nil?
 
-    case movement
-    when PromotionMove
-      remove_at!(movement.point_start)
-      replace_at!(movement.point_end, movement.promoted_to)
-    when PromotionCapture
-      remove_at!(movement.point_start)
-      @eaten << replace_at!(movement.point_end, movement.promoted_to)
-    when EnPassant
-      @eaten << remove_at!(movement.captured_at)
-      remove_at!(movement.point_start)
-      replace_at!(movement.point_end, movement.figure)
-    when Castling
-      remove_at!(movement.king_point_start)
-      replace_at!(movement.king_point_end, movement.figure)
-      remove_at!(movement.rook_point_start)
-      replace_at!(movement.rook_point_end, movement.rook)
-    when Capture
-      remove_at!(movement.point_start)
-      @eaten << replace_at!(movement.point_end, movement.figure)
-    when Move
-      remove_at!(movement.point_start)
-      replace_at!(movement.point_end, movement.figure)
-    else
-      return
-    end
+    captured = movement.perform_movement(self)
+    @eaten << captured unless captured.nil?
     @history << movement
     repetition_add if repetition_hash
   end

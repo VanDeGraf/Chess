@@ -10,6 +10,10 @@ class Movement
     false
   end
 
+  # @param board [Board]
+  # @return [Figure, nil] return captured figure, if it's happened
+  def perform_movement(board) end
+
   def ==(other)
     return false if self.class != other.class
 

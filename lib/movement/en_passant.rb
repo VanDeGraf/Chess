@@ -23,4 +23,9 @@ class EnPassant < Capture
     file = @point_start.to_s.split('')[0]
     "#{file}x#{@point_end}"
   end
+
+  def perform_movement(board)
+    super
+    board.remove_at!(captured_at)
+  end
 end

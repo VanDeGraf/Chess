@@ -25,6 +25,11 @@ class PromotionCapture < Capture
     "#{@figure.algebraic_notation}#{file}#{rank}x#{@point_end}=#{@promoted_to.algebraic_notation}"
   end
 
+  def perform_movement(board)
+    board.remove_at!(point_start)
+    board.replace_at!(point_end, promoted_to)
+  end
+
   PROMOTION_FIGURES = %i[queen knight rook bishop].freeze
 
   # @param capture [Capture]

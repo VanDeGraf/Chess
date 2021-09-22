@@ -23,4 +23,9 @@ class Move < Movement
     rank = rank ? @point_start.to_s.split('')[1] : ''
     "#{@figure.algebraic_notation}#{file}#{rank}#{@point_end}"
   end
+
+  def perform_movement(board)
+    board.remove_at!(point_start)
+    board.replace_at!(point_end, figure)
+  end
 end
