@@ -21,7 +21,7 @@ class InputFilter
   # @return [Hash]
   def match(str)
     match_data = @regexp.match(str)
-    return error_result if match_data.nil? || match_data.size.zero?
+    return InputFilter.error_result if match_data.nil? || match_data.size.zero?
 
     if @handler.nil?
       match_data.to_s
