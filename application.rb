@@ -1,2 +1,2 @@
-require_relative '/lib/chess'
+require_relative './lib/chess'
 Chess.new.start
