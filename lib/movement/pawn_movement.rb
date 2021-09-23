@@ -17,9 +17,7 @@ class PawnMovement < FigureMovement
       moves << twice_toward_move unless twice_toward_move.nil?
     end
     captured = capture
-    moves += captured
-    moves += promotions_after_capture(captured)
-    moves + en_passant
+    moves + captured + promotions_after_capture(captured) + en_passant
   end
 
   private
