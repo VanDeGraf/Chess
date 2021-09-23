@@ -1,6 +1,7 @@
 require_relative 'coordinate'
 require_relative 'figure'
 require_relative 'movement/movement_generator'
+require_relative 'repetition_log'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board
@@ -26,7 +27,7 @@ class Board
     @eaten = []
     # @type [Array<Movement>]
     @history = []
-    @repetition_hash = {}
+    @repetition_log = RepetitionLog.new
   end
 
   # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
@@ -62,7 +63,7 @@ class Board
     captured = movement.perform_movement(self)
     @eaten << captured unless captured.nil?
     @history << movement
-    repetition_add if repetition_hash
+    @repetition_log.add!(movement, self) if repetition_hash
   end
 
   # in clone of current board do move and return that clone
@@ -154,18 +155,8 @@ class Board
     new_board.instance_variable_set(:@board, array)
     new_board.instance_variable_set(:@history, @history.clone)
     new_board.instance_variable_set(:@eaten, @eaten.clone)
+    new_board.instance_variable_set(:@repetition_log, @repetition_log.clone)
     new_board
-  end
-
-  def repetition_add
-    return if history.last.nil?
-
-    hash = repetition_hash_summary(history.last.figure.color)
-    if @repetition_hash.key?(hash)
-      @repetition_hash[hash] += 1
-    else
-      @repetition_hash[hash] = 1
-    end
   end
 
   # @param color [Symbol]
@@ -201,7 +192,7 @@ class Board
 
   # @param color [Symbol]
   def draw?(color)
-    stalemate?(color) || deadmate? || n_move?(75) || n_fold_repetition?(5)
+    stalemate?(color) || deadmate? || n_move?(75) || @repetition_log.n_fold_repetition?(5)
   end
 
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
@@ -252,11 +243,6 @@ class Board
     end
   end
 
-  # @param repetition_count [Integer]
-  def n_fold_repetition?(repetition_count)
-    @repetition_hash.any? { |_hash, count| count >= repetition_count }
-  end
-
   # @param color [Symbol]
   # @return [Array<Movement>]
   def possible_moves(color)
@@ -283,28 +269,5 @@ class Board
       end
     end
     figures_by_color
-  end
-
-  # @param color [Symbol]
-  def repetition_hash_summary(color)
-    hash = color == :white ? 'w' : 'b'
-    hash += MovementGenerator.castling(self, color).length.to_s
-    hash += en_passant?(color) ? '1' : '0'
-    each_figure do |figure|
-      hash += figure_hash(figure)
-    end
-    hash
-  end
-
-  # @param figure [Figure]
-  # @return [String]
-  def figure_hash(figure)
-    if figure.nil?
-      '-'
-    elsif figure.figure == :knight
-      'n'
-    else
-      figure.figure[0]
-    end
   end
 end
