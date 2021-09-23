@@ -2,10 +2,11 @@ require_relative 'coordinate'
 require_relative 'figure'
 require_relative 'movement/movement_generator'
 require_relative 'repetition_log'
+require_relative 'board_state'
 # Chess board, contains figures and methods for move it, checking position status for situations like shah(check),
 # mate(checkmate), draw and other
 class Board
-  attr_reader :history, :eaten
+  attr_reader :history, :eaten, :repetition_log, :state
 
   def initialize
     # @type [Array<Array<Figure,nil>>]
@@ -28,6 +29,7 @@ class Board
     # @type [Array<Movement>]
     @history = []
     @repetition_log = RepetitionLog.new
+    @state = BoardState.new(self)
   end
 
   # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
@@ -64,6 +66,7 @@ class Board
     @eaten << captured unless captured.nil?
     @history << movement
     @repetition_log.add!(movement, self) if repetition_hash
+    @state.clear!
   end
 
   # in clone of current board do move and return that clone
@@ -156,91 +159,8 @@ class Board
     new_board.instance_variable_set(:@history, @history.clone)
     new_board.instance_variable_set(:@eaten, @eaten.clone)
     new_board.instance_variable_set(:@repetition_log, @repetition_log.clone)
+    new_board.instance_variable_set(:@state, @state.clone(new_board))
     new_board
-  end
-
-  # @param color [Symbol]
-  # @return [Boolean]
-  def en_passant?(color)
-    where_is(:pawn, color).any? do |coordinate|
-      MovementGenerator.generate_from(coordinate, self).any? { |move| move.is_a?(EnPassant) }
-    end
-  end
-
-  # check inputted color is in shah(check) state, i.e. any enemy figure has possible move at next turn to beat king with
-  # inputted color
-  # @param color [Symbol]
-  def shah?(color)
-    opposite_color = color == :white ? :black : :white
-    where_is(nil, opposite_color).any? do |coordinate|
-      MovementGenerator.generate_from(coordinate, self, check_shah: false)
-                       .any? { |move| move.is_a?(Capture) && move.captured.figure == :king }
-    end
-  end
-
-  # check inputted color is in mate(checkmate) state, i.e. after all possible moves inputted color is in shah state, or
-  # now is in shah state and no possible moves
-  # @param color [Symbol]
-  def mate?(color)
-    moves = []
-    where_is(nil, color).each do |coordinate|
-      moves += MovementGenerator.generate_from(coordinate, self)
-    end
-    shah?(color) if moves.empty?
-    moves.all? { |move_action| move(move_action).shah?(color) }
-  end
-
-  # @param color [Symbol]
-  def draw?(color)
-    stalemate?(color) || deadmate? || n_move?(75) || @repetition_log.n_fold_repetition?(5)
-  end
-
-  # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
-  # @param color [Symbol]
-  def stalemate?(color)
-    where_is(nil, color).each do |coordinate|
-      return false unless MovementGenerator.generate_from(coordinate, self).empty?
-    end
-    return false unless MovementGenerator.castling(self, color).empty?
-
-    !shah?(color)
-  end
-
-  def deadmate?
-    return true if figures_on_board([
-                                      { king: 1 },
-                                      { king: 1 }
-                                    ])
-    return true if figures_on_board([
-                                      { king: 1 },
-                                      { king: 1, bishop: 1 }
-                                    ])
-    return true if figures_on_board([
-                                      { king: 1 },
-                                      { king: 1, knight: 1 }
-                                    ])
-
-    if figures_on_board([
-                          { king: 1, bishop: 1 },
-                          { king: 1, bishop: 1 }
-                        ])
-      bishops_coordinate = where_is(:bishop, nil)
-      bc1sum = bishops_coordinate[0].x + bishops_coordinate[0].y
-      bc2sum = bishops_coordinate[1].x + bishops_coordinate[1].y
-      return true if (bc1sum.even? && bc2sum.even?) || (bc1sum.odd? && bc2sum.odd?)
-    end
-    false
-  end
-
-  # generic check Fifty-move and Seventy-five-move draw rules
-  # @param turns_count [Integer]
-  def n_move?(turns_count)
-    return false if @history.length < turns_count
-
-    @history.last(turns_count).none? do |move|
-      [Capture, PromotionCapture, PromotionMove].include?(move.class) ||
-        (move.is_a?(Move) && move.figure.figure == :pawn)
-    end
   end
 
   # @param color [Symbol]
@@ -249,25 +169,5 @@ class Board
     (where_is(nil, color).map do |coordinate|
       MovementGenerator.generate_from(coordinate, self)
     end + MovementGenerator.castling(self, color)).flatten
-  end
-
-  private
-
-  def figures_on_board(figures)
-    figures_by_color = all_figures_by_color
-    (figures[0].eql?(figures_by_color[:white]) && figures[1].eql?(figures_by_color[:black])) ||
-      (figures[1].eql?(figures_by_color[:white]) && figures[0].eql?(figures_by_color[:black]))
-  end
-
-  def all_figures_by_color
-    figures_by_color = { white: {}, black: {} }
-    each_figure(skip_empty: true) do |figure|
-      if figures_by_color[figure.color].key?(figure.figure)
-        figures_by_color[figure.color][figure.figure] += 1
-      else
-        figures_by_color[figure.color][figure.figure] = 1
-      end
-    end
-    figures_by_color
   end
 end

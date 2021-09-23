@@ -8,8 +8,8 @@ describe Game do
   describe '#game_end?' do
     context 'when board in mate state and current player == 0' do
       before do
-        allow(board).to receive(:mate?).and_return(true)
-        allow(board).to receive(:draw?).and_return(false)
+        allow(board.state).to receive(:mate?).and_return(true)
+        allow(board.state).to receive(:draw?).and_return(false)
         game.instance_variable_set(:@players, [player1, player2])
       end
       it 'should return true' do
@@ -21,8 +21,8 @@ describe Game do
     end
     context 'when board in draw state' do
       before do
-        allow(board).to receive(:mate?).and_return(false)
-        allow(board).to receive(:draw?).and_return(true)
+        allow(board.state).to receive(:mate?).and_return(false)
+        allow(board.state).to receive(:draw?).and_return(true)
         game.instance_variable_set(:@players, [player1, player2])
         game.instance_variable_set(:@winner, player1)
       end
@@ -35,8 +35,8 @@ describe Game do
     end
     context 'when board not in draw or mate state' do
       before do
-        allow(board).to receive(:mate?).and_return(false)
-        allow(board).to receive(:draw?).and_return(false)
+        allow(board.state).to receive(:mate?).and_return(false)
+        allow(board.state).to receive(:draw?).and_return(false)
         game.instance_variable_set(:@players, [player1, player2])
       end
       it 'should return false' do

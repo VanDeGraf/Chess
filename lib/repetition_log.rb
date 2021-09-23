@@ -39,7 +39,7 @@ class RepetitionLog
   def repetition_hash_summary(color, board)
     hash = color == :white ? 'w' : 'b'
     hash += MovementGenerator.castling(board, color).length.to_s
-    hash += board.en_passant?(color) ? '1' : '0'
+    hash += board.state.en_passant?(color) ? '1' : '0'
     board.each_figure do |figure|
       hash += figure_hash(figure)
     end

@@ -29,7 +29,7 @@ module MovementGenerator
               BishopMovement.new(figure, coordinate, board).generate_moves +
               RookMovement.new(figure, coordinate, board).generate_moves
             end
-    moves = moves.map { |move| board.move(move).shah?(figure.color) ? nil : move }.compact if check_shah
+    moves = moves.map { |move| board.move(move).state.shah?(figure.color) ? nil : move }.compact if check_shah
     moves
   end
 
@@ -41,7 +41,7 @@ module MovementGenerator
 
   def self.castling(board, color)
     moves = []
-    return moves if board.shah?(color) || board.history.any? do |move|
+    return moves if board.state.shah?(color) || board.history.any? do |move|
       move.figure.figure == :king &&
       move.figure.color == color
     end
@@ -67,9 +67,9 @@ module MovementGenerator
                   board.there_ally?(color, rook_coordinate) &&
                   board.history.none? { |move| move.point_start == rook_coordinate } &&
                   !board.move(Move.new(king_figure, king_coordinate,
-                                       king_coordinate.relative(1 * direction, 0))).shah?(color) &&
+                                       king_coordinate.relative(1 * direction, 0))).state.shah?(color) &&
                   !board.move(Move.new(king_figure, king_coordinate,
-                                       king_coordinate.relative(2 * direction, 0))).shah?(color)
+                                       king_coordinate.relative(2 * direction, 0))).state.shah?(color)
 
       moves << Castling.new(
         king_figure,

@@ -66,10 +66,10 @@ class Game
   end
 
   def game_end?
-    if @board.mate?(current_player.color)
+    if @board.state.mate?(current_player.color)
       @winner = @players[@current_player.zero? ? 1 : 0]
       true
-    elsif @board.draw?(current_player.color)
+    elsif @board.state.draw?(current_player.color)
       @winner = nil
       true
     else
@@ -119,7 +119,7 @@ class Game
 
     YAML.safe_load(File.read(filename), permitted_classes: [
                      Game, Board, Figure, Player, Movement, Move, Capture, EnPassant, PromotionCapture, PromotionMove,
-                     Castling, Coordinate, Symbol, Computer
+                     Castling, Coordinate, Symbol, Computer, RepetitionLog, BoardState
                    ], aliases: true)
   end
 
@@ -169,8 +169,8 @@ class Game
       current_board_state = current_board_state.move(movement)
       current_color = current_color == :white ? :black : :white
 
-      postfix = current_board_state.mate?(current_color) ? '#' : ''
-      postfix = current_board_state.shah?(current_color) ? '+' : '' if postfix.length.zero?
+      postfix = current_board_state.state.mate?(current_color) ? '#' : ''
+      postfix = current_board_state.state.shah?(current_color) ? '+' : '' if postfix.length.zero?
 
       row << "#{player_turn}#{postfix} "
     end
