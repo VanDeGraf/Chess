@@ -13,30 +13,27 @@ class Chess
   def await_main_menu_command
     returned_command = nil
     loop do
-      command = if returned_command.nil?
-                  MainMenuScreen.show_and_read
-                else
-                  returned_command
-                end
-      returned_command = nil
-      case command
-      when :play_human_vs_human
-        @game = Game.new
-        returned_command = await_play_game_command
-      when :play_human_vs_computer
-        @game = Game.new([nil, Computer.new(:black)])
-        returned_command = await_play_game_command
-      when :load_game
-        @game = SaveLoadScreen.show_and_read(:load)
-        returned_command = await_play_game_command
-      when :import_from_PGN
-        @game = SaveLoadScreen.show_and_read(:import)
-        returned_command = await_play_game_command
-      when :quit
+      command = returned_command.nil? ? MainMenuScreen.show_and_read : returned_command
+      if command.eql?(:quit)
         Interface.clear_console
         break
       end
+      perform_command_to_game(command)
+      returned_command = await_play_game_command
     end
+  end
+
+  def perform_command_to_game(command)
+    @game = case command
+            when :play_human_vs_human
+              Game.new
+            when :play_human_vs_computer
+              Game.new([nil, Computer.new(:black)])
+            when :load_game
+              SaveLoadScreen.show_and_read(:load)
+            when :import_from_PGN
+              SaveLoadScreen.show_and_read(:import)
+            end
   end
 
   # @return [Symbol, nil]
