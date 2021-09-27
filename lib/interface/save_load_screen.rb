@@ -1,17 +1,19 @@
 class SaveLoadScreen < Screen
   def initialize(type, game: nil)
-    super(HEADERS[type], input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type], filters: [
-                                                      InputFilter.new(/^[a-zA-Z \d_]+$/, handler: proc { |match_data|
-                                                        filename = match_data.to_s
-                                                        if @type == :load && !File.exist?(Game.full_name_of_save_file(filename))
-                                                          InputFilter.error_result('Save file with this name not found!')
-                                                        elsif @type == :import && !File.exist?(Game.full_name_of_export_file(filename))
-                                                          InputFilter.error_result('PGN formatted save file with this name not found!')
-                                                        else
-                                                          filename
-                                                        end
-                                                      })
-                                                    ]))
+    super(HEADERS[type],
+          input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type],
+                                     filters: [
+                                       InputFilter.new(/^[a-zA-Z \d_]+$/, handler: proc { |match_data|
+                                         filename = match_data.to_s
+                                         if @type == :load && !File.exist?(SaveSerializer.new.filepath(filename))
+                                           InputFilter.error_result('Save file with this name not found!')
+                                         elsif @type == :import && !File.exist?(PGNSerializer.new.filepath(filename))
+                                           InputFilter.error_result('PGN formatted save file with this name not found!')
+                                         else
+                                           filename
+                                         end
+                                       })
+                                     ]))
     @type = type
     @game = game
   end
@@ -30,44 +32,42 @@ class SaveLoadScreen < Screen
       filename = @input.handle_console_input(-> { draw })
       case @type
       when :save
-        filename = Game.full_name_of_save_file(filename)
-        if File.exist?(filename) && !AcceptRequestScreen.show_and_read(
+        ss = SaveSerializer.new
+        if File.exist?(ss.filepath(filename)) && !AcceptRequestScreen.show_and_read(
           'File with this name already exists, do you want rewrite it?'
         )
           draw
           next
         end
-
-        @game.save(filename)
-        MessageScreen.show("Game saved successfully to #{filename}")
+        ss.serialize(@game, filename)
+        MessageScreen.show("Game saved successfully to #{ss.filepath(filename)}")
         return @game
       when :load
-        filename = Game.full_name_of_save_file(filename)
-        return Game.load(filename)
+        return SaveSerializer.new.deserialize(filename)
       when :export
-        filename = Game.full_name_of_export_file(filename)
-        if File.exist?(filename) && !AcceptRequestScreen.show_and_read(
+        pgns = PGNSerializer.new
+        if File.exist?(pgns.filepath(filename)) && !AcceptRequestScreen.show_and_read(
           'File with this name already exists, do you want rewrite it?' \
             '(Export save one game to one file only!)'
         )
           draw
           next
         end
-
-        @game.export(filename)
-        MessageScreen.show("Game saved successfully as PGN formatted to #{filename}")
+        pgns.serialize(@game, filename)
+        MessageScreen.show("Game saved successfully as PGN formatted to #{pgns.filepath(filename)}")
         return @game
       when :import
-        filename = Game.full_name_of_export_file(filename)
-        saves_strings = Game.split_pgn_to_saves(filename)
-        return Game.import(saves_strings[:saves].first) if saves_strings[:saves].length == 1
+        games = PGNSerializer.new.deserialize(filename)
+        return games unless games.is_a?(Array)
 
+        descriptions = []
+        games.each { |game| descriptions << game.description }
         choice = MultipleChoiceRequestScreen.show_and_read(
-          saves_strings[:descriptions],
+          descriptions,
           "In this PGN file founded more then one game save!\n" \
-            'Here each: [{Event}] {White Player Name} vs {Black Player Name}'
+            'Here each: {White Player Name} vs {Black Player Name} : {Status}'
         )
-        return Game.import(saves_strings[:saves][choice])
+        return games[choice]
       end
     end
   end
