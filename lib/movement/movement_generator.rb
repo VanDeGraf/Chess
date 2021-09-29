@@ -119,28 +119,28 @@ module MovementGenerator
       if movement.is_a?(Castling) || movement.is_a?(PromotionMove) || movement.is_a?(EnPassant)
         assoc[movement.algebraic_notation] = movement
       else
-        file_required, rank_required = rank_file_required?(moves, movement)
+        file_required, rank_required = movement_rank_file(moves, movement)
         assoc[movement.algebraic_notation(file: file_required, rank: rank_required)] = movement
       end
     end
     assoc
   end
 
-  def self.rank_file_required?(moves, movement)
-    file_required = false
-    rank_required = false
-    moves.each do |move|
-      next if movement == move || move.point_end != movement.point_end
-      next if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
-      next unless movement.figure.figure == move.figure.figure
+  def self.rank_file_required?(move, movement)
+    false if movement == move || move.point_end != movement.point_end
+    false if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+    movement.figure.figure == move.figure.figure
+  end
 
-      if move.point_start.x == movement.point_start.x
-        rank_required = true
-      else
-        file_required = true
-      end
-      break
+  # @return [Array<Boolean>] [file_required, rank_required]
+  def self.movement_rank_file(moves, movement)
+    moves.each do |move|
+      next unless rank_file_required?(move, movement)
+
+      return [false, true] if move.point_start.x == movement.point_start.x
+
+      return [true, false]
     end
-    [file_required, rank_required]
+    [false, false]
   end
 end
