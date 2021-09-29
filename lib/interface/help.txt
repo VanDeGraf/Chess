@@ -1,0 +1,15 @@
+You can enter commands only when it is explicitly indicated.
+    Command list:
+/save - save current game state to specified file
+/export - save current game state to specified file, use PGN format
+/mm - go to main menu
+/draw - offer the opponent a draw
+/surrender - admit defeat, the opponent must accept it
+/history - show game turns history
+/help - show this screen
+/quit - exit from this application
+
+    In-Game turn input variants:
+1)Simple, example: `a2 a4`,`b1 c3`
+2)Algebraic Notation, example: `a4`,`Nc3`
+3)Choose special move, if it exists, just with type number of move
