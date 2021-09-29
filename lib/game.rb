@@ -50,24 +50,29 @@ class Game
                GameTurnScreen.show_and_read(self)
              end
     if action.is_a?(Movement)
-      @board.move!(action)
-      @current_player = @current_player.zero? ? 1 : 0
-      SaveSerializer.new.serialize(self, 'autosave')
-      nil
+      perform_movement_action(action)
     else
-      case action
-      when :draw
-        @winner = nil
-        @finished = true
-        nil
-      when :surrender
-        @winner = opposite_player
-        @finished = true
-        nil
-      else
-        action
-      end
+      perform_not_movement_action(action)
     end
+  end
+
+  def perform_movement_action(action)
+    @board.move!(action)
+    @current_player = @current_player.zero? ? 1 : 0
+    SaveSerializer.new.serialize(self, 'autosave')
+    nil
+  end
+
+  def perform_not_movement_action(action)
+    return action unless %i[draw surrender].include?(action)
+
+    @winner = if action == :draw
+                nil
+              else
+                opposite_player
+              end
+    @finished = true
+    nil
   end
 
   # @return [Symbol, nil]
