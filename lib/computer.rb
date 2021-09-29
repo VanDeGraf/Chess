@@ -23,17 +23,29 @@ class Computer < Player
   # @return [Integer]
   def score_turn(game, move)
     board_clone = game.board.move(move)
-    return 0 if board_clone.state.draw?(opposite_color)
+    return 0 if score_turn_0?(board_clone)
 
-    enemy_possible_moves = board_clone.possible_moves(opposite_color)
     capture_score = move.is_a?(PromotionMove) || move.is_a?(PromotionCapture) || move.is_a?(Capture) ? 1 : 0
 
-    return 3 + capture_score if board_clone.state.shah?(opposite_color)
-    return 1 + capture_score if enemy_possible_moves.any? do |enemy_move|
-      enemy_move.is_a?(Capture) || enemy_move.is_a?(PromotionCapture)
-    end
+    return 3 + capture_score if score_turn_3?(board_clone)
+    return 1 + capture_score if score_turn_1?(board_clone)
 
     2 + capture_score
+  end
+
+  def score_turn_0?(board_clone)
+    board_clone.state.draw?(opposite_color)
+  end
+
+  def score_turn_3?(board_clone)
+    board_clone.state.shah?(opposite_color)
+  end
+
+  def score_turn_1?(board_clone)
+    enemy_possible_moves = board_clone.possible_moves(opposite_color)
+    enemy_possible_moves.any? do |enemy_move|
+      enemy_move.is_a?(Capture) || enemy_move.is_a?(PromotionCapture)
+    end
   end
 
   def opposite_color
