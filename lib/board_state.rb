@@ -108,13 +108,17 @@ class BoardState
        figures_on_board(DEADMATE_PRESETS[2])
       true
     elsif figures_on_board(DEADMATE_PRESETS[3])
-      bishops_coordinate = @board.where_is(:bishop, nil)
-      bc1sum = bishops_coordinate[0].x + bishops_coordinate[0].y
-      bc2sum = bishops_coordinate[1].x + bishops_coordinate[1].y
-      (bc1sum.even? && bc2sum.even?) || (bc1sum.odd? && bc2sum.odd?)
+      deadmate_special3?
     else
       false
     end
+  end
+
+  def deadmate_special3?
+    bishops_coordinate = @board.where_is(:bishop, nil)
+    bc1sum = bishops_coordinate[0].x + bishops_coordinate[0].y
+    bc2sum = bishops_coordinate[1].x + bishops_coordinate[1].y
+    (bc1sum.even? && bc2sum.even?) || (bc1sum.odd? && bc2sum.odd?)
   end
 
   # generic check Fifty-move and Seventy-five-move draw rules
