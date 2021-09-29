@@ -21,19 +21,24 @@ class PGNSerializer < Serializer
     block = StringIO.new
     row = StringIO.new
     game.board.history.each_with_index do |movement, i|
-      if i.even?
-        if row.length >= 80
-          block << "#{row.string}\n"
-          row = StringIO.new
-        end
-        row << "#{(i + 2) / 2}."
-      end
+      turns_block_splitter(block, row, i)
       row << turn_string(board_history_before_iteration(game.board, i), movement)
     end
     row << " #{game_result(game)}" if game.finished
     block << row.string
 
     block.string
+  end
+
+  def turns_block_splitter(block, row, turn_number)
+    return unless turn_number.even?
+
+    if row.length >= 80
+      block << "#{row.string}\n"
+      row.truncate(0)
+      row.rewind
+    end
+    row << "#{(turn_number + 2) / 2}."
   end
 
   def board_history_before_iteration(board, iter)
@@ -57,18 +62,22 @@ class PGNSerializer < Serializer
   end
 
   def turn_string(board, movement)
-    current_color = if board.history.last.nil?
-                      :white
-                    elsif board.history.last.figure.color == :white
-                      :black
-                    else
-                      :white
-                    end
+    current_color = turn_string_current_color(board)
     player_turn = turn_string_prefix(board, current_color, movement)
     board.move!(movement)
     current_color = current_color == :white ? :black : :white
     postfix = turn_string_postfix(board, current_color)
     "#{player_turn}#{postfix} "
+  end
+
+  def turn_string_current_color(board)
+    if board.history.last.nil?
+      :white
+    elsif board.history.last.figure.color == :white
+      :black
+    else
+      :white
+    end
   end
 
   def turn_string_prefix(board, current_color, movement)
@@ -120,20 +129,23 @@ class PGNSerializer < Serializer
                       Player.new(tags['White'], :white),
                       Player.new(tags['Black'], :black)
                     ])
-    if tags['Result'] == '*'
-      game.instance_variable_set(:@finished, false)
-      game.instance_variable_set(:@winner, nil)
-    else
-      game.instance_variable_set(:@finished, true)
-      winner = case tags['Result']
-               when '1-0'
-                 game.instance_variable_get(:@players)[0]
-               when '0-1'
-                 game.instance_variable_get(:@players)[1]
-               end
-      game.instance_variable_set(:@winner, winner)
-    end
+    game_set_result(game, tags['Result'])
     game
+  end
+
+  # @param game [Game]
+  # @param result [String]
+  def game_set_result(game, result)
+    game.instance_variable_set(:@finished, !result.eql?('*'))
+    winner = case result
+             when '*', '1/2-1/2'
+               nil
+             when '1-0'
+               game.instance_variable_get(:@players)[0]
+             else
+               game.instance_variable_get(:@players)[1]
+             end
+    game.instance_variable_set(:@winner, winner)
   end
 
   # @return [Void]
