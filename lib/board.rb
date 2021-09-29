@@ -10,26 +10,40 @@ class Board
 
   def initialize
     # @type [Array<Array<Figure,nil>>]
-    @board = [
-      [Figure.new(:rook, :white), Figure.new(:knight, :white), Figure.new(:bishop, :white),
-       Figure.new(:queen, :white), Figure.new(:king, :white), Figure.new(:bishop, :white), Figure.new(:knight, :white), Figure.new(:rook, :white)],
-      [Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white),
-       Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white), Figure.new(:pawn, :white)],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [nil, nil, nil, nil, nil, nil, nil, nil],
-      [Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black),
-       Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black), Figure.new(:pawn, :black)],
-      [Figure.new(:rook, :black), Figure.new(:knight, :black), Figure.new(:bishop, :black),
-       Figure.new(:queen, :black), Figure.new(:king, :black), Figure.new(:bishop, :black), Figure.new(:knight, :black), Figure.new(:rook, :black)]
-    ]
+    @board = Array.new(8) { Array.new(8) }
+    init_board_cells
     # @type [Array<Figure>]
     @eaten = []
     # @type [Array<Movement>]
     @history = []
     @repetition_log = RepetitionLog.new
     @state = BoardState.new(self)
+  end
+
+  def init_board_row(color, row_number)
+    @board[row_number] = [
+      Figure.new(:rook, color),
+      Figure.new(:knight, color),
+      Figure.new(:bishop, color),
+      Figure.new(:queen, color),
+      Figure.new(:king, color),
+      Figure.new(:bishop, color),
+      Figure.new(:knight, color),
+      Figure.new(:rook, color)
+    ]
+  end
+
+  def init_pawn_row(color, row_number)
+    8.times do |i|
+      @board[row_number][i] = Figure.new(:pawn, color)
+    end
+  end
+
+  def init_board_cells
+    init_board_row(:white, 0)
+    init_pawn_row(:white, 1)
+    init_pawn_row(:black, 6)
+    init_board_row(:black, 7)
   end
 
   # Remove from coordinate on board figure, if it's exists there, and coordinate is valid
