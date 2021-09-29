@@ -13,17 +13,21 @@ class Chess
   def await_main_menu_command
     returned_command = nil
     loop do
-      command = if returned_command.nil? || returned_command == :main_menu
-                  MainMenuScreen.show_and_read
-                else
-                  returned_command
-                end
+      command = init_main_menu_await_command(returned_command)
       if command.eql?(:quit)
         Interface.clear_console
         break
       end
       perform_command_to_game(command)
       returned_command = await_play_game_command
+    end
+  end
+
+  def init_main_menu_await_command(returned_command)
+    if returned_command.nil? || returned_command == :main_menu
+      MainMenuScreen.show_and_read
+    else
+      returned_command
     end
   end
 
