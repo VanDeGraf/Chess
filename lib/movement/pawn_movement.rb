@@ -23,13 +23,13 @@ class PawnMovement < FigureMovement
   private
 
   def move_towards_once
-    get_move_relative(0, 1 * @move_direction) do |point|
+    create_move_relative(0, 1 * @move_direction) do |point|
       @board.on_board?(point) && @board.there_empty?(point)
     end
   end
 
   def move_towards_twice
-    get_move_relative(0, 2 * @move_direction) do |point|
+    create_move_relative(0, 2 * @move_direction) do |point|
       (@start_coordinate.y == 1 || @start_coordinate.y == 6) &&
         @board.there_empty?(point)
     end
@@ -44,7 +44,10 @@ class PawnMovement < FigureMovement
   end
 
   def capture
-    get_move_relative([[-1, 1 * @move_direction], [1, 1 * @move_direction]]) do |point|
+    create_moves_relative_many([
+                                 [-1, 1 * @move_direction],
+                                 [1, 1 * @move_direction]
+                               ]) do |point|
       @board.on_board?(point) && @board.there_enemy?(@figure, point)
     end
   end

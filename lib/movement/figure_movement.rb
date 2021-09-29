@@ -22,60 +22,55 @@ class FigureMovement
 
   private
 
-  # @overload get_move_relative(x,y)
-  #   @param x [Numeric]
-  #   @param y [Numeric]
-  #   @yieldparam point [Coordinate]
-  #   @yieldreturn [Boolean]
-  #   @return [Move, Capture, nil]
-  # @overload get_move_relative(moves)
-  #   @param moves [Array<Array<Fixnum>>]
-  #   @yieldparam point [Coordinate]
-  #   @yieldreturn [Boolean]
-  #   @return [Array<Move, Capture>]
-  def get_move_relative(*args, &block)
-    if args.length == 2 && args[0].is_a?(Integer) && args[1].is_a?(Integer)
-      point = @start_coordinate.relative(args[0], args[1])
-      if yield(point)
-        if @board.there_empty?(point)
-          Move.new(@figure, @start_coordinate, point)
-        else
-          Capture.new(@figure, @start_coordinate, point, @board.at(point))
-        end
-      end
-    elsif args.length == 1 && args[0].is_a?(Array)
-      args[0].map { |relative| get_move_relative(relative[0], relative[1], &block) }.compact
+  # @param coordinate_x [Numeric]
+  # @param coordinate_y [Numeric]
+  # @yieldparam point [Coordinate]
+  # @yieldreturn [Boolean]
+  # @return [Move]
+  def create_move_relative(coordinate_x, coordinate_y)
+    point = @start_coordinate.relative(coordinate_x, coordinate_y)
+    return unless yield(point)
+
+    if @board.there_empty?(point)
+      Move.new(@figure, @start_coordinate, point)
+    else
+      Capture.new(@figure, @start_coordinate, point, @board.at(point))
     end
   end
 
-  # @overload get_moves_by_direction(x,y)
-  #   @param x [Fixnum]
-  #   @param y [Fixnum]
-  #   @yieldparam point [Coordinate]
-  #   @yieldreturn [Boolean]
-  #   @return [Array<Move, Capture>]
-  # @overload get_moves_by_direction(directions)
-  #   @param directions [Array<Array<Fixnum>>]
-  #   @yieldparam point [Coordinate]
-  #   @yieldreturn [Boolean]
-  #   @return [Array<Move, Capture>]
+  # @param moves [Array<Array<Fixnum>>]
+  # @yieldparam point [Coordinate]
+  # @yieldreturn [Boolean]
+  # @return [Array<Move>]
+  def create_moves_relative_many(moves, &block)
+    moves.map { |relative| create_move_relative(relative[0], relative[1], &block) }.compact
+  end
 
-  def get_moves_by_direction(*args, &block)
-    if args.length == 2 && args[0].is_a?(Integer) && args[1].is_a?(Integer)
-      moves = []
-      iteration = 1
-      loop do
-        move = get_move_relative(args[0] * iteration, args[1] * iteration, &block)
-        break if move.nil?
+  # @param coordinate_x [Numeric]
+  # @param coordinate_y [Numeric]
+  # @yieldparam point [Coordinate]
+  # @yieldreturn [Boolean]
+  # @return [Array<Move>]
+  def create_moves_by_direction(coordinate_x, coordinate_y, &block)
+    moves = []
+    iteration = 1
+    loop do
+      move = create_move_relative(coordinate_x * iteration, coordinate_y * iteration, &block)
+      break if move.nil?
 
-        moves << move
-        break if move.is_a?(Capture)
+      moves << move
+      break if move.is_a?(Capture)
 
-        iteration += 1
-      end
-      moves
-    elsif args.length == 1 && args[0].is_a?(Array)
-      args[0].map { |direction| get_moves_by_direction(direction[0], direction[1], &block) }.flatten
+      iteration += 1
     end
+    moves
+  end
+
+  # @param directions [Array<Array<Fixnum>>]
+  # @yieldparam point [Coordinate]
+  # @yieldreturn [Boolean]
+  # @return [Array<Move>]
+  def create_moves_by_many_direction(directions, &block)
+    directions.map { |direction| create_moves_by_direction(direction[0], direction[1], &block) }.flatten
   end
 end

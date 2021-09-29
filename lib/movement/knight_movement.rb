@@ -3,7 +3,7 @@ require_relative 'figure_movement'
 class KnightMovement < FigureMovement
   # @return [Array<Movement>]
   def generate_moves
-    get_move_relative(KNIGHT_RELATIVE_MOVEMENT_TABLE) do |point|
+    create_moves_relative_many(KNIGHT_RELATIVE_MOVEMENT_TABLE) do |point|
       @board.on_board?(point) &&
         (@board.there_enemy?(@figure, point) || @board.there_empty?(point))
     end
