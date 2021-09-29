@@ -4,33 +4,32 @@ require_relative 'king_movement'
 require_relative 'knight_movement'
 require_relative 'pawn_movement'
 require_relative 'rook_movement'
+require_relative 'queen_movement'
 # moves generation methods
 module MovementGenerator
   # @param coordinate [Coordinate]
   # @param board [Board]
   # @return [Array<Movement>]
-
   def self.generate_from(coordinate, board, check_shah: true)
     figure = board.at(coordinate)
     return [] if figure.nil?
 
-    moves = case figure.figure
-            when :pawn
-              PawnMovement.new(figure, coordinate, board).generate_moves
-            when :knight
-              KnightMovement.new(figure, coordinate, board).generate_moves
-            when :king
-              KingMovement.new(figure, coordinate, board).generate_moves
-            when :bishop
-              BishopMovement.new(figure, coordinate, board).generate_moves
-            when :rook
-              RookMovement.new(figure, coordinate, board).generate_moves
-            when :queen
-              BishopMovement.new(figure, coordinate, board).generate_moves +
-              RookMovement.new(figure, coordinate, board).generate_moves
-            end
-    moves = moves.map { |move| board.move(move).state.shah?(figure.color) ? nil : move }.compact if check_shah
+    moves = FIGURE_MOVEMENT[figure.figure].new(figure, coordinate, board).generate_moves
+    moves = moves_remove_on_shah(board, moves, figure) if check_shah
     moves
+  end
+
+  FIGURE_MOVEMENT = {
+    pawn: PawnMovement,
+    knight: KnightMovement,
+    king: KingMovement,
+    bishop: BishopMovement,
+    rook: RookMovement,
+    queen: QueenMovement
+  }.freeze
+
+  def self.moves_remove_on_shah(board, moves, figure)
+    moves.map { |move| board.move(move).state.shah?(figure.color) ? nil : move }.compact
   end
 
   # king and rook can do special move named castling, it possible, if king never move, not state shah on current and on
