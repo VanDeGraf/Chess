@@ -67,21 +67,29 @@ class PawnMovement < FigureMovement
     [-1, 1].each do |shift|
       enemy_point_start = @start_coordinate.relative(shift, @move_direction * 2)
       enemy_point_end = @start_coordinate.relative(shift, 0)
-      last_move = @board.history.last
-      next unless !last_move.nil? &&
-                  last_move.is_a?(Move) &&
-                  last_move.figure.figure == :pawn &&
-                  last_move.point_end == enemy_point_end &&
-                  last_move.point_start == enemy_point_start
+      next unless en_passant_verify?(enemy_point_end, enemy_point_start)
 
-      moves << EnPassant.new(
-        @figure,
-        @start_coordinate,
-        @start_coordinate.relative(shift, @move_direction),
-        last_move.figure,
-        enemy_point_end
-      )
+      moves << en_passant_instance(shift, enemy_point_end)
     end
     moves
+  end
+
+  def en_passant_verify?(enemy_point_end, enemy_point_start)
+    last_move = @board.history.last
+    !last_move.nil? &&
+      last_move.is_a?(Move) &&
+      last_move.figure.figure == :pawn &&
+      last_move.point_end == enemy_point_end &&
+      last_move.point_start == enemy_point_start
+  end
+
+  def en_passant_instance(shift, enemy_point_end)
+    EnPassant.new(
+      @figure,
+      @start_coordinate,
+      @start_coordinate.relative(shift, @move_direction),
+      @board.history.last.figure,
+      enemy_point_end
+    )
   end
 end
