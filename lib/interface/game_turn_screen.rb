@@ -87,27 +87,26 @@ class GameTurnScreen < Screen
 
   # @return [Symbol, Movement]
   def handle_input
-    loop do
+    result = nil
+    while result.nil?
       action = @input.handle_console_input(-> { draw })
-      case action[:action]
-      when :command
-        command = handle_input_command(action)
-        return command unless command.nil?
-      when :special_move
-        move = handle_input_special_move(action)
-        return move unless move.nil?
-      when :move
-        move = handle_input_move(action)
-        return move unless move.nil?
-      when :notation_move
-        move = handle_input_notation_move(action)
-        return move unless move.nil?
-      else
-        next
-      end
+      result = perform_action(action)
       draw
     end
-    :stub
+    result
+  end
+
+  def perform_action(action)
+    case action[:action]
+    when :command
+      handle_input_command(action)
+    when :special_move
+      handle_input_special_move(action)
+    when :move
+      handle_input_move(action)
+    when :notation_move
+      handle_input_notation_move(action)
+    end
   end
 
   private
@@ -116,43 +115,59 @@ class GameTurnScreen < Screen
   def handle_input_command(action)
     case action[:command]
     when 'save'
-      SaveLoadScreen.show_and_read(:save, game: @game)
-      nil
+      handle_input_command_save
     when 'export'
-      SaveLoadScreen.show_and_read(:export, game: @game)
-      nil
-    when 'mm'
+      handle_input_command_export
+    when 'mm', 'menu'
       :main_menu
     when 'draw'
-      if @game.opposite_player.is_a?(Computer)
-        MessageScreen.show("Computer player can't accept your draw request!")
-      elsif AcceptRequestScreen.show_and_read(
-        "#{@game.current_player}, are you sure you want to offer a draw to your opponent?"
-      ) && AcceptRequestScreen.show_and_read(
-        "#{@game.current_player} wants to end the game in a draw, #{@game.opposite_player} do you agree?"
-      )
-        :draw
-      end
-    when 'surrender'
-      if @game.opposite_player.is_a?(Computer)
-        MessageScreen.show("Computer player can't accept your surrender request!")
-      elsif AcceptRequestScreen.show_and_read(
-        "#{@game.current_player}, are you sure you want surrender?"
-      ) && AcceptRequestScreen.show_and_read(
-        "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
-      )
-        :surrender
-      end
+      handle_input_command_draw
+    when 'surrender', 'sur'
+      handle_input_command_surrender
     when 'history'
       TurnHistoryScreen.show(@game)
     when 'help'
       CommandHelpScreen.show
-    when 'quit'
+    when 'quit', 'exit'
       :quit
     else
       @input.error_message = "Not found command with name: #{action[:command]}"
       nil
     end
+  end
+
+  def handle_input_command_draw
+    if @game.opposite_player.is_a?(Computer)
+      MessageScreen.show("Computer player can't accept your draw request!")
+    elsif AcceptRequestScreen.show_and_read(
+      "#{@game.current_player}, are you sure you want to offer a draw to your opponent?"
+    ) && AcceptRequestScreen.show_and_read(
+      "#{@game.current_player} wants to end the game in a draw, #{@game.opposite_player} do you agree?"
+    )
+      :draw
+    end
+  end
+
+  def handle_input_command_surrender
+    if @game.opposite_player.is_a?(Computer)
+      MessageScreen.show("Computer player can't accept your surrender request!")
+    elsif AcceptRequestScreen.show_and_read(
+      "#{@game.current_player}, are you sure you want surrender?"
+    ) && AcceptRequestScreen.show_and_read(
+      "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
+    )
+      :surrender
+    end
+  end
+
+  def handle_input_command_save
+    SaveLoadScreen.show_and_read(:save, game: @game)
+    nil
+  end
+
+  def handle_input_command_export
+    SaveLoadScreen.show_and_read(:export, game: @game)
+    nil
   end
 
   # @return [Movement, nil]
