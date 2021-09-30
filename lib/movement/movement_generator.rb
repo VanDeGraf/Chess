@@ -33,11 +33,17 @@ module MovementGenerator
     moves.map { |move| board.move(move).state.shah?(figure.color) ? nil : move }.compact
   end
 
+  # king and rook can do special move named castling, it possible, if king never move, not state shah on current and on
+  # every path cells, one of rooks never moved and between them cells is empty.
   # @param board [Board]
   # @param color [Symbol]
   # @return [Array<Movement>]
   def self.castling(board, color)
-    CastlingGenerator.new(board, color).generate
+    cg = CastlingGenerator.new(board, color)
+    [
+      cg.generate_side(:castling_short),
+      cg.generate_side(:castling_long)
+    ].compact
   end
 
   # @param moves [Array<Movement>]
