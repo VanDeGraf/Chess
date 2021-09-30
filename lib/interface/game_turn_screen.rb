@@ -1,40 +1,13 @@
 class GameTurnScreen < Screen
   def initialize(game)
-    super('Chess Game Turn', input: ScreenDataInput.new(
-      'Enter your move or command',
-      filters: [
-        InputFilter.new(/^(([a-h][1-8]) ([a-h][1-8]))$/, handler: proc { |match_data|
-          {
-            action: :move,
-            point_start: Coordinate.from_s(match_data[2]),
-            point_end: Coordinate.from_s(match_data[3])
-          }
-        }),
-        InputFilter.new(%r{^(/([a-z]+) ?(\S* ?)*)$}, handler: proc { |match_data|
-          {
-            action: :command,
-            command: match_data[2],
-            arguments: match_data[3].split
-          }
-        }),
-        InputFilter.new(/^(s (\d+))$/, handler: proc { |match_data|
-          {
-            action: :special_move,
-            move_index: match_data[2].to_i - 1
-          }
-        }),
-        InputFilter.new(/^([BNQKR]?[a-h]?[1-8]?x?[a-h][1-8]=?[BNQKR]?)|(O-O)|(O-O-O)$/, handler: proc { |match_data|
-          {
-            action: :notation_move,
-            string: match_data[0]
-          }
-        })
-      ],
-      default_errmsg: "Can't parse inputted string, enter /help for more info about input."
-    ))
+    super('Chess Game Turn', input: init_input_params)
     @game = game
     @default_moves = []
     @special_moves = []
+    init_moves
+  end
+
+  def init_moves
     @game.board.possible_moves(@game.current_player.color).each do |move|
       if move.special?
         @special_moves << move
@@ -42,6 +15,56 @@ class GameTurnScreen < Screen
         @default_moves << move
       end
     end
+  end
+
+  def init_input_params
+    ScreenDataInput.new('Enter your move or command',
+                        filters: [
+                          init_filter_simple_move,
+                          init_filter_command,
+                          init_filter_special_move,
+                          init_filter_notation_move
+                        ],
+                        default_errmsg: "Can't parse inputted string, enter /help for more info about input.")
+  end
+
+  def init_filter_simple_move
+    InputFilter.new(/^(([a-h][1-8]) ([a-h][1-8]))$/, handler: proc { |match_data|
+      {
+        action: :move,
+        point_start: Coordinate.from_s(match_data[2]),
+        point_end: Coordinate.from_s(match_data[3])
+      }
+    })
+  end
+
+  def init_filter_command
+    InputFilter.new(%r{^(/([a-z]+) ?(\S* ?)*)$}, handler: proc { |match_data|
+      {
+        action: :command,
+        command: match_data[2],
+        arguments: match_data[3].split
+      }
+    })
+  end
+
+  def init_filter_special_move
+    InputFilter.new(/^(s (\d+))$/, handler: proc { |match_data|
+      {
+        action: :special_move,
+        move_index: match_data[2].to_i - 1
+      }
+    })
+  end
+
+  def init_filter_notation_move
+    InputFilter.new(/^([BNQKR]?[a-h]?[1-8]?x?[a-h][1-8]=?[BNQKR]?)|(O-O)|(O-O-O)$/,
+                    handler: proc { |match_data|
+                      {
+                        action: :notation_move,
+                        string: match_data[0]
+                      }
+                    })
   end
 
   def self.show_and_read(game)
