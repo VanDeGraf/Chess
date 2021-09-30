@@ -1,5 +1,4 @@
 module Interface
-
   def self.clear_console
     system('clear') || system('cls')
   end
@@ -7,11 +6,28 @@ module Interface
   # @param board [Board]
   # @return [Void]
   def self.draw_board(board)
-    rotated_to_player = if board.history.last.nil?
-                          :white
-                        else
-                          board.history.last.figure.color == :white ? :black : :white
-                        end
+    point_start, point_end, step = init_params_by_rotation(board)
+    print_rank_line(point_start, point_end, step)
+    print "\n"
+    point_start.step(point_end, step) do |y|
+      print "#{y + 1} "
+      print_board_cells_line(board, point_start, point_end, step, y)
+      puts " #{y + 1}"
+    end
+    print_rank_line(point_start, point_end, step)
+    puts ' '
+  end
+
+  def self.rotated_to_player_board_side(board)
+    if board.history.last.nil?
+      :white
+    else
+      board.history.last.figure.color == :white ? :black : :white
+    end
+  end
+
+  def self.init_params_by_rotation(board)
+    rotated_to_player = rotated_to_player_board_side(board)
     point_start = 0
     point_end = 7
     step = 1
@@ -19,20 +35,19 @@ module Interface
       point_start, point_end = point_end, point_start
       step = -1
     end
+    [point_start, point_end, step]
+  end
+
+  def self.print_rank_line(point_start, point_end, step)
     print '  '
     point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    print "\n"
-    point_start.step(point_end, step) do |y|
-      print "#{y + 1} "
-      point_end.step(point_start, step * -1) do |x|
-        coordinate = Coordinate.new(x, y)
-        draw_figure_at(coordinate, board.at(coordinate))
-      end
-      puts " #{y + 1}"
+  end
+
+  def self.print_board_cells_line(board, point_start, point_end, step, coordinate_y)
+    point_end.step(point_start, step * -1) do |x|
+      coordinate = Coordinate.new(x, coordinate_y)
+      draw_figure_at(coordinate, board.at(coordinate))
     end
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
-    puts ' '
   end
 
   FIGURE_AS_UNICODE = {
