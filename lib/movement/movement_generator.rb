@@ -56,8 +56,9 @@ module MovementGenerator
   end
 
   def self.rank_file_required?(move, movement)
-    false if movement == move || move.point_end != movement.point_end
-    false if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+    return false if !move.is_a?(Move) && !move.is_a?(Capture) && !move.is_a?(PromotionCapture)
+    return false if movement == move || move.point_end != movement.point_end
+
     movement.figure.figure == move.figure.figure
   end
 
