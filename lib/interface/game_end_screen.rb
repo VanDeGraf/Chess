@@ -19,21 +19,24 @@ class GameEndScreen < Screen
 
   # @return [Symbol]
   def handle_input
-    loop do
+    command = nil
+    while command.nil?
       command = @input.handle_console_input(-> { draw })
-      case command
-      when :show_history
-        TurnHistoryScreen.show(@game)
-      when :save_game
-        SaveLoadScreen.show_and_read(:save, game: @game)
-      when :export_to_PGN
-        SaveLoadScreen.show_and_read(:export, game: @game)
-      else
-        return command
-      end
+      command = perform_command(command)
       draw
     end
-    :stub
+  end
+
+  def perform_command(command)
+    return command unless %i[show_history save_game export_to_PGN].include?(command)
+
+    if command.eql?(:show_history)
+      TurnHistoryScreen.show(@game)
+    else
+      screen_type = command.eql?(:save_game) ? :save : :export
+      SaveLoadScreen.show_and_read(screen_type, game: @game)
+    end
+    nil
   end
 
   def draw
