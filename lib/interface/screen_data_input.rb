@@ -18,13 +18,19 @@ class ScreenDataInput < ScreenInput
       @error_message = nil
       input = gets.chomp
       @filters.each do |filter|
-        match_result = filter.match(input)
-        return match_result unless match_result.is_a?(Hash) && match_result[:action] == :error
-
-        @error_message = match_result[:error_message] unless match_result[:error_message].nil?
+        match_result = match_filter(filter, input)
+        return match_result unless match_result.nil?
       end
       @error_message = @default_errmsg if @error_message.nil?
       screen_draw_method.call
     end
+  end
+
+  def match_filter(filter, input)
+    match_result = filter.match(input)
+    return match_result unless match_result.is_a?(Hash) && match_result[:action] == :error
+
+    @error_message = match_result[:error_message] unless match_result[:error_message].nil?
+    nil
   end
 end
