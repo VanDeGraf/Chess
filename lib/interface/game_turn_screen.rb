@@ -56,23 +56,7 @@ class GameTurnScreen < Screen
     Interface.draw_board(@game.board)
     unless @special_moves.empty?
       puts 'You can do one of this special moves: '
-      @special_moves.each_with_index do |move, i|
-        desc = case move
-               when EnPassant
-                 "en passant from #{move.point_start} to #{move.point_end}"
-               when PromotionMove
-                 "pawn move to #{move.point_end} and promotion to #{move.promoted_to.figure}"
-               when PromotionCapture
-                 "pawn capture enemy at #{move.point_end} and promotion to #{move.promoted_to.figure}"
-               when Castling
-                 if move.short
-                   'castling short'
-                 else
-                   'castling long'
-                 end
-               end
-        puts "#{i + 1}) #{desc}"
-      end
+      @special_moves.each_with_index { |move, i| puts "#{i + 1}) #{move}" }
     end
     puts "Player #{@game.current_player} turn."
     puts @input.draw
