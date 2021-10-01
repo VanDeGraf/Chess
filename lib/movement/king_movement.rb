@@ -15,7 +15,7 @@ class KingMovement < FigureMovement
 
   # @param king1 [Coordinate]
   # @param king2 [Coordinate]
-  def distance_between_kings_enough(king1, king2)
+  def self.distance_between_kings_enough(king1, king2)
     Math.sqrt((king2.x - king1.x)**2 + (king2.y - king1.y)**2) >= 2
   end
 
