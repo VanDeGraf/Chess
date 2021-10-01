@@ -1,0 +1,15 @@
+require: rubocop-rspec
+AllCops:
+  TargetRubyVersion: 2.7
+  Exclude:
+    - 'coverage/*'
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Metrics:
+  Enabled: false
+RSpec:
+  Enabled: true
+RSpec/NestedGroups:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
