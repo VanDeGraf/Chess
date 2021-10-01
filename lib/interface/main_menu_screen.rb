@@ -8,7 +8,7 @@ class MainMenuScreen < Screen
       MenuAction.new(:cmd_help, 'Show in game console commands'),
       MenuAction.new(:quit, 'Exit from the program')
     ]
-    super('Main Menu', input: ScreenMenuInput.new(menu_actions))
+    super('Main Menu', input: ScreenMenuInput.new(self, menu_actions))
   end
 
   # @return [Symbol]
@@ -20,7 +20,7 @@ class MainMenuScreen < Screen
 
   def handle_input
     loop do
-      command = @input.handle_console_input(-> { draw })
+      command = @input.handle_console_input
       case command
       when :cmd_help
         CommandHelpScreen.show

@@ -3,6 +3,7 @@ class MultipleChoiceRequestScreen < Screen
   # @param request_message [String]
   def initialize(choices, request_message: nil)
     super('Multiple-choice request', input: ScreenMenuInput.new(
+      self,
       choices.map.with_index { |choice, i| MenuAction.new(i, choice) }
     ))
     @request_message = request_message
@@ -16,7 +17,7 @@ class MultipleChoiceRequestScreen < Screen
   end
 
   def handle_input
-    @input.handle_console_input(-> { draw })
+    @input.handle_console_input
   end
 
   # @param choices [Array<String>]

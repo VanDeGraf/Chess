@@ -2,6 +2,7 @@ class PlayerNameRequestScreen < Screen
   # @param color [Symbol]
   def initialize(color)
     super('Name Request', input: ScreenDataInput.new(
+      self,
       "Player with #{color} figures, enter your name",
       filters: [
         InputFilter.new(/^[a-zA-Z .']+$/)
@@ -19,6 +20,6 @@ class PlayerNameRequestScreen < Screen
 
   # @return [String]
   def handle_input
-    @input.handle_console_input(-> { draw })
+    @input.handle_console_input
   end
 end

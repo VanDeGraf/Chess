@@ -1,7 +1,7 @@
 class MenuAction
   attr_reader :name, :title
 
-  # @param name [Symbol, Integer, String]
+  # @param name [Symbol, Integer]
   # @param title [String]
   def initialize(name, title)
     @name = name

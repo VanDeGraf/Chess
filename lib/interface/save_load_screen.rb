@@ -1,7 +1,8 @@
 class SaveLoadScreen < Screen
   def initialize(type, game: nil)
     super(HEADERS[type],
-          input: ScreenDataInput.new(INPUT_DESCRIPTIONS[type],
+          input: ScreenDataInput.new(self,
+                                     INPUT_DESCRIPTIONS[type],
                                      filters: init_data_input_filters))
     @type = type
     @game = game
@@ -32,7 +33,7 @@ class SaveLoadScreen < Screen
   def handle_input
     command_result = nil
     while command_result.nil?
-      filename = @input.handle_console_input(-> { draw })
+      filename = @input.handle_console_input
       command_result = perform_command(filename)
     end
     command_result

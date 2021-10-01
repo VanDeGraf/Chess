@@ -1,10 +1,12 @@
 class ScreenInput
   attr_writer :error_message
 
+  # @param screen [Screen]
   # @param description_message [String]
-  def initialize(description_message)
+  def initialize(screen, description_message)
     @description_message = description_message
     @error_message = nil
+    @screen = screen
   end
 
   # @return [String]
@@ -15,10 +17,9 @@ class ScreenInput
     buffer.string
   end
 
-  # @param screen_draw_method [Proc]
-  def handle_console_input(screen_draw_method)
+  def handle_console_input
     until (handled = gets.chomp)
-      screen_draw_method.call
+      @screen.draw
     end
     handled
   end

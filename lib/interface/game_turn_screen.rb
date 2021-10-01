@@ -18,7 +18,8 @@ class GameTurnScreen < Screen
   end
 
   def init_input_params
-    ScreenDataInput.new('Enter your move or command',
+    ScreenDataInput.new(self,
+                        'Enter your move or command',
                         filters: [
                           init_filter_simple_move,
                           init_filter_command,
@@ -89,7 +90,7 @@ class GameTurnScreen < Screen
   def handle_input
     result = nil
     while result.nil?
-      action = @input.handle_console_input(-> { draw })
+      action = @input.handle_console_input
       result = perform_action(action)
       draw
     end

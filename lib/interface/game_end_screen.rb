@@ -7,7 +7,7 @@ class GameEndScreen < Screen
       MenuAction.new(:main_menu, 'Go to Main Menu'),
       MenuAction.new(:quit, 'Exit from the program')
     ]
-    super('Game is over!', input: ScreenMenuInput.new(menu_actions))
+    super('Game is over!', input: ScreenMenuInput.new(self, menu_actions))
     @game = game
   end
 
@@ -21,7 +21,7 @@ class GameEndScreen < Screen
   def handle_input
     command = nil
     while command.nil?
-      command = @input.handle_console_input(-> { draw })
+      command = @input.handle_console_input
       command = perform_command(command)
       draw
     end

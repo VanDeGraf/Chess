@@ -2,18 +2,18 @@ require_relative 'menu_action'
 require_relative 'input_filter'
 
 class ScreenDataInput < ScreenInput
+  # @param screen [Screen]
   # @param description_message [String]
   # @param filters [Array<InputFilter>]
   # @param default_errmsg [String]
-  def initialize(description_message, filters: [], default_errmsg: nil)
-    super(description_message)
+  def initialize(screen, description_message, filters: [], default_errmsg: nil)
+    super(screen, description_message)
     # @type [Array<InputFilter>]
     @filters = filters
     @default_errmsg = default_errmsg
   end
 
-  # @param screen_draw_method [Proc]
-  def handle_console_input(screen_draw_method)
+  def handle_console_input
     loop do
       @error_message = nil
       input = gets.chomp
@@ -22,7 +22,7 @@ class ScreenDataInput < ScreenInput
         return match_result unless match_result.nil?
       end
       @error_message = @default_errmsg if @error_message.nil?
-      screen_draw_method.call
+      @screen.draw
     end
   end
 
