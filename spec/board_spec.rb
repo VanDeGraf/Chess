@@ -340,4 +340,36 @@ describe Board do
       end
     end
   end
+
+  describe '#possible_moves' do
+    subject(:board) do
+      b = described_class.new
+      b.instance_variable_set(:@board, Array.new(8) { Array.new(8) })
+      b.init_pawn_row(:white, 1)
+      b.init_pawn_row(:black, 6)
+      b
+    end
+
+    context 'color white' do
+      let(:color) { :white }
+
+      it 'call where_is once' do
+        allow(board).to receive(:where_is).and_return([])
+        board.possible_moves(color)
+        expect(board).to have_received(:where_is).with(nil, color)
+      end
+
+      it 'call MovementGenerator.generate_from 8 times' do
+        allow(MovementGenerator).to receive(:generate_from).and_return([])
+        board.possible_moves(color)
+        expect(MovementGenerator).to have_received(:generate_from).exactly(8).times
+      end
+
+      it 'call MovementGenerator.castling once' do
+        allow(MovementGenerator).to receive(:castling).and_return([])
+        board.possible_moves(color)
+        expect(MovementGenerator).to have_received(:castling).once
+      end
+    end
+  end
 end

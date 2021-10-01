@@ -46,4 +46,34 @@ describe PromotionCapture do
       end
     end
   end
+
+  describe '#perform_movement' do
+    subject(:promotion_capture) do
+      described_class.new(Figure.new(:pawn, :white),
+                          point_start, point_end,
+                          Figure.new(:bishop, :black),
+                          promoted_to)
+    end
+
+    let(:promoted_to) { Figure.new(:queen, :white) }
+    let(:point_start) { Coordinate.new(0, 0) }
+    let(:point_end) { Coordinate.new(1, 0) }
+
+    let(:board) { Board.new }
+
+    before do
+      allow(board).to receive(:remove_at!)
+      allow(board).to receive(:replace_at!)
+    end
+
+    it 'remove old figure from old position' do
+      promotion_capture.perform_movement(board)
+      expect(board).to have_received(:remove_at!).with(point_start)
+    end
+
+    it 'set new figure on new position' do
+      promotion_capture.perform_movement(board)
+      expect(board).to have_received(:replace_at!).with(point_end, promoted_to)
+    end
+  end
 end

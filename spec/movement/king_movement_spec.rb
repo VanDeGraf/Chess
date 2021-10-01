@@ -118,4 +118,70 @@ describe KingMovement do
     end
     # TODO: more edges
   end
+
+  describe '#distance_between_kings_enough' do
+    context 'king1[0,0] and king2[1,1]' do
+      it 'not enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(1, 1)
+               )).to be_falsey
+      end
+    end
+
+    context 'king1[0,0] and king2[0,1]' do
+      it 'not enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(0, 1)
+               )).to be_falsey
+      end
+    end
+
+    context 'king1[0,0] and king2[1,0]' do
+      it 'not enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(1, 0)
+               )).to be_falsey
+      end
+    end
+
+    context 'king1[0,0] and king2[2,2]' do
+      it 'enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(2, 2)
+               )).to be_truthy
+      end
+    end
+
+    context 'king1[0,0] and king2[3,3]' do
+      it 'enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(3, 3)
+               )).to be_truthy
+      end
+    end
+
+    context 'king1[2,2] and king2[0,0]' do
+      it 'enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(2, 2), Coordinate.new(0, 0)
+               )).to be_truthy
+      end
+    end
+
+    context 'king1[0,0] and king2[1,2]' do
+      it 'enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(1, 2)
+               )).to be_truthy
+      end
+    end
+
+    context 'king1[0,0] and king2[2,1]' do
+      it 'enough' do
+        expect(described_class.distance_between_kings_enough(
+                 Coordinate.new(0, 0), Coordinate.new(2, 1)
+               )).to be_truthy
+      end
+    end
+  end
 end
