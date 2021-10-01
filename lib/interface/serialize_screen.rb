@@ -1,4 +1,4 @@
-class SaveLoadScreen < Screen
+class SerializeScreen < Screen
   def initialize(type, game: nil)
     super(HEADERS[type],
           input: ScreenDataInput.new(self,

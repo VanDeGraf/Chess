@@ -38,9 +38,9 @@ class Chess
             when :play_human_vs_computer
               Game.new([nil, Computer.new(:black)])
             when :load_game
-              SaveLoadScreen.show_and_read(:load)
+              SerializeScreen.show_and_read(:load)
             when :import_from_PGN
-              SaveLoadScreen.show_and_read(:import)
+              SerializeScreen.show_and_read(:import)
             end
   end
 

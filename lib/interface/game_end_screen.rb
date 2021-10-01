@@ -34,7 +34,7 @@ class GameEndScreen < Screen
       TurnHistoryScreen.show(@game)
     else
       screen_type = command.eql?(:save_game) ? :save : :export
-      SaveLoadScreen.show_and_read(screen_type, game: @game)
+      SerializeScreen.show_and_read(screen_type, game: @game)
     end
     nil
   end

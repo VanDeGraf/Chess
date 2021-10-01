@@ -55,12 +55,12 @@ class TurnHandlerCommand < TurnHandler
   end
 
   def handle_input_command_save
-    SaveLoadScreen.show_and_read(:save, game: @game)
+    SerializeScreen.show_and_read(:save, game: @game)
     nil
   end
 
   def handle_input_command_export
-    SaveLoadScreen.show_and_read(:export, game: @game)
+    SerializeScreen.show_and_read(:export, game: @game)
     nil
   end
 
