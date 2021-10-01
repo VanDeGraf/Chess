@@ -9,7 +9,7 @@ class KingMovement < FigureMovement
     create_moves_relative_many(KING_RELATIVE_MOVEMENT_TABLE) do |point|
       @board.on_board?(point) &&
         (@board.there_enemy?(@figure, point) || @board.there_empty?(point)) &&
-        (enemy_king_coordinate.nil? || distance_between_kings_enough(point, enemy_king_coordinate))
+        (enemy_king_coordinate.nil? || KingMovement.distance_between_kings_enough(point, enemy_king_coordinate))
     end
   end
 
