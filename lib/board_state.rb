@@ -74,12 +74,10 @@ class BoardState
   # check inputted color is in stalemate state, i.e. now isn't in shah state and no possible moves
   # @param color [Symbol]
   def stalemate?(color)
-    if @board.where_is(nil, color).any? do |coordinate|
-      !MovementGenerator.generate_from(coordinate, @board).empty?
-    end || !MovementGenerator.castling(@board, color).empty?
-      false
-    else
+    if @board.possible_moves(color).empty?
       !shah?(color)
+    else
+      false
     end
   end
 
