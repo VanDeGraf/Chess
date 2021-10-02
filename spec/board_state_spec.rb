@@ -47,7 +47,80 @@ describe BoardState do
   end
 
   describe '#stalemate?' do
-    # TODO
+    let(:color) { :white }
+
+    it 'calculate possible_moves' do
+      allow(board).to receive(:possible_moves).and_return([])
+      board.state.stalemate?(color)
+      expect(board).to have_received(:possible_moves).at_least(:once)
+    end
+
+    context 'possible_moves exist' do
+      before do
+        allow(board).to receive(:possible_moves).and_return([nil,nil])
+      end
+
+      it 'return false' do
+        expect(board.state).not_to be_stalemate(color)
+      end
+    end
+
+    context 'possible_moves not exist' do
+      before do
+        allow(board).to receive(:possible_moves).and_return([])
+      end
+
+      context 'on shah' do
+        it 'return false' do
+          allow(board.state).to receive(:shah?).and_return(true)
+          expect(board.state).not_to be_stalemate(color)
+        end
+      end
+
+      context 'not on shah' do
+        it 'return true' do
+          allow(board.state).to receive(:shah?).and_return(false)
+          expect(board.state).to be_stalemate(color)
+        end
+      end
+    end
+  end
+
+  describe '#draw?' do
+    let(:color) { :white }
+
+    before do
+      allow(board.state).to receive(:stalemate?).and_return(false)
+      allow(board.state).to receive(:deadmate?).and_return(false)
+      allow(board.state).to receive(:n_move?).and_return(false)
+      allow(board.repetition_log).to receive(:n_fold_repetition?).and_return(false)
+    end
+
+    it 'check stalemate' do
+      board.state.draw?(color)
+      expect(board.state).to have_received(:stalemate?).once
+    end
+
+    it 'check deadmate' do
+      board.state.draw?(color)
+      expect(board.state).to have_received(:deadmate?).once
+    end
+
+    it 'check n_move' do
+      board.state.draw?(color)
+      expect(board.state).to have_received(:n_move?).once
+    end
+
+    it 'check n_fold_repetition?' do
+      board.state.draw?(color)
+      expect(board.repetition_log).to have_received(:n_fold_repetition?).once
+    end
+
+    context 'all checks false' do
+      it 'return false' do
+        expect(board.state).not_to be_draw(color)
+      end
+    end
   end
 
   describe '#deadmate?' do
@@ -116,10 +189,6 @@ describe BoardState do
         expect(board.state).to be_deadmate
       end
     end
-  end
-
-  describe '#n_fold_repetition?' do
-    # TODO
   end
 
   describe '#n_move?' do
