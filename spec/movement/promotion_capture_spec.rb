@@ -47,6 +47,41 @@ describe PromotionCapture do
     end
   end
 
+  describe '#from_capture' do
+    subject(:capture) do
+      Capture.new(Figure.new(:pawn, :white),
+                  Coordinate.new(0, 0),
+                  Coordinate.new(1, 0),
+                  Figure.new(:pawn, :black))
+    end
+
+    let(:board) { Board.new }
+
+    it 'return array of 4 new PromotionMove instances' do
+      expect(described_class.from_capture(capture).length).to be 4
+    end
+
+    it 'return instances with same start figure' do
+      expect(described_class.from_capture(capture)[0].figure).to be_equal(capture.figure)
+    end
+
+    it 'return instances with same point_start' do
+      expect(described_class.from_capture(capture)[0].point_start).to be_equal(capture.point_start)
+    end
+
+    it 'return instances with same point_end' do
+      expect(described_class.from_capture(capture)[0].point_end).to be_equal(capture.point_end)
+    end
+
+    it 'return instances with same captured figure' do
+      expect(described_class.from_capture(capture)[0].captured).to be_equal(capture.captured)
+    end
+
+    it 'return instances with same color of new figure' do
+      expect(described_class.from_capture(capture)[0].promoted_to.color).to be_equal(capture.figure.color)
+    end
+  end
+
   describe '#perform_movement' do
     subject(:promotion_capture) do
       described_class.new(Figure.new(:pawn, :white),

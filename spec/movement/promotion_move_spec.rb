@@ -53,4 +53,34 @@ describe PromotionMove do
       expect(board).to have_received(:replace_at!).with(point_end, promoted_to)
     end
   end
+
+  describe '#from_move' do
+    subject(:move) do
+      Move.new(Figure.new(:pawn, :white),
+               Coordinate.new(0, 0),
+               Coordinate.new(1, 0))
+    end
+
+    let(:board) { Board.new }
+
+    it 'return array of 4 new PromotionMove instances' do
+      expect(described_class.from_move(move).length).to be 4
+    end
+
+    it 'return instances with same start figure' do
+      expect(described_class.from_move(move)[0].figure).to be_equal(move.figure)
+    end
+
+    it 'return instances with same point_start' do
+      expect(described_class.from_move(move)[0].point_start).to be_equal(move.point_start)
+    end
+
+    it 'return instances with same point_end' do
+      expect(described_class.from_move(move)[0].point_end).to be_equal(move.point_end)
+    end
+
+    it 'return instances with same color of new figure' do
+      expect(described_class.from_move(move)[0].promoted_to.color).to be_equal(move.figure.color)
+    end
+  end
 end
