@@ -21,11 +21,7 @@ class Movement
     return false if self.class != other.class
 
     instance_variables.all? do |var_name|
-      if other.instance_variables.include?(var_name)
-        instance_variable_get(var_name) == other.instance_variable_get(var_name)
-      else
-        false
-      end
+      instance_variable_get(var_name) == other.instance_variable_get(var_name)
     end
   end
 end
