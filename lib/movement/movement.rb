@@ -6,9 +6,7 @@ class Movement
     @figure = figure
   end
 
-  def special?
-    false
-  end
+  def special?; end
 
   # @param board [Board]
   # @return [Figure, nil] return captured figure, if it's happened
