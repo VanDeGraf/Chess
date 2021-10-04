@@ -57,4 +57,23 @@ describe Game do
       end
     end
   end
+
+  describe '#opposite_player' do
+    before do
+      game.instance_variable_set(:@players, [player1, player2])
+    end
+
+    context 'current player is first' do
+      it 'return second player' do
+        expect(game.opposite_player).to eql(player2)
+      end
+    end
+
+    context 'current player is second' do
+      it 'return first player' do
+        game.instance_variable_set(:@current_player, 1)
+        expect(game.opposite_player).to eql(player1)
+      end
+    end
+  end
 end
