@@ -58,9 +58,9 @@ class CastlingGenerator
   def king_path_on_shah?(side_direction)
     @board.state.shah?(@color) ||
       @board.move(Move.new(@board.at(@king_coordinate), @king_coordinate,
-                           @king_coordinate.relative(-1 * side_direction, 0))).state.shah?(@color) ||
+                           @king_coordinate.relative(1 * side_direction, 0))).state.shah?(@color) ||
       @board.move(Move.new(@board.at(@king_coordinate), @king_coordinate,
-                           @king_coordinate.relative(-2 * side_direction, 0))).state.shah?(@color)
+                           @king_coordinate.relative(2 * side_direction, 0))).state.shah?(@color)
   end
 
   def castling_instance(side_direction, rook_start_point)
