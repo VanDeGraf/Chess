@@ -12,7 +12,7 @@ class PawnMovement < FigureMovement
     toward_move = move_towards_once
     unless toward_move.nil?
       moves << toward_move
-      moves += promotions_after_move(toward_move)
+      moves += Promotion.from_movement(toward_move)
       twice_toward_move = move_towards_twice
       moves << twice_toward_move unless twice_toward_move.nil?
     end
@@ -35,14 +35,6 @@ class PawnMovement < FigureMovement
     end
   end
 
-  # @param move [Move]
-  # @return [Array<PromotionMove>]
-  def promotions_after_move(move)
-    return [] unless move.point_end.y.zero? || move.point_end.y == 7
-
-    PromotionMove.from_move(move)
-  end
-
   def capture
     create_moves_relative_many([
                                  [-1, 1 * @move_direction],
@@ -55,13 +47,7 @@ class PawnMovement < FigureMovement
   # @param capture_moves [Array<Capture>]
   # @return [Array<PromotionCapture>]
   def promotions_after_capture(capture_moves)
-    moves = []
-    capture_moves.each do |move|
-      next unless move.point_end.y.zero? || move.point_end.y == 7
-
-      moves += PromotionCapture.from_capture(move)
-    end
-    moves
+    capture_moves.map { |move| Promotion.from_movement(move) }.flatten.compact
   end
 
   # @return [Array<EnPassant>]
