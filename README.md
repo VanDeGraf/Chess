@@ -40,4 +40,5 @@ This project is part of [The Odin Project Curriculum](https://www.theodinproject
 * From the repo's root directory, run `bundle exec ruby application.rb`
 
 ### Running the tests
-* To run the entire test suite, run `rspec`
+* To show all test, run `rspec`
+* To show tests coverage, run `rspec` and open created `spec/coverage/index.html` (see [simplecov](https://github.com/simplecov-ruby/simplecov) gem)
