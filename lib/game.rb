@@ -77,13 +77,17 @@ class Game
 
   # @return [Symbol, nil]
   def play_game
-    @players[0] = PlayerNameRequestScreen.show_and_read(:white) if @players[0].nil?
-    @players[1] = PlayerNameRequestScreen.show_and_read(:black) if @players[1].nil?
-    until @finished || (@finished = game_end?)
+    players_initialize
+    until (@finished = game_end?)
       action = player_turn
       return action unless action.nil?
     end
     nil
+  end
+
+  def players_initialize
+    @players[0] = PlayerNameRequestScreen.show_and_read(:white) if @players[0].nil?
+    @players[1] = PlayerNameRequestScreen.show_and_read(:black) if @players[1].nil?
   end
 
   def game_end?
