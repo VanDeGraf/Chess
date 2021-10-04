@@ -17,10 +17,6 @@ class RepetitionLog
     end
   end
 
-  def clear!
-    @repetition_hash = {}
-  end
-
   # @param repetition_count [Integer]
   def n_fold_repetition?(repetition_count)
     @repetition_hash.any? { |_hash, count| count >= repetition_count }
