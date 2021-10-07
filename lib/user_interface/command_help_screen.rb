@@ -10,7 +10,7 @@ class CommandHelpScreen < MessageScreen
   def self.show
     instance = new
     instance.draw
-    gets
+    UserInterface.io.readline
     nil
   end
 end
