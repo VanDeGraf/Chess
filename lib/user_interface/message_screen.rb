@@ -16,7 +16,7 @@ class MessageScreen < Screen
   def self.show(message)
     instance = new(message)
     instance.draw
-    gets
+    UserInterface.io.readline
     nil
   end
 end
