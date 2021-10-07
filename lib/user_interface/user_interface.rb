@@ -1,5 +1,6 @@
 require_relative 'user_interface_io'
 require_relative 'console_io'
+require_relative 'buffer_io'
 
 module UserInterface
   class << self
