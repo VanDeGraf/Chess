@@ -14,7 +14,7 @@ class Screen
 
   def draw
     Interface.clear_console
-    print "\t#{@header}\n"
-    print @input.draw unless @input.nil?
+    Interface.io.write "\t#{@header}\n"
+    Interface.io.write @input.draw unless @input.nil?
   end
 end

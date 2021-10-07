@@ -25,8 +25,8 @@ class AcceptRequestScreen < Screen
 
   def draw
     Interface.clear_console
-    print "\t#{@header}\n"
-    puts @request_message
-    puts @input.draw
+    Interface.io.write "\t#{@header}\n"
+    Interface.io.writeline @request_message
+    Interface.io.writeline @input.draw
   end
 end

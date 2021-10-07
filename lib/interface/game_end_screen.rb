@@ -41,13 +41,13 @@ class GameEndScreen < Screen
 
   def draw
     Interface.clear_console
-    print "\t#{@header}\n"
+    Interface.io.write "\t#{@header}\n"
     Interface.draw_board(@game.board)
     if @game.winner.nil?
-      puts "\nDraw! No winners!"
+      Interface.io.writeline "\nDraw! No winners!"
     else
-      puts "\nPlayer #{@game.winner} Win! Congratulations!"
+      Interface.io.writeline "\nPlayer #{@game.winner} Win! Congratulations!"
     end
-    print @input.draw unless @input.nil?
+    Interface.io.write @input.draw unless @input.nil?
   end
 end

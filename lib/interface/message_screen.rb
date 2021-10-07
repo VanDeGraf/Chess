@@ -7,9 +7,9 @@ class MessageScreen < Screen
 
   def draw
     Interface.clear_console
-    print "\t#{@header}\n"
-    puts @message
-    print "\nPress Enter to continue...\n"
+    Interface.io.write "\t#{@header}\n"
+    Interface.io.writeline @message
+    Interface.io.write "\nPress Enter to continue...\n"
   end
 
   # @param message [String]

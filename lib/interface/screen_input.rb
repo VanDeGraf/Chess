@@ -18,7 +18,7 @@ class ScreenInput
   end
 
   def handle_console_input
-    until (handled = gets.chomp)
+    until (handled = Interface.io.readline)
       @screen.draw
     end
     handled

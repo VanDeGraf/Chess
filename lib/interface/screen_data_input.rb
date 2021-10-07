@@ -16,7 +16,7 @@ class ScreenDataInput < ScreenInput
   def handle_console_input
     loop do
       @error_message = nil
-      input = gets.chomp
+      input = Interface.io.readline
       @filters.each do |filter|
         match_result = match_filter(filter, input)
         return match_result unless match_result.nil?

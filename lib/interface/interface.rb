@@ -1,4 +1,18 @@
+require_relative 'interfaceio'
+require_relative 'consoleio'
+
 module Interface
+  class << self
+    attr_accessor :io
+
+    def initialize
+      # @type [InterfaceIO]
+      @io = InterfaceIO.new
+    end
+  end
+
+  self.io = ConsoleIO.new
+
   def self.clear_console
     system('clear') || system('cls')
   end
@@ -8,14 +22,14 @@ module Interface
   def self.draw_board(board)
     point_start, point_end, step = init_params_by_rotation(board)
     print_rank_line(point_start, point_end, step)
-    print "\n"
+    Interface.io.write "\n"
     point_start.step(point_end, step) do |y|
-      print "#{y + 1} "
+      Interface.io.write "#{y + 1} "
       print_board_cells_line(board, point_start, point_end, step, y)
-      puts " #{y + 1}"
+      Interface.io.writeline " #{y + 1}"
     end
     print_rank_line(point_start, point_end, step)
-    puts ' '
+    Interface.io.writeline ' '
   end
 
   def self.rotated_to_player_board_side(board)
@@ -39,8 +53,8 @@ module Interface
   end
 
   def self.print_rank_line(point_start, point_end, step)
-    print '  '
-    point_end.step(point_start, step * -1) { |x| print " #{(97 + x).chr}" }
+    Interface.io.write '  '
+    point_end.step(point_start, step * -1) { |x| Interface.io.write " #{(97 + x).chr}" }
   end
 
   def self.print_board_cells_line(board, point_start, point_end, step, coordinate_y)
@@ -69,13 +83,13 @@ module Interface
       color_num = figure.color == :white ? 37 : 30
       figure_string = " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
     end
-    print((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
+    Interface.io.write((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
   end
 
   # @param figure [Figure]
   # @return [Void]
   def self.draw_figure(figure)
     color_num = figure.color == :white ? 37 : 30
-    print " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
+    Interface.io.write " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
   end
 end
