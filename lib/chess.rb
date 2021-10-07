@@ -15,7 +15,7 @@ class Chess
     loop do
       command = init_main_menu_await_command(returned_command)
       if command.eql?(:quit)
-        UserInterface.clear_console
+        UserInterface.io.clear
         break
       end
       perform_command_to_game(command)

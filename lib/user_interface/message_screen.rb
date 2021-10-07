@@ -6,7 +6,7 @@ class MessageScreen < Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     UserInterface.io.writeline @message
     UserInterface.io.write "\nPress Enter to continue...\n"

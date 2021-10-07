@@ -24,7 +24,7 @@ class AcceptRequestScreen < Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     UserInterface.io.writeline @request_message
     UserInterface.io.writeline @input.draw

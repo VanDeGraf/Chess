@@ -42,7 +42,7 @@ class GameTurnScreen < Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     UserInterface.draw_board(@game.board)
     unless @special_moves.empty?

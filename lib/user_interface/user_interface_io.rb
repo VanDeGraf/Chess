@@ -7,4 +7,6 @@ class UserInterfaceIO
 
   # @param string [String]
   def writeline(string) end
+
+  def clear; end
 end

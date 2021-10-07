@@ -13,7 +13,7 @@ class Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     UserInterface.io.write @input.draw unless @input.nil?
   end

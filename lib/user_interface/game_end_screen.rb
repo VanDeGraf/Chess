@@ -40,7 +40,7 @@ class GameEndScreen < Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     UserInterface.draw_board(@game.board)
     if @game.winner.nil?

@@ -6,7 +6,7 @@ class TurnHistoryScreen < Screen
   end
 
   def draw
-    UserInterface.clear_console
+    UserInterface.io.clear
     UserInterface.io.write "\t#{@header}\n"
     @game.board.history.each do |move|
       player = move.figure.color == @game.current_player.color ? @game.current_player : @game.opposite_player

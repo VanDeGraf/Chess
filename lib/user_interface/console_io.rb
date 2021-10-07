@@ -10,4 +10,8 @@ class ConsoleIO < UserInterfaceIO
   def writeline(string)
     puts(string)
   end
+
+  def clear
+    system('clear') || system('cls')
+  end
 end
