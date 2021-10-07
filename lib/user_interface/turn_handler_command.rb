@@ -38,7 +38,7 @@ class TurnHandlerCommand < TurnHandler
     ) && AcceptRequestScreen.show_and_read(
       "#{@game.current_player} wants to end the game in a draw, #{@game.opposite_player} do you agree?"
     )
-      :draw
+      @game.perform_draw_command
     end
   end
 
@@ -50,7 +50,7 @@ class TurnHandlerCommand < TurnHandler
     ) && AcceptRequestScreen.show_and_read(
       "#{@game.current_player} wants surrender, #{@game.opposite_player} do you agree?"
     )
-      :surrender
+      @game.perform_surrender_command
     end
   end
 

@@ -42,16 +42,6 @@ class Game
     "#{@players[0].name} vs #{@players[1].name} : #{status}"
   end
 
-  # @return [Symbol, nil]
-  def player_turn
-    command = if current_player.is_a?(Computer)
-                current_player.turn(self)
-              else
-                GameTurnScreen.show_and_read(self)
-              end
-    perform_not_movement_action(command)
-  end
-
   # @param move [Movement, nil]
   def perform_movement(move)
     return if move.nil?
@@ -62,14 +52,14 @@ class Game
     nil
   end
 
-  def perform_not_movement_action(command)
-    return command unless %i[draw surrender].include?(command)
+  def perform_draw_command
+    @winner = nil
+    @finished = true
+    nil
+  end
 
-    @winner = if command == :draw
-                nil
-              else
-                opposite_player
-              end
+  def perform_surrender_command
+    @winner = opposite_player
     @finished = true
     nil
   end
@@ -78,8 +68,8 @@ class Game
   def play_game
     players_initialize
     until (@finished = game_end?)
-      action = player_turn
-      return action unless action.nil?
+      command = current_player.turn(self)
+      return command unless command.nil?
     end
     nil
   end
@@ -91,10 +81,10 @@ class Game
 
   def game_end?
     if @board.state.mate?(current_player.color)
-      @winner = @players[@current_player.zero? ? 1 : 0]
+      @winner = opposite_player
       true
     elsif @board.state.draw?(current_player.color)
-      @winner = nil
+      perform_draw_command
       true
     else
       false
