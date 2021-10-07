@@ -21,12 +21,13 @@ class GameEndScreen < Screen
   def handle_input
     command = nil
     while command.nil?
-      command = @input.handle_console_input
-      command = perform_command(command)
+      command = perform_command(@input.handle_console_input)
       draw
     end
+    command
   end
 
+  # @return [Symbol, nil]
   def perform_command(command)
     return command unless %i[show_history save_game export_to_PGN].include?(command)
 
