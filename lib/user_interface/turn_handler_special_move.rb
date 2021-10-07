@@ -14,6 +14,7 @@ class TurnHandlerSpecialMove < TurnHandler
       return @game.perform_movement(@special_moves[@move_index])
     end
 
+    @has_error = true
     nil
   end
 

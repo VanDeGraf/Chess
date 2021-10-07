@@ -10,7 +10,10 @@ class TurnHandlerNotationMove < TurnHandler
   end
 
   def perform_action
-    @game.perform_movement(MovementGenerator.algebraic_notation(@all_moves)[@move_notation])
+    move = MovementGenerator.algebraic_notation(@all_moves)[@move_notation]
+    @game.perform_movement(move)
+    @has_error = move.nil?
+    nil
   end
 
   def error_msg

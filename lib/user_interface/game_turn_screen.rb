@@ -47,7 +47,7 @@ class GameTurnScreen < Screen
     UserInterface.draw_board(@game.board)
     draw_special_moves_block unless @special_moves.empty?
     UserInterface.io.writeline "Player #{@game.current_player} turn."
-    UserInterface.io.writeline @input.draw
+    UserInterface.io.writeline @input.draw unless @game.current_player.is_a?(Computer)
   end
 
   def draw_special_moves_block
@@ -55,16 +55,16 @@ class GameTurnScreen < Screen
     @special_moves.each_with_index { |move, i| UserInterface.io.writeline "#{i + 1}) #{move}" }
   end
 
-  # @return [Symbol]
+  # @return [Symbol,nil]
   def handle_input
-    result = nil
-    while result.nil?
+    loop do
       # @type [TurnHandler]
       action = @input.handle_console_input
-      result = action.perform_action
-      @input.error_message = action.error_msg if result.nil?
+      command = action.perform_action
+      @input.error_message = action.error_msg if action.has_error
       draw
+      return command unless action.has_error
     end
-    result
+    nil
   end
 end

@@ -23,6 +23,9 @@ class TurnHandlerCommand < TurnHandler
       CommandHelpScreen.show
     when 'quit', 'exit'
       :quit
+    else
+      @has_error = true
+      nil
     end
   end
 

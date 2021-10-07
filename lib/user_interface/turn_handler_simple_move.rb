@@ -16,6 +16,7 @@ class TurnHandlerSimpleMove < TurnHandler
       return @game.perform_movement(move) if move.point_start == @point_start &&
                                              move.point_end == @point_end
     end
+    @has_error = true
     nil
   end
 
