@@ -44,29 +44,28 @@ class Game
 
   # @return [Symbol, nil]
   def player_turn
-    action = if current_player.is_a?(Computer)
-               current_player.turn(self)
-             else
-               GameTurnScreen.show_and_read(self)
-             end
-    if action.is_a?(Movement)
-      perform_movement_action(action)
-    else
-      perform_not_movement_action(action)
-    end
+    command = if current_player.is_a?(Computer)
+                current_player.turn(self)
+              else
+                GameTurnScreen.show_and_read(self)
+              end
+    perform_not_movement_action(command)
   end
 
-  def perform_movement_action(action)
-    @board.move!(action)
-    @current_player = @current_player.zero? ? 1 : 0
+  # @param move [Movement, nil]
+  def perform_movement(move)
+    return if move.nil?
+
+    @board.move!(move)
+    swap_current_player
     SaveSerializer.new.serialize(self, 'autosave')
     nil
   end
 
-  def perform_not_movement_action(action)
-    return action unless %i[draw surrender].include?(action)
+  def perform_not_movement_action(command)
+    return command unless %i[draw surrender].include?(command)
 
-    @winner = if action == :draw
+    @winner = if command == :draw
                 nil
               else
                 opposite_player
@@ -110,6 +109,10 @@ class Game
   # @return [Player]
   def opposite_player
     @players[@current_player.zero? ? 1 : 0]
+  end
+
+  def swap_current_player
+    @current_player = @current_player.zero? ? 1 : 0
   end
 
   YAML_LOAD_PERMITTED_CLASSES = [

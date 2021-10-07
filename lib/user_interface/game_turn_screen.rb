@@ -27,10 +27,10 @@ class GameTurnScreen < Screen
     ScreenDataInput.new(self,
                         'Enter your move or command',
                         filters: [
-                          TurnHandlerSimpleMove.create_filter(@default_moves),
+                          TurnHandlerSimpleMove.create_filter(@game, @default_moves),
                           TurnHandlerCommand.create_filter(@game),
-                          TurnHandlerSpecialMove.create_filter(@special_moves),
-                          TurnHandlerNotationMove.create_filter(@default_moves + @special_moves)
+                          TurnHandlerSpecialMove.create_filter(@game, @special_moves),
+                          TurnHandlerNotationMove.create_filter(@game, @default_moves + @special_moves)
                         ],
                         default_errmsg: "Can't parse inputted string, enter /help for more info about input.")
   end
@@ -55,7 +55,7 @@ class GameTurnScreen < Screen
     @special_moves.each_with_index { |move, i| UserInterface.io.writeline "#{i + 1}) #{move}" }
   end
 
-  # @return [Symbol, Movement]
+  # @return [Symbol]
   def handle_input
     result = nil
     while result.nil?

@@ -4,7 +4,7 @@ class Computer < Player
   end
 
   # @param game [Game]
-  # @return [Movement]
+  # @return [Symbol]
   def turn(game)
     scored_moves = {}
     game.board.possible_moves(@color).each do |move|
@@ -13,7 +13,7 @@ class Computer < Player
       scored_moves[score] << move
     end
     best_score_moves = scored_moves[scored_moves.keys.max]
-    best_score_moves[rand(best_score_moves.length)]
+    game.perform_movement(best_score_moves[rand(best_score_moves.length)])
   end
 
   private

@@ -1,5 +1,5 @@
 class TurnHandler
-  # @return [Movement, Symbol, nil]
+  # @return [Symbol, nil]
   def perform_action; end
 
   # @return [String]

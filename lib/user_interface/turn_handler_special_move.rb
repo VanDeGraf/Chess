@@ -1,12 +1,18 @@
 class TurnHandlerSpecialMove < TurnHandler
-  def initialize(special_moves, move_index)
+  # @param game [Game]
+  # @param special_moves [Array<Movement>]
+  # @param move_index [Integer]
+  def initialize(game, special_moves, move_index)
     super()
     @special_moves = special_moves
     @move_index = move_index
+    @game = game
   end
 
   def perform_action
-    return @special_moves[@move_index] if !@special_moves.empty? && @move_index.between?(0, @special_moves.length - 1)
+    if !@special_moves.empty? && @move_index.between?(0, @special_moves.length - 1)
+      return @game.perform_movement(@special_moves[@move_index])
+    end
 
     nil
   end
@@ -15,10 +21,11 @@ class TurnHandlerSpecialMove < TurnHandler
     'Mismatch number of special move choice.'
   end
 
+  # @param game [Game]
   # @param special_moves [Array<Movement>]
-  def self.create_filter(special_moves)
+  def self.create_filter(game, special_moves)
     InputFilter.new(/^(s (\d+))$/, handler: proc { |match_data|
-      new(special_moves, match_data[2].to_i - 1)
+      new(game, special_moves, match_data[2].to_i - 1)
     })
   end
 end
