@@ -14,10 +14,6 @@ module UserInterface
 
   self.io = ConsoleIO.new
 
-  def self.clear_console
-    system('clear') || system('cls')
-  end
-
   # @param board [Board]
   # @return [Void]
   def self.draw_board(board)
