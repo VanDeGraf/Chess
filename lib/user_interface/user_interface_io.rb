@@ -1,4 +1,4 @@
-class InterfaceIO
+class UserInterfaceIO
   # @return [String]
   def readline; end
 

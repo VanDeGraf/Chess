@@ -6,10 +6,10 @@ class MessageScreen < Screen
   end
 
   def draw
-    Interface.clear_console
-    Interface.io.write "\t#{@header}\n"
-    Interface.io.writeline @message
-    Interface.io.write "\nPress Enter to continue...\n"
+    UserInterface.clear_console
+    UserInterface.io.write "\t#{@header}\n"
+    UserInterface.io.writeline @message
+    UserInterface.io.write "\nPress Enter to continue...\n"
   end
 
   # @param message [String]

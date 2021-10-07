@@ -6,13 +6,13 @@ class TurnHistoryScreen < Screen
   end
 
   def draw
-    Interface.clear_console
-    Interface.io.write "\t#{@header}\n"
+    UserInterface.clear_console
+    UserInterface.io.write "\t#{@header}\n"
     @game.board.history.each do |move|
       player = move.figure.color == @game.current_player.color ? @game.current_player : @game.opposite_player
-      Interface.io.writeline "#{player}: #{move}"
+      UserInterface.io.writeline "#{player}: #{move}"
     end
-    Interface.io.write "\nPress Enter to continue...\n"
+    UserInterface.io.write "\nPress Enter to continue...\n"
   end
 
   # @param game [Game]

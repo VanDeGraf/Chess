@@ -1,4 +1,4 @@
-class ConsoleIO < InterfaceIO
+class ConsoleIO < UserInterfaceIO
   def readline
     gets.chomp
   end

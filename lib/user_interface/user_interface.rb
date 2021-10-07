@@ -1,13 +1,13 @@
-require_relative 'interfaceio'
-require_relative 'consoleio'
+require_relative 'user_interface_io'
+require_relative 'console_io'
 
-module Interface
+module UserInterface
   class << self
     attr_accessor :io
 
     def initialize
-      # @type [InterfaceIO]
-      @io = InterfaceIO.new
+      # @type [UserInterfaceIO]
+      @io = UserInterfaceIO.new
     end
   end
 
@@ -22,14 +22,14 @@ module Interface
   def self.draw_board(board)
     point_start, point_end, step = init_params_by_rotation(board)
     print_rank_line(point_start, point_end, step)
-    Interface.io.write "\n"
+    UserInterface.io.write "\n"
     point_start.step(point_end, step) do |y|
-      Interface.io.write "#{y + 1} "
+      UserInterface.io.write "#{y + 1} "
       print_board_cells_line(board, point_start, point_end, step, y)
-      Interface.io.writeline " #{y + 1}"
+      UserInterface.io.writeline " #{y + 1}"
     end
     print_rank_line(point_start, point_end, step)
-    Interface.io.writeline ' '
+    UserInterface.io.writeline ' '
   end
 
   def self.rotated_to_player_board_side(board)
@@ -53,8 +53,8 @@ module Interface
   end
 
   def self.print_rank_line(point_start, point_end, step)
-    Interface.io.write '  '
-    point_end.step(point_start, step * -1) { |x| Interface.io.write " #{(97 + x).chr}" }
+    UserInterface.io.write '  '
+    point_end.step(point_start, step * -1) { |x| UserInterface.io.write " #{(97 + x).chr}" }
   end
 
   def self.print_board_cells_line(board, point_start, point_end, step, coordinate_y)
@@ -83,13 +83,13 @@ module Interface
       color_num = figure.color == :white ? 37 : 30
       figure_string = " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
     end
-    Interface.io.write((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
+    UserInterface.io.write((coordinate.x + coordinate.y).odd? ? "\e[46m#{figure_string}\e[0m" : "\e[44m#{figure_string}\e[0m")
   end
 
   # @param figure [Figure]
   # @return [Void]
   def self.draw_figure(figure)
     color_num = figure.color == :white ? 37 : 30
-    Interface.io.write " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
+    UserInterface.io.write " \e[#{color_num}m#{FIGURE_AS_UNICODE[figure.figure]}\e[0m"
   end
 end

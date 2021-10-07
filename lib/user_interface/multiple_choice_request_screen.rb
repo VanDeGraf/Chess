@@ -10,10 +10,10 @@ class MultipleChoiceRequestScreen < Screen
   end
 
   def draw
-    Interface.clear_console
-    Interface.io.write "\t#{@header}\n"
-    Interface.io.writeline @request_message unless @request_message.nil?
-    Interface.io.writeline @input.draw
+    UserInterface.clear_console
+    UserInterface.io.write "\t#{@header}\n"
+    UserInterface.io.writeline @request_message unless @request_message.nil?
+    UserInterface.io.writeline @input.draw
   end
 
   def handle_input

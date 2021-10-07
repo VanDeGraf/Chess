@@ -42,15 +42,15 @@ class GameTurnScreen < Screen
   end
 
   def draw
-    Interface.clear_console
-    Interface.io.write "\t#{@header}\n"
-    Interface.draw_board(@game.board)
+    UserInterface.clear_console
+    UserInterface.io.write "\t#{@header}\n"
+    UserInterface.draw_board(@game.board)
     unless @special_moves.empty?
-      Interface.io.writeline 'You can do one of this special moves: '
-      @special_moves.each_with_index { |move, i| Interface.io.writeline "#{i + 1}) #{move}" }
+      UserInterface.io.writeline 'You can do one of this special moves: '
+      @special_moves.each_with_index { |move, i| UserInterface.io.writeline "#{i + 1}) #{move}" }
     end
-    Interface.io.writeline "Player #{@game.current_player} turn."
-    Interface.io.writeline @input.draw
+    UserInterface.io.writeline "Player #{@game.current_player} turn."
+    UserInterface.io.writeline @input.draw
   end
 
   # @return [Symbol, Movement]

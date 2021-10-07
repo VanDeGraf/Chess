@@ -19,7 +19,7 @@ class ScreenMenuInput < ScreenInput
   def handle_console_input
     input = nil
     loop do
-      input = Interface.io.readline
+      input = UserInterface.io.readline
       next unless regexp_verify?(input) &&
                   number_range_verify?(input)
 
