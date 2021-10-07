@@ -1,6 +1,7 @@
 # Chess
 Game rules: [Wikipedia](https://en.wikipedia.org/wiki/Chess)  
-This project is part of [The Odin Project Curriculum](https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby-programming/lessons/ruby-final-project)
+This project is part of [The Odin Project Curriculum](https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby-programming/lessons/ruby-final-project)  
+You can try it on [live version](https://replit.com/@VanDeGraf/Chess)
 
 ### Implemented features
 * Figures movement, include special: 
