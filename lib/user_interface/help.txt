@@ -9,7 +9,7 @@ You can enter commands only when it is explicitly indicated.
 /help - show this screen
 /quit - exit from this application
 
-    In-Game turn input variants:
+    In-Game turn input options:
 1)Simple, example: `a2 a4`,`b1 c3`
 2)Algebraic Notation, example: `a4`,`Nc3`
-3)Choose special move, if it exists, just with type number of move
+3)Choose special move, if it exists, just with type s + number of move, example: `s 1`, `s 2`
