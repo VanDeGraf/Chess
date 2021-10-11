@@ -19,7 +19,7 @@ class TurnHistoryScreen < Screen
   def self.show(game)
     instance = new(game)
     instance.draw
-    gets
+    UserInterface.io.readline
     nil
   end
 end
