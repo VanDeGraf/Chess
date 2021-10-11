@@ -14,23 +14,15 @@ You can try it on [live version](https://replit.com/@VanDeGraf/Chess)
       [Resignation](https://en.wikipedia.org/wiki/Rules_of_chess#Resigning)
     * Draw:
       [Draw by agreement](https://en.wikipedia.org/wiki/Draw_by_agreement),
-      [Stalemate](https://en.wikipedia.org/wiki/Stalemate),
-      incomplete [Dead position](https://en.wikipedia.org/wiki/Rules_of_chess#Dead_position),
+      [Stalemate](https://en.wikipedia.org/wiki/Stalemate),      
       [Seventy-five move](https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule),
-      [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition)
+      [Fivefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
+      incomplete [Dead position](https://en.wikipedia.org/wiki/Rules_of_chess#Dead_position)
     * [Check](https://en.wikipedia.org/wiki/Check_(chess))
 * Save\Load game to file (save file every turn in 'autosave')
 * Turns history shown
 * Simple Computer AI
 * Export\Import [PGN](https://ru.wikipedia.org/wiki/Portable_Game_Notation) game saves
-### Not implemented features yet
-* Game states:      
-    * Draw:
-      Ask about [Threefold repetition](https://en.wikipedia.org/wiki/Threefold_repetition),
-      Ask about [Fifty-move rule](https://en.wikipedia.org/wiki/Fifty-move_rule), 
-    * Check:
-    Show warning message about that      
-* Game with time control
 
 ### Installation
 * Clone the repo locally.
